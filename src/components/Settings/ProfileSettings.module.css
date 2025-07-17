@@ -1,0 +1,355 @@
+/* src/components/Settings/ProfileSettings.module.css */
+
+.profileContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.sectionTitle {
+  font-family: var(--font-luckiest-guy);
+  font-size: 2.5rem;
+  color: var(--color-text-dark-blue);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* --- SEÇÃO NOME E AVATAR --- */
+.infoSection {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  justify-content: center;
+  background-color: var(--color-jackboo-orange-lightest);
+  border: 2px solid var(--color-jackboo-light-orange);
+  border-radius: 20px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.avatarWrapper {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid var(--color-jackboo-primary-orange);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarSavedFeedback {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(76, 175, 80, 0.8);
+    color: white;
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-align: center;
+    padding: 0.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+}
+
+
+.nameSection {
+    display: flex;
+    align-items: center;
+}
+
+.currentName {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.userName {
+    font-family: var(--font-luckiest-guy);
+    font-size: 2rem;
+    color: var(--color-text-dark-blue);
+    margin: 0;
+}
+
+.editNameButton {
+    background: none;
+    border: none;
+    color: var(--color-jackboo-primary-orange);
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: transform 0.2s ease;
+}
+
+.nameInputGroup {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nameInput {
+    font-family: var(--font-mali);
+    font-size: 1.2rem;
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--color-jackboo-light-orange);
+    border-radius: 20px;
+    transition: all 0.2s ease;
+}
+
+.nameInput:focus {
+    outline: none;
+    border-color: var(--color-jackboo-primary-orange);
+    box-shadow: 0 0 8px rgba(255, 140, 0, 0.2);
+}
+
+.saveNameButton, .cancelEditNameButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    transition: transform 0.2s ease;
+}
+.saveNameButton {
+    color: var(--color-text-dark-green);
+}
+.cancelEditNameButton {
+    color: #ff0000;
+}
+.saveNameButton:disabled {
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+
+.divider {
+  border: none;
+  border-top: 2px dashed var(--color-jackboo-light-orange);
+  margin: 2rem 0;
+}
+
+/* --- SEÇÃO GALERIA DE DESENHOS (AGORA CARROSSEL) --- */
+.gallerySection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.galleryTitle {
+    font-family: var(--font-mali);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text-dark-blue);
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.emptyMessage {
+    font-family: var(--font-mali);
+    font-size: 1.1rem;
+    color: var(--color-text-dark-blue);
+    opacity: 0.7;
+    text-align: center;
+}
+
+/* --- CONTAINER DO CARROSSEL --- */
+.carouselContainer {
+    width: 100%;
+    max-width: 650px; /* Largura máxima do carrossel */
+    margin: 0 auto;
+    position: relative; /* Para posicionar os botões */
+    display: flex; /* Garante que os botões e o wrapper fiquem na mesma linha */
+    align-items: center;
+}
+
+/* --- WRAPPER QUE ROLA --- */
+.carouselWrapper {
+  display: flex; /* Itens em linha */
+  overflow-x: auto; /* Permite rolagem horizontal */
+  scrollbar-width: none; /* Oculta scrollbar padrão Firefox */
+  -ms-overflow-style: none; /* Oculta scrollbar IE and Edge */
+  gap: 1rem; /* Espaço entre os thumbnails */
+  padding: 0.5rem 0; /* Um pouco de padding para a sombra/borda aparecer no scroll */
+  flex-grow: 1; /* Permite que ele ocupe o espaço disponível */
+}
+
+/* Oculta scrollbar padrão Webkit (Chrome, Safari) */
+.carouselWrapper::-webkit-scrollbar {
+  display: none;
+}
+
+
+.drawingThumbnailWrapper {
+  width: 100px; /* Tamanho fixo para os itens do carrossel */
+  height: 100px;
+  border-radius: 15px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 3px solid white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  position: relative;
+   transition: border-color 0.2s ease;
+   flex-shrink: 0; /* Essencial para que os itens não encolham e mantenham a largura */
+}
+
+.drawingThumbnailWrapper.selected {
+    border-color: var(--color-jackboo-primary-orange);
+    box-shadow: 0 6px 15px rgba(255, 140, 0, 0.3);
+}
+
+.drawingThumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.selectedOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 140, 0, 0.6);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* --- BOTÕES DE NAVEGAÇÃO DO CARROSSEL --- */
+.navButton {
+    background: none;
+    border: none;
+    color: var(--color-jackboo-primary-orange);
+    font-size: 1.8rem; /* Tamanho maior para os ícones de seta */
+    cursor: pointer;
+    padding: 0.5rem;
+    flex-shrink: 0; /* Impede que encolha */
+    z-index: 2; /* Garante que fiquem por cima dos thumbnails */
+    transition: transform 0.2s ease;
+}
+.navButton:hover {
+    transform: scale(1.2);
+}
+.navButton:active {
+     transform: scale(0.9);
+}
+.navButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.navLeft {
+    margin-right: 0.5rem; /* Espaço à direita da seta esquerda */
+}
+.navRight {
+    margin-left: 0.5rem; /* Espaço à esquerda da seta direita */
+}
+
+
+.saveAvatarButton, .uploadNewDrawingButton {
+  font-family: var(--font-mali);
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.saveAvatarButton {
+  background-color: var(--color-jackboo-primary-orange);
+  color: white;
+}
+
+.saveAvatarButton:disabled {
+    background-color: #ffcda1;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.uploadNewDrawingButton {
+  background-color: white;
+  color: var(--color-jackboo-primary-orange);
+  border: 2px solid var(--color-jackboo-light-orange);
+}
+.uploadNewDrawingButton:hover {
+    border-color: var(--color-jackboo-primary-orange);
+    background-color: var(--color-jackboo-orange-lightest);
+}
+
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .sectionTitle {
+        font-size: 2rem;
+    }
+    .infoSection {
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1rem 1.5rem;
+    }
+    .avatarWrapper {
+        width: 100px;
+        height: 100px;
+    }
+    .userName {
+        font-size: 1.8rem;
+    }
+    .editNameButton {
+        font-size: 1rem;
+    }
+     .nameInputGroup {
+        flex-direction: column;
+        gap: 0.8rem;
+     }
+     .nameInput {
+        font-size: 1.1rem;
+        padding: 0.6rem 1rem;
+     }
+     .saveNameButton, .cancelEditNameButton {
+         font-size: 1.3rem;
+     }
+     .divider {
+         margin: 1.5rem 0;
+     }
+     .galleryTitle {
+         font-size: 1.3rem;
+     }
+     /* Ajustes para o carrossel em mobile */
+     .carouselContainer {
+         max-width: 95%; /* Ocupa mais largura em mobile */
+     }
+     .carouselWrapper {
+         gap: 0.8rem; /* Espaço menor entre os thumbnails */
+         padding: 0.3rem 0;
+     }
+     .drawingThumbnailWrapper {
+         width: 80px; /* Tamanho menor em mobile */
+         height: 80px;
+     }
+     .navButton {
+         font-size: 1.5rem; /* Setas menores */
+         padding: 0.3rem;
+     }
+     .selectedOverlay FaCheckCircle {
+         size: 24px;
+     }
+     .saveAvatarButton, .uploadNewDrawingButton {
+         font-size: 1rem;
+         padding: 0.6rem 1.5rem;
+     }
+}

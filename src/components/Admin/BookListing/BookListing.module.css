@@ -1,0 +1,175 @@
+/* src/components/Admin/BookListing/BookListing.module.css */
+.title {
+    font-family: var(--font-mali);
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 700;
+    color: var(--color-text-dark-blue);
+}
+
+.subtitle {
+    font-family: var(--font-mali);
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-top: 0.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #eef2f7;
+    padding-bottom: 1rem;
+}
+
+.tabButton {
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    background-color: transparent;
+    color: #6c757d;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.tabButton.active {
+    background-color: var(--color-jackboo-primary-orange);
+    color: white;
+}
+
+.tabButton:not(.active):hover {
+    background-color: #f8f9fa;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 2rem;
+}
+
+.bookCard {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.bookCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+
+.imageWrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+}
+
+.bookImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.typeBadge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--color-jackboo-primary-orange);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 0.8rem;
+    border-radius: 50px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.bookInfo {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.bookTitle {
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--color-text-dark-blue);
+    margin-bottom: 0.5rem;
+    flex-grow: 1;
+    line-height: 1.3;
+}
+
+.authorLink {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mali);
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 1rem;
+    transition: color 0.2s ease;
+}
+
+.authorLink:hover {
+    color: var(--color-jackboo-primary-orange);
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 0.5rem;
+    border-top: 1px solid #eef2f7;
+}
+
+.actionButton {
+    background: none;
+    border: 1px solid #ced4da;
+    cursor: pointer;
+    font-size: 1rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.viewButton {
+    color: #495057;
+}
+
+.viewButton:hover {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+}
+
+.deleteButton {
+    color: var(--color-text-red-heart);
+}
+
+.deleteButton:hover {
+    background-color: #f7e0e8;
+    border-color: #f7e0e8;
+}
+
+.emptyMessage {
+    text-align: center;
+    font-family: var(--font-mali);
+    color: #6c757d;
+    padding: 3rem;
+    background-color: #f8f9fa;
+    border-radius: 15px;
+    margin-top: 1rem;
+}

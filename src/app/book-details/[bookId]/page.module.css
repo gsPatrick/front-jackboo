@@ -1,0 +1,300 @@
+/* src/app/book-details/[bookId]/page.module.css */
+.main {
+  padding: 4rem 2rem;
+  background-color: var(--color-jackboo-beige-ultra-light); /* Fundo suave */
+  min-height: calc(100vh - 80px); /* Ocupa a altura da tela menos o header */
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.pageTitle {
+  font-family: var(--font-luckiest-guy);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  color: var(--color-text-dark-blue);
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.notFoundMessage {
+     font-family: var(--font-mali);
+     font-size: 1.5rem;
+     color: var(--color-text-dark-blue);
+     text-align: center;
+     opacity: 0.8;
+     margin-top: 5rem;
+}
+
+/* --- LAYOUT PRINCIPAL (GRID) --- */
+.contentLayout {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 4rem;
+  align-items: flex-start;
+}
+
+.carouselSection {
+    display: flex;
+    justify-content: center; /* Centraliza o wrapper do personagem e carrossel */
+}
+
+/* --- NOVO: WRAPPER PARA PERSONAGEM E CARROSSEL --- */
+.characterAndCarouselWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem; /* Espaço entre a mensagem e o carrossel */
+    width: 100%;
+    /* Garante que este wrapper não exceda a largura máxima do carrossel */
+    max-width: 550px; 
+}
+
+
+.detailsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* --- DETALHES DO LIVRO --- */
+.bookDescription {
+  font-family: var(--font-mali);
+  font-size: 1.2rem;
+  color: var(--color-text-dark-blue);
+  line-height: 1.6;
+  opacity: 0.9;
+  margin-bottom: 1rem;
+}
+
+/* --- MENSAGEM DO JACK --- */
+.jackAdvice {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: var(--color-jackboo-orange-lightest);
+    padding: 1rem;
+    border-radius: 15px;
+}
+
+.speechBubbleSmall {
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--color-text-dark-blue);
+    line-height: 1.4;
+}
+
+/* --- SELEÇÃO DE VARIAÇÕES --- */
+.variationsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.variationsTitle {
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--color-text-dark-blue);
+    margin-bottom: 0.5rem;
+}
+
+.variationOption {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 2px solid var(--color-jackboo-light-orange);
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.variationOption.selected {
+    border-color: var(--color-jackboo-primary-orange);
+    background-color: var(--color-jackboo-orange-lightest);
+    box-shadow: 0 4px 10px rgba(255, 140, 0, 0.2);
+}
+
+.customRadio {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--color-jackboo-primary-orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.radioInner {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: var(--color-jackboo-primary-orange);
+}
+
+
+.variationDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    flex-grow: 1;
+}
+
+.variationName {
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--color-text-dark-blue);
+}
+
+.variationInfo {
+    font-family: var(--font-mali);
+    font-size: 0.9rem;
+    color: var(--color-text-dark-blue);
+    opacity: 0.7;
+}
+
+.variationPrice {
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--color-jackboo-primary-orange);
+}
+
+/* --- SELETOR DE QUANTIDADE --- */
+.quantitySelector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.quantityButton {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--color-jackboo-light-orange);
+    background-color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: var(--color-jackboo-primary-orange);
+    transition: all 0.2s ease;
+}
+.quantityButton:hover {
+    background-color: var(--color-jackboo-primary-orange);
+    color: white;
+    border-color: var(--color-jackboo-primary-orange);
+}
+
+.quantityDisplay {
+    font-family: var(--font-luckiest-guy);
+    font-size: 2rem;
+    color: var(--color-text-dark-blue);
+    min-width: 40px;
+    text-align: center;
+}
+
+
+/* --- BOTÕES DE AÇÃO --- */
+.actionButtons {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.addToCartButton, .buyNowButton {
+  font-family: var(--font-mali);
+  font-weight: 700;
+  font-size: 1.2rem;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-grow: 1;
+   text-align: center;
+   max-width: 300px;
+}
+
+.addToCartButton {
+    background-color: var(--color-jackboo-light-orange);
+    color: var(--color-text-dark-blue);
+}
+.addToCartButton:hover {
+     background-color: #fca546;
+}
+
+.buyNowButton {
+    background-color: var(--color-jackboo-primary-orange);
+    color: white;
+}
+.buyNowButton:hover {
+     background-color: #e07b00;
+}
+
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 992px) {
+    .contentLayout {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+     .carouselSection {
+        /* A ordem no mobile é definida aqui. Detalhes vêm primeiro. */
+        order: 2;
+     }
+     .detailsSection {
+        order: 1;
+     }
+     .actionButtons {
+        justify-content: center;
+     }
+}
+
+@media (max-width: 480px) {
+    .pageTitle {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+    .main {
+        padding: 2rem 1rem;
+    }
+    .bookDescription {
+        font-size: 1.1rem;
+    }
+    .variationOption {
+        padding: 0.8rem;
+        gap: 0.8rem;
+    }
+    .variationName {
+        font-size: 1rem;
+    }
+     .variationInfo {
+        font-size: 0.8rem;
+     }
+     .variationPrice {
+        font-size: 1.1rem;
+     }
+     .actionButtons {
+        gap: 1rem;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+     }
+      .addToCartButton, .buyNowButton {
+        font-size: 1.1rem;
+        padding: 0.8rem 1.5rem;
+        width: 100%;
+        max-width: 350px;
+      }
+}

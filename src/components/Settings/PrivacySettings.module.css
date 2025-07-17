@@ -1,0 +1,108 @@
+/* src/components/Settings/PrivacySettings.module.css */
+
+.privacyContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Espaço entre os grupos do formulário */
+}
+
+.sectionTitle {
+  font-family: var(--font-luckiest-guy);
+  font-size: 2.5rem;
+  color: var(--color-text-dark-blue);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem; /* Espaço extra entre os grupos */
+}
+
+.formGroup label {
+    font-family: var(--font-mali);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-text-dark-blue);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.icon {
+    color: var(--color-jackboo-primary-orange);
+}
+
+.input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 2px solid var(--color-jackboo-light-orange);
+  background-color: white;
+  border-radius: 15px;
+  font-family: var(--font-mali);
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-jackboo-primary-orange);
+  box-shadow: 0 0 8px rgba(255, 140, 0, 0.2);
+}
+
+.changePasswordButton {
+  font-family: var(--font-mali);
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.6rem 1.5rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  background-color: var(--color-jackboo-light-orange);
+  color: var(--color-text-dark-blue);
+  transition: all 0.2s ease;
+   align-self: flex-start; /* Alinha o botão com o label */
+}
+.changePasswordButton:hover {
+    background-color: var(--color-jackboo-primary-orange);
+    color: white;
+}
+
+
+.saveButton {
+  font-family: var(--font-mali);
+  font-weight: 700;
+  font-size: 1.2rem;
+  padding: 1rem 2.5rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  background-color: var(--color-jackboo-primary-orange);
+  color: white;
+  margin-top: 2rem;
+  align-self: center; /* Centraliza o botão */
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .sectionTitle {
+        font-size: 2rem;
+    }
+    .formGroup label {
+        font-size: 1.1rem;
+    }
+    .input {
+        font-size: 0.9rem;
+        padding: 0.6rem 0.8rem;
+    }
+    .changePasswordButton {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+    .saveButton {
+        font-size: 1.1rem;
+        padding: 0.8rem 2rem;
+    }
+}

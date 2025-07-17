@@ -1,0 +1,10 @@
+/* src/components/Admin/AssetPicker/AssetPicker.module.css */
+.pickerBackdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1060; display: flex; align-items: center; justify-content: center; }
+.pickerModal { width: 90%; max-width: 900px; height: 80%; background-color: white; border-radius: 15px; display: flex; flex-direction: column; }
+.pickerHeader { padding: 1rem 1.5rem; border-bottom: 1px solid #eef2f7; display: flex; justify-content: space-between; align-items: center; }
+.pickerHeader h4 { font-family: var(--font-mali); font-weight: 700; margin: 0; }
+.closeButton { background-color: var(--color-jackboo-primary-orange); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 700; cursor: pointer; }
+.pickerGrid { padding: 1.5rem; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
+.assetItem { position: relative; aspect-ratio: 1 / 1; border-radius: 10px; overflow: hidden; cursor: pointer; border: 3px solid transparent; transition: border-color 0.2s; }
+.assetItem.selected { border-color: var(--color-jackboo-primary-orange); }
+.assetOverlay { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); padding: 0.8rem; color: white; font-family: var(--font-mali); font-size: 0.9rem; font-weight: 700; }

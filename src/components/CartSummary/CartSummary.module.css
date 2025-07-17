@@ -1,0 +1,280 @@
+/* src/components/CartSummary/CartSummary.module.css */
+.summary {
+  background-color: var(--color-jackboo-orange-lightest);
+  padding: 1.5rem;
+  border-radius: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  height: fit-content;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+.title {
+  font-family: var(--font-luckiest-guy);
+  font-size: 1.8rem;
+  color: var(--color-text-dark-blue);
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mali);
+  font-size: 1.1rem;
+  color: var(--color-text-dark-blue);
+}
+.totalRow {
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+.divider {
+  border: none;
+  border-top: 1px dashed var(--color-jackboo-light-orange);
+  margin: 0.8rem 0;
+}
+
+/* --- SEÇÃO DO CEP E JACKBOO --- */
+.cepSection {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--color-jackboo-light-orange);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.jackbooMessage {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1.5rem; /* Ajusta a margem para dar espaço ao balão */
+}
+
+.jackbooImage {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+.speechBubble {
+  position: absolute;
+  background-color: white;
+  padding: 0.5rem 0.8rem;
+  border-radius: 15px;
+  font-family: var(--font-mali);
+  font-weight: 700;
+  color: var(--color-text-dark-blue);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  text-align: center;
+  /* --- POSICIONAMENTO CORRIGIDO DO BALÃO --- */
+  top: -45px; /* Ajustado para que o balão comece mais acima e não seja cortado */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px; /* Largura para permitir quebra de linha */
+  font-size: 0.85rem;
+  line-height: 1.3; /* Ajuste para espaçamento entre linhas */
+}
+
+.speechBubble::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border: 10px solid transparent;
+  border-top-color: white;
+  border-bottom: 0;
+  border-left: 0;
+  border-right: 0;
+}
+
+.cepFormControls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 280px;
+    justify-content: center;
+}
+
+.cepInputWrapper {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-radius: 50px;
+    padding: 0.3rem 0.5rem;
+    border: 2px solid var(--color-jackboo-light-orange);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+}
+
+.cepInputWrapper:focus-within {
+  border-color: var(--color-jackboo-primary-orange);
+  box-shadow: 0 0 8px rgba(255, 140, 0, 0.2);
+}
+
+.cepIcon {
+    font-size: 1.1rem;
+    color: var(--color-jackboo-primary-orange);
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+}
+
+.cepInput {
+    flex-grow: 1;
+    padding: 0.5rem 0;
+    border: none;
+    background: transparent;
+    font-family: var(--font-mali);
+    font-size: 1rem;
+    color: var(--color-text-dark-blue);
+    text-align: left;
+}
+
+.cepInput:focus {
+    outline: none;
+}
+
+.calculateCepButton {
+    background-color: var(--color-jackboo-primary-orange);
+    color: white;
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.calculateCepButton:disabled {
+    background-color: #ffcda1;
+    cursor: not-allowed;
+}
+
+/* --- OPÇÕES DE FRETE --- */
+.shippingLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  font-family: var(--font-mali);
+  font-size: 1rem;
+  color: var(--color-text-dark-blue);
+}
+
+/* Spinner animado */
+.shippingLoading .spinner {
+  width: 30px;
+  height: 30px;
+  border: 4px solid rgba(255, 140, 0, 0.2);
+  border-top-color: var(--color-jackboo-primary-orange);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.shippingOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px dashed var(--color-jackboo-light-orange);
+}
+
+.optionsTitle {
+  font-family: var(--font-mali);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--color-text-dark-blue);
+  margin-bottom: 0.5rem;
+}
+
+.shippingOption {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-mali);
+  font-size: 1rem;
+  color: var(--color-text-dark-blue);
+  cursor: pointer;
+}
+
+.shippingOption input[type="radio"] {
+  margin-right: 0.75rem;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-jackboo-primary-orange);
+}
+
+.optionDetails {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.truckIcon {
+  color: var(--color-jackboo-primary-orange);
+}
+
+/* --- BOTÃO FINALIZAR COMPRA --- */
+.checkoutButton {
+  width: 100%;
+  padding: 1rem;
+  font-family: var(--font-mali);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: white;
+  background-color: var(--color-jackboo-primary-orange);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  box-shadow: 0 5px 15px rgba(255, 140, 0, 0.4);
+}
+
+.checkoutButton:disabled {
+  background-color: #ffcda1;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 480px) {
+  .summary {
+    padding: 1rem;
+  }
+  .title {
+    font-size: 1.5rem;
+  }
+  .row {
+    font-size: 0.9rem;
+  }
+  .totalRow {
+    font-size: 1.1rem;
+  }
+  .cepInputGroup {
+    max-width: 100%;
+  }
+  .calculateCepButton {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
+  }
+  .checkoutButton {
+    font-size: 1.1rem;
+    padding: 0.8rem;
+  }
+}

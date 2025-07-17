@@ -1,0 +1,8 @@
+/* src/app/club/page.module.css */
+.main {
+  /* Pode adicionar estilos globais para a página do clube, como padding */
+  padding-bottom: 4rem; /* Garante espaço antes do rodapé */
+}
+
+/* Se tiver algum container central para a página inteira, pode ser aqui */
+/* .container { max-width: 1200px; margin: 0 auto; } */

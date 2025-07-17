@@ -1,0 +1,40 @@
+/* src/components/Pagination/Pagination.module.css */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.navButton {
+  background-color: white;
+  border: 2px solid var(--color-jackboo-light-orange);
+  color: var(--color-text-dark-blue);
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navButton:hover:not(:disabled) {
+  background-color: var(--color-jackboo-primary-orange);
+  color: white;
+  border-color: var(--color-jackboo-primary-orange);
+}
+
+.navButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pageInfo {
+  font-family: var(--font-mali);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--color-text-dark-blue);
+}

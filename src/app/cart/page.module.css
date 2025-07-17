@@ -1,0 +1,9 @@
+/* src/app/cart/page.module.css */
+.main { padding: 4rem 2rem; }
+.container { max-width: 1200px; margin: 0 auto; }
+.pageTitle { font-family: var(--font-luckiest-guy); font-size: clamp(2.5rem, 5vw, 4rem); color: var(--color-text-dark-blue); text-align: center; margin-bottom: 3rem; }
+.cartLayout { display: grid; grid-template-columns: 2fr 1fr; gap: 2.5rem; align-items: flex-start; }
+.itemsList { display: flex; flex-direction: column; }
+@media (max-width: 992px) {
+  .cartLayout { grid-template-columns: 1fr; }
+}

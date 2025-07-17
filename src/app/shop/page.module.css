@@ -1,0 +1,87 @@
+/* src/app/shop/page.module.css */
+.main {
+  padding: 4rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* --- TÍTULO NOVO --- */
+.pageTitle {
+  font-family: var(--font-mali);
+  font-size: clamp(2.8rem, 6vw, 4.5rem);
+  font-weight: 700;
+  color: var(--color-text-dark-blue);
+  text-align: center;
+  margin-bottom: 3rem;
+  line-height: 1.3;
+  position: relative;
+  z-index: 2;
+}
+
+.highlight {
+  position: relative;
+  display: inline-block;
+  color: #ff8b01;
+}
+
+.highlight::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: -5%;
+  width: 110%;
+  height: 18px;
+  background-color: #fdda58;
+  opacity: 0.9;
+  z-index: -1;
+  border-radius: 5px;
+  transform: rotate(-1.5deg);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.shopLayout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 2.5rem;
+  align-items: flex-start;
+}
+
+/* --- CONFETES --- */
+.confettiWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.confettiPiece {
+  position: absolute;
+  width: 8px;
+  height: 16px;
+  opacity: 0.5;
+  top: -20px;
+  animation-name: drop;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes drop {
+  0% { transform: translateY(0) rotate(0); }
+  100% { transform: translateY(110vh) rotate(360deg); }
+}
+
+
+@media (max-width: 992px) {
+  .shopLayout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}

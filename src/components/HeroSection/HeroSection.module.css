@@ -1,0 +1,217 @@
+/* src/components/HeroSection/HeroSection.module.css */
+
+.section {
+  position: relative;
+  height: 85vh;
+  min-height: 650px;
+  display: flex;
+  align-items: flex-start; /* Alinhado ao topo para controle individual dos itens */
+  overflow: hidden;
+  padding-top: 1rem; 
+}
+
+.background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.star {
+  position: absolute;
+  background-color: #FFDE59;
+  border-radius: 50%;
+  box-shadow: 0 0 15px 5px #FFDE59;
+  z-index: 2;
+}
+
+/* --- CONTAINER (GRID) --- */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: 45% 55%;
+  align-items: start; /* Altera o alinhamento vertical dos itens do grid para o topo */
+  width: 100%;
+  position: relative;
+  z-index: 3;
+}
+
+/* --- CONTENT WRAPPER (AGRUPA O TEXTO/BOTÃO) --- */
+.contentWrapper {
+  display: flex;
+  flex-direction: column;
+  align-self: start; /* Garante que este item específico se alinhe ao topo dentro da sua célula do grid */
+  padding-left: 6rem;
+}
+
+/* --- CONTÊINER PARA TÍTULO E BOTÃO --- */
+.headlineContent {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem; /* Espaço entre o título e o botão (ajustado ligeiramente) */
+     align-items: flex-start; /* Alinha o texto e botão à esquerda dentro deste contêiner */
+}
+
+.title {
+  font-family: var(--font-mali);
+  font-size: clamp(3rem, 6vw, 4.5rem);
+  font-weight: 700;
+  color: var(--color-text-dark-blue);
+  line-height: 1.3;
+  margin-bottom: 0;
+  text-align: left; /* Garante alinhamento à esquerda */
+}
+
+.highlight {
+  position: relative;
+  display: inline-block;
+  color: #ff8b01;
+}
+
+.highlight::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: -5%;
+  width: 110%;
+  height: 20px;
+  background-color: #fdda58;
+  opacity: 0.9;
+  z-index: -1;
+  border-radius: 8px;
+  transform: rotate(-2deg);
+}
+
+/* --- BOTÃO DE CTA MAIS CHAMATIVO E NO TOPO --- */
+.ctaButton {
+  font-family: var(--font-mali);
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(145deg, #ffb03a 0%, var(--color-jackboo-primary-orange) 100%);
+  padding: 1.4rem 3.5rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 12px 0px #c76d00, 0 18px 35px rgba(0,0,0,0.4);
+  align-self: flex-start;
+  transition: all 0.1s ease-in-out;
+}
+
+.ctaButton:active {
+    transform: translateY(6px);
+    box-shadow: 0 6px 0px #c76d00;
+}
+
+/* --- URSO ALINHADO À DIREITA --- */
+.illustrationWrapper {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 15rem;
+}
+
+.mainImage {
+  width: 400px;
+  max-width: auto;
+  height: auto;
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+  .section {
+    height: auto;
+    padding: 4rem 2rem;
+    align-items: center; 
+  }
+  .container {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 3rem;
+    align-items: center;
+  }
+  .contentWrapper {
+    order: 1; 
+    align-items: center;
+    align-self: center;
+    padding-left: 0;
+  }
+   .headlineContent {
+       align-items: center;
+       gap: 1.5rem;
+   }
+
+   .title {
+        text-align: center;
+   }
+
+  .illustrationWrapper {
+    order: 2; 
+    justify-content: center;
+    margin-top: 0;
+  }
+
+  /* AJUSTE AQUI: Tamanho da imagem para tablets */
+  .mainImage {
+    width: 90%;
+    max-width: 400px; 
+  }
+
+  .ctaButton {
+    align-self: center;
+    font-size: 1.4rem;
+    padding: 1.1rem 2.5rem;
+    box-shadow: 0 6px 0px #c76d00, 0 8px 20px rgba(0,0,0,0.2);
+  }
+  .ctaButton:active {
+    transform: translateY(3px);
+    box-shadow: 0 3px 0px #c76d00;
+  }
+  
+  /* AJUSTE AQUI: Destaque amarelo para fontes menores */
+  .highlight::after {
+    height: 15px;
+    bottom: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* AJUSTE AQUI: Menos padding em telas pequenas */
+  .section {
+    padding: 3rem 1rem;
+  }
+  /* AJUSTE AQUI: Menos espaço entre os elementos */
+  .container {
+    gap: 2rem;
+  }
+
+  /* AJUSTE AQUI: Tamanho da imagem para celulares */
+  .mainImage {
+    max-width: 320px;
+  }
+
+  /* AJUSTE AQUI: Fonte do título menor */
+  .title {
+    font-size: 2.3rem; 
+    line-height: 1.35;
+  }
+
+  .ctaButton {
+    font-size: 1.2rem;
+    padding: 1rem 2.2rem;
+    box-shadow: 0 5px 0px #c76d00, 0 6px 15px rgba(0,0,0,0.2);
+  }
+   .ctaButton:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0px #c76d00;
+  }
+
+  /* AJUSTE AQUI: Destaque amarelo para fontes ainda menores */
+  .highlight::after {
+    height: 12px;
+    bottom: 5px;
+  }
+}

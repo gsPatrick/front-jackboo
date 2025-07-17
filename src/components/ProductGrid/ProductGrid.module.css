@@ -1,0 +1,76 @@
+/* src/components/ProductGrid/ProductGrid.module.css */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.card {
+  border-radius: 25px;
+  border: 3px solid white;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+.imageWrapper {
+  margin-bottom: 1.5rem;
+}
+
+.productImage {
+  width: 100%;
+  height: 150px;
+  object-fit: contain;
+}
+
+.productName {
+  font-family: var(--font-luckiest-guy);
+  font-size: 1.5rem;
+  color: var(--color-text-dark-blue);
+  margin-bottom: 0.5rem;
+  min-height: 60px; /* Garante alinhamento */
+}
+
+.productPrice {
+  font-family: var(--font-mali);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text-dark-blue);
+  opacity: 0.8;
+  margin-bottom: 1.5rem;
+}
+
+.buyButton {
+  font-family: var(--font-mali);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--color-text-dark-blue);
+  background-color: var(--color-jackboo-light-orange);
+  border: none;
+  border-radius: 50px;
+  padding: 0.8rem 2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.buyButton:hover {
+    background-color: var(--color-jackboo-primary-orange);
+    color: white;
+}
+
+/* Adiciona a transição para a imagem */
+.productImage {
+  width: 100%;
+  height: 150px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+/* Efeito de zoom na imagem ao passar o mouse no card */
+.card:hover .productImage {
+    transform: scale(1.1);
+}

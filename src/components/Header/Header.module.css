@@ -1,0 +1,370 @@
+/* src/components/Header/Header.module.css */
+
+.header {
+  background-color: var(--color-header-background); /* Cor #FED166 */
+  padding: 1rem 2rem;
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: 80px;
+  display: flex;
+  align-items: center;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.logoImage {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.navDesktop ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 2.5rem;
+}
+
+.navDesktop li {
+    position: relative;
+}
+
+.navDesktop li a,
+.dropdownToggle {
+  font-family: var(--font-mali);
+  font-size: 1.3rem;
+  color: var(--color-dark-brown);
+  padding: 0.5rem 0.8rem;
+  border-radius: 15px;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.navDesktop li a:hover,
+.dropdownToggle:hover {
+  color: var(--color-jackboo-primary-orange);
+}
+
+.dropdownArrow {
+    font-size: 0.8em;
+    transition: transform 0.2s ease-in-out;
+}
+
+.dropdownArrow.rotated {
+    transform: rotate(180deg);
+}
+
+.dropdownMenu,
+.userDropdownMenu {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    border: 1px solid var(--color-jackboo-light-orange);
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 0;
+    z-index: 1050;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 180px;
+    text-align: center;
+}
+
+.userDropdownMenu {
+    left: auto;
+    right: 0;
+    transform: translateX(0);
+    min-width: 150px;
+    gap: 0;
+    padding: 0.5rem;
+}
+
+.dropdownItemLink,
+.userDropdownItemLink,
+.userDropdownItemButton {
+    font-family: var(--font-mali);
+    font-size: 1.1rem;
+    color: var(--color-text-dark-blue);
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+    display: block;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    width: 100%;
+    border-radius: 10px;
+}
+
+.dropdownItemLink:hover,
+.userDropdownItemLink:hover,
+.userDropdownItemButton:hover {
+    background-color: var(--color-jackboo-beige-ultra-light);
+    color: var(--color-jackboo-primary-orange);
+}
+
+.logoutButton {
+    color: var(--color-text-red-heart);
+}
+.logoutButton:hover {
+    background-color: var(--color-jackboo-pink-lightest);
+}
+
+.actionsDesktop {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.iconWrapper {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.icon {
+  width: 28px;
+  height: 28px;
+  color: var(--color-dark-brown);
+  transition: color 0.2s ease-in-out;
+}
+
+.iconWrapper:hover .icon {
+    color: var(--color-jackboo-primary-orange);
+}
+
+.cartBadge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: var(--color-text-red-heart);
+    color: white;
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 0.7rem;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.loginButton {
+  background-color: var(--color-jackboo-primary-orange);
+  color: white;
+  font-family: var(--font-mali);
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding: 0.8rem 1.8rem;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-in-out;
+}
+
+.userMenuWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 0;
+}
+
+.userIconToggle {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   padding: 0.5rem;
+   gap: 0.3rem;
+}
+
+/* NOVO: Estilo para o avatar do usuário no desktop */
+.userAvatarWrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--color-jackboo-primary-orange);
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.userAvatarWrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+/* --- Esconde os novos elementos de mobile por padrão --- */
+.mobileRightActions,
+.actionsMobile {
+    display: none;
+}
+
+.hamburgerMenuButton {
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.hamburgerIcon {
+  width: 30px;
+  height: 30px;
+  color: var(--color-dark-brown);
+}
+
+.navMobile {
+  position: fixed;
+  top: 0;
+  right: 0; /* Altera para a direita para animação X */
+  width: 100%;
+  height: 100vh;
+  background-color: var(--color-header-background);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 80px;
+  z-index: 999;
+  overflow-y: auto;
+}
+
+.navMobile ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  gap: 1.5rem;
+}
+
+.navMobile li a, .mobileNavLinkButton {
+  font-family: var(--font-mali);
+  font-size: 1.8rem;
+  color: var(--color-dark-brown);
+  padding: 0.8rem 1rem;
+  display: block;
+  border-radius: 15px;
+  transition: all 0.2s ease-in-out;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+}
+
+.navMobile li a:hover, .mobileNavLinkButton:hover {
+  color: var(--color-jackboo-primary-orange);
+}
+
+.mobileNavLinkButton.logoutButton {
+     color: var(--color-text-red-heart);
+}
+.mobileNavLinkButton.logoutButton:hover {
+     background-color: var(--color-jackboo-pink-lightest);
+}
+
+
+/* --- MEDIA QUERY PARA MOBILE --- */
+@media (max-width: 992px) {
+  .navDesktop,
+  .actionsDesktop {
+    display: none;
+  }
+
+  .header {
+    padding: 0.8rem 1rem;
+    height: 65px;
+  }
+
+  .logoImage {
+    max-width: 160px;
+    height: auto;
+  }
+  
+  /* --- MOSTRA OS NOVOS ELEMENTOS MOBILE --- */
+  .mobileRightActions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .actionsMobile {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+  }
+  
+  .mobileCartIcon {
+    position: relative;
+    color: var(--color-dark-brown);
+  }
+  .mobileCartIcon .icon {
+    width: 26px;
+    height: 26px;
+  }
+  .mobileCartIcon .cartBadge {
+    top: -5px;
+    right: -5px;
+    width: 18px;
+    height: 18px;
+    font-size: 0.65rem;
+  }
+  
+  .mobileUserAvatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--color-jackboo-primary-orange);
+  }
+  .mobileUserAvatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+@media (min-width: 993px) and (max-width: 1200px) {
+    .actionsDesktop { gap: 1rem; }
+     .navDesktop ul { gap: 1.5rem; }
+     .navDesktop li a, .dropdownToggle { font-size: 1.2rem; padding: 0.4rem 0.6rem; gap: 0.2rem; }
+      .loginButton { font-size: 1.1rem; padding: 0.6rem 1.5rem; }
+      .icon { width: 24px; height: 24px; }
+       .cartBadge { width: 18px; height: 18px; font-size: 0.6rem; }
+        .dropdownMenu, .userDropdownMenu { min-width: 160px; padding: 0.4rem 0; }
+        .userDropdownMenu { padding: 0.4rem; }
+        .dropdownItemLink, .userDropdownItemLink, .userDropdownItemButton { font-size: 1rem; padding: 0.4rem 0.8rem; }
+         .userAvatarWrapper { width: 36px; height: 36px; }
+          .userIconToggle { gap: 0.2rem; }
+}

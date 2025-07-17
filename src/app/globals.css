@@ -1,33 +1,11 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* src/app/globals.css */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
+/* Reset básico (opcional, mas boa prática) */
+html, body {
   padding: 0;
   margin: 0;
+  font-family: var(--font-mali), sans-serif; /* Define Mali como fonte padrão */
+  background-color: var(--color-jackboo-beige-ultra-light); /* Fundo geral predominante */
 }
 
 a {
@@ -35,8 +13,33 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+* {
+  box-sizing: border-box;
+}
+
+/* Paleta de Cores JackBoo */
+:root {
+  /* Primárias de JackBoo */
+  --color-jackboo-primary-orange: #FF8C00;
+  --color-jackboo-light-orange: #FFB35E; /* Mantido para outros usos */
+  --color-jackboo-beige-creme: #F7E7D0;
+  --color-jackboo-dark-brown: #4A331C;
+  --color-jackboo-rosy-beige: #E0A174;
+
+  /* Pastéis de Fundo e Destaque */
+  --color-jackboo-blue-lightest: #E0F2F7;
+  --color-jackboo-orange-lightest: #FFF2E0;
+  --color-jackboo-green-lightest: #E8F7E0;
+  --color-jackboo-pink-lightest: #F7E0E8;
+  --color-jackboo-lilac-light: #E2D0F0;
+  --color-jackboo-yellow-highlight: #FFC640;
+  --color-jackboo-beige-ultra-light: #FEF8F0;
+
+  /* Cores de Texto/Ícone */
+  --color-text-dark-blue: #2F4A6E;
+  --color-text-dark-green: #3D6B35;
+  --color-text-red-heart: #FF0000;
+
+  /* Nova cor específica para o header */
+  --color-header-background: #FED166; /* Cor exata solicitada */
 }

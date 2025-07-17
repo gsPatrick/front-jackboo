@@ -1,0 +1,28 @@
+/* src/app/(admin)/admin/create-book/page.module.css */
+.container { padding: 2rem; }
+.header { text-align: center; margin-bottom: 3rem; }
+.title { font-family: var(--font-mali); font-weight: 700; font-size: 2.5rem; color: var(--color-text-dark-blue); }
+.subtitle { font-family: var(--font-mali); font-size: 1.2rem; color: #6c757d; margin-top: 0.5rem; }
+
+.content { max-width: 800px; margin: 0 auto; }
+.stepTitle { font-family: var(--font-mali); font-weight: 700; color: #adb5bd; text-align: center; margin-bottom: 2rem; text-transform: uppercase; letter-spacing: 1px; }
+
+.typeSelector { display: flex; flex-direction: column; align-items: center; }
+.cardContainer { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; width: 100%; }
+.typeCard { background-color: white; border: 1px solid #eef2f7; border-radius: 20px; padding: 2.5rem; text-align: center; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.03); transition: all 0.3s ease; }
+.typeCard:hover { border-color: var(--color-jackboo-primary-orange); transform: translateY(-5px); box-shadow: 0 10px 25px rgba(255, 140, 0, 0.1); }
+.typeIcon { font-size: 3rem; color: var(--color-jackboo-primary-orange); margin-bottom: 1rem; }
+.typeCard h3 { font-family: var(--font-mali); font-weight: 700; font-size: 1.5rem; margin: 0 0 0.5rem 0; color: var(--color-text-dark-blue); }
+.typeCard p { font-family: var(--font-mali); color: #6c757d; line-height: 1.6; }
+
+.formContainer { background-color: white; border-radius: 15px; padding: 2rem; border: 1px solid #eef2f7; position: relative; }
+.backButton { position: absolute; top: 1.5rem; left: 1.5rem; background: none; border: none; font-size: 1rem; color: #6c757d; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-mali); font-weight: 700; }
+.formTitle { font-family: var(--font-mali); text-align: center; font-size: 1.8rem; margin-bottom: 2rem; color: var(--color-text-dark-blue); }
+.formGroup { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
+.formGroup label { font-family: var(--font-mali); font-weight: 700; color: #495057; }
+.formGroup input, .formGroup select, .formGroup textarea { width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid #ced4da; font-family: var(--font-mali); font-size: 1rem; background-color: #f8f9fa; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.submitWrapper { display: flex; justify-content: center; margin-top: 1.5rem; }
+.submitButton { font-family: var(--font-mali); font-weight: 700; font-size: 1.1rem; color: white; background-color: var(--color-jackboo-primary-orange); padding: 0.8rem 2rem; border: none; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; }
+
+@media (max-width: 768px) { .cardContainer { grid-template-columns: 1fr; } .grid { grid-template-columns: 1fr; } }

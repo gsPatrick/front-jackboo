@@ -1,0 +1,107 @@
+/* src/components/ShopSidebar/ShopSidebar.module.css */
+.sidebar {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 25px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+  height: fit-content;
+}
+
+.filterGroup {
+  margin-bottom: 2rem;
+}
+
+.filterTitle {
+  font-family: var(--font-luckiest-guy);
+  font-size: 1.5rem;
+  color: var(--color-text-dark-blue);
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--color-jackboo-light-orange);
+  padding-bottom: 0.5rem;
+}
+
+.optionsWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.checkboxLabel {
+    font-family: var(--font-mali);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text-dark-blue);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.checkboxLabel input {
+    display: none; /* Esconde o input original */
+}
+
+.customCheckbox, .customRadio {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--color-jackboo-light-orange);
+    margin-right: 0.75rem;
+    display: inline-block;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.customCheckbox {
+    border-radius: 5px;
+}
+
+.customRadio {
+    border-radius: 50%;
+}
+
+.checkboxLabel:hover .customCheckbox,
+.checkboxLabel:hover .customRadio {
+    border-color: var(--color-jackboo-primary-orange);
+}
+
+.checkboxLabel input:checked + .customCheckbox,
+.checkboxLabel input:checked + .customRadio {
+    background-color: var(--color-jackboo-primary-orange);
+    border-color: var(--color-jackboo-primary-orange);
+}
+
+.checkboxLabel input:checked + .customCheckbox::after {
+    content: '✓';
+    color: white;
+    position: absolute;
+    font-size: 14px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.checkboxLabel input:checked + .customRadio::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+.applyButton {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 1rem;
+  font-family: var(--font-mali);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: white;
+  background-color: var(--color-jackboo-primary-orange);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+}

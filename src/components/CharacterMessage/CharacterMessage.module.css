@@ -1,0 +1,128 @@
+/* src/components/CharacterMessage/CharacterMessage.module.css */
+.wrapper {
+  margin-top: 2rem; /* Espaço acima do card */
+  padding: 1.5rem;
+  background-color: var(--color-jackboo-orange-lightest);
+  border: 2px solid var(--color-jackboo-light-orange);
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  width: 100%; /* Ocupa a largura total da coluna de detalhes */
+}
+
+/* NOVO: Layout interno com flexbox */
+.characterInfo {
+    display: flex;
+    align-items: center; /* Alinha a imagem e o texto verticalmente */
+    gap: 1.5rem; /* Espaço entre a imagem e a área de texto */
+}
+
+.characterImageWrapper {
+    flex-shrink: 0; /* Impede que a imagem encolha */
+    width: 120px;
+    height: 120px;
+}
+
+.characterImage {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border: 3px solid var(--color-jackboo-primary-orange);
+    border-radius: 20px;
+    background-color: white; /* Fundo branco para a imagem */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.textContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem; /* Espaço entre o balão e o nome/crédito */
+    flex-grow: 1; /* Ocupa o espaço restante */
+}
+
+.speechBubble {
+  position: relative;
+  background-color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 20px;
+  font-family: var(--font-mali);
+  font-weight: 700;
+  color: var(--color-text-dark-blue);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  text-align: left; /* Alinhamento do texto */
+  line-height: 1.4;
+  font-size: 1rem;
+}
+
+/* --- NOVO: Cauda do balão apontando para a esquerda --- */
+.speechBubble::after {
+  content: '';
+  position: absolute;
+  top: 50%; /* Centraliza verticalmente */
+  left: -10px; /* Posiciona à esquerda do balão */
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 10px solid white; /* Cria o triângulo apontando para a esquerda */
+}
+
+/* Nome do protagonista ou crédito do autor */
+.protagonistName,
+.authorCredit {
+    font-family: var(--font-mali);
+    font-size: 1rem;
+    color: var(--color-text-dark-blue);
+    opacity: 0.9;
+    text-align: right; /* Alinha o crédito à direita */
+}
+
+.protagonistName .nameLabel {
+    font-weight: 400; /* Fonte mais leve para "Sou eu," */
+}
+
+.protagonistName {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.authorLink {
+    font-weight: 700;
+    color: var(--color-jackboo-primary-orange);
+    text-decoration: underline;
+    transition: color 0.2s;
+}
+.authorLink:hover {
+    color: var(--color-jackboo-dark-brown);
+}
+
+
+/* --- Responsividade --- */
+@media (max-width: 768px) {
+    .characterInfo {
+        flex-direction: column; /* Empilha a imagem e o texto */
+        gap: 1rem;
+        text-align: center;
+    }
+    .textContainer {
+        align-items: center; /* Centraliza o balão e o texto */
+    }
+     .speechBubble {
+        text-align: center;
+     }
+    .speechBubble::after {
+        /* Altera a cauda para apontar para cima */
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-bottom: 10px solid white;
+        border-top: 0;
+    }
+     .protagonistName,
+     .authorCredit {
+         text-align: center; /* Centraliza o crédito em mobile */
+         font-size: 0.9rem;
+     }
+}

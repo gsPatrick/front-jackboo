@@ -1,0 +1,233 @@
+/* src/components/RelatedBooksGrid/RelatedBooksGrid.module.css */
+.sectionWrapper {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 3px dashed var(--color-jackboo-light-orange);
+}
+
+.sectionTitle {
+  font-family: var(--font-luckiest-guy);
+  font-size: 2.2rem;
+  color: var(--color-text-dark-blue);
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.carouselWrapper {
+  position: relative;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-bottom: 1rem;
+}
+
+.carouselWrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel {
+  display: flex;
+  width: max-content;
+  gap: 2rem;
+  padding: 0 1rem;
+  margin: 0 auto;
+}
+
+.bookCard {
+  background-color: white;
+  border-radius: 20px;
+  border: 3px solid white;
+  padding: 1rem;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column; /* Organiza os filhos verticalmente */
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  width: 220px;
+}
+
+.bookCard[style] {
+  border-color: rgba(0, 0, 0, 0.05);
+}
+
+.bookLink {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    width: 100%;
+}
+
+
+.bookCoverWrapper {
+   width: 100%;
+   border-radius: 15px;
+   overflow: hidden;
+   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+   transition: transform 0.4s ease;
+   aspect-ratio: 4 / 5;
+}
+
+.bookCard:hover .bookCoverWrapper {
+     transform: scale(1.08);
+}
+
+
+.bookCover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0;
+}
+
+.bookTitle {
+  font-family: var(--font-mali);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--color-text-dark-blue);
+  margin-top: 0;
+  min-height: 35px;
+  line-height: 1.3;
+  text-align: center; /* Garante que o título esteja sempre centralizado */
+}
+
+/* --- NOVO: SEÇÃO DE AÇÕES DO CARD --- */
+.cardActions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    width: 100%;
+    margin-top: auto; /* Empurra para a base do card */
+    padding-top: 0.8rem; /* Espaço acima do preço/botões */
+    border-top: 1px dashed rgba(0,0,0,0.08); /* Divisor sutil */
+}
+
+
+.bookPrice {
+  font-family: var(--font-mali);
+  font-weight: 700;
+  font-size: 1.1rem; /* Preço um pouco maior */
+  color: var(--color-jackboo-primary-orange);
+  opacity: 0.9;
+  text-align: center;
+  margin: 0;
+}
+
+.actionButtons {
+    display: flex;
+    justify-content: space-between; /* Espaça o Like e o Botão */
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+
+/* --- BOTÃO DE LIKE --- */
+.likesWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mali);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-dark-blue);
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+  padding: 0.4rem 0.6rem;
+  border-radius: 15px;
+  background-color: var(--color-jackboo-blue-lightest);
+  border: 2px solid var(--color-jackboo-blue-lightest);
+  transition: border-color 0.2s ease;
+}
+
+.likesWrapper:hover {
+    border-color: var(--color-jackboo-light-orange);
+}
+
+
+.heartIcon {
+  width: 18px;
+  height: 18px;
+  stroke: var(--color-text-red-heart);
+  stroke-width: 2;
+  fill: none;
+  transition: fill 0.2s ease-in-out;
+}
+
+.heartIcon.liked {
+  fill: var(--color-text-red-heart);
+  stroke: var(--color-text-red-heart);
+}
+
+/* --- BOTÃO VER LIVRO --- */
+.viewBookButton {
+  font-family: var(--font-mali);
+  font-weight: 700;
+  font-size: 0.9rem; /* Tamanho ajustado */
+  color: var(--color-text-dark-blue);
+  background-color: var(--color-jackboo-light-orange);
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  flex-grow: 1; /* Permite que o botão ocupe o espaço restante */
+  text-align: center; /* Garante que o texto esteja centralizado */
+}
+
+.viewBookButton:hover {
+    background-color: var(--color-jackboo-primary-orange);
+    color: white;
+}
+
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 768px) {
+    .sectionWrapper {
+        margin-top: 3rem;
+        padding-top: 1.5rem;
+    }
+    .sectionTitle {
+        font-size: 1.8rem;
+        margin-bottom: 2rem;
+    }
+     .carousel {
+         gap: 1rem;
+         padding: 0 0.5rem;
+     }
+     .bookCard {
+        padding: 0.8rem;
+        width: 180px;
+     }
+     .bookTitle {
+        font-size: 1rem;
+        min-height: 30px;
+     }
+      .cardActions {
+        padding-top: 0.5rem;
+        gap: 0.5rem;
+      }
+     .bookPrice {
+        font-size: 1rem;
+     }
+     .actionButtons {
+        gap: 0.4rem;
+     }
+     .likesWrapper {
+         font-size: 0.9rem;
+         padding: 0.3rem 0.5rem;
+     }
+     .heartIcon {
+         width: 16px;
+         height: 16px;
+     }
+     .viewBookButton {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+     }
+}

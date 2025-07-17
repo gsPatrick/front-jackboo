@@ -1,0 +1,106 @@
+/* src/app/(admin)/admin/product-settings/page.module.css */
+.title {
+    font-family: var(--font-mali);
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 700;
+    color: var(--color-text-dark-blue);
+}
+
+.subtitle {
+    font-family: var(--font-mali);
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-top: 0.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.settingsContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.settingCard {
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.cardIcon {
+    font-size: 2rem;
+    color: var(--color-jackboo-primary-orange);
+}
+
+.cardTitle {
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin: 0;
+    color: var(--color-text-dark-blue);
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.formGroup label {
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 1rem;
+    color: #495057;
+}
+
+.formGroup input, .formGroup select {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    font-family: var(--font-mali);
+    font-size: 1rem;
+    background-color: #f8f9fa;
+}
+
+.formGroup input:focus, .formGroup select:focus {
+    outline: none;
+    border-color: var(--color-jackboo-primary-orange);
+    box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.2);
+}
+
+.saveButton {
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: white;
+    background-color: var(--color-jackboo-primary-orange);
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem; /* Espaço extra no final */
+    align-self: flex-end; /* Alinha à direita */
+}
+
+@media (max-width: 992px) {
+    .settingsContainer {
+        grid-template-columns: 1fr;
+    }
+}

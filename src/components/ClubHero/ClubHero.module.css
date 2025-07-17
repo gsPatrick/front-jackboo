@@ -1,0 +1,8 @@
+/* src/components/ClubHero/ClubHero.module.css */
+.section { background-color: var(--color-jackboo-lilac-light); padding: 4rem 2rem; border-bottom-left-radius: 50px; border-bottom-right-radius: 50px; }
+.container { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
+.content { max-width: 600px; }
+.title { font-family: var(--font-luckiest-guy); font-size: clamp(2.5rem, 5vw, 4rem); color: var(--color-text-dark-blue); margin-bottom: 1rem; }
+.subtitle { font-family: var(--font-mali); font-size: clamp(1.2rem, 2.5vw, 1.5rem); color: var(--color-text-dark-blue); opacity: 0.8; }
+.imageWrapper { display: flex; justify-content: center; align-items: center; }
+@media (max-width: 768px) { .container { flex-direction: column; text-align: center; } .content { max-width: 100%; } }

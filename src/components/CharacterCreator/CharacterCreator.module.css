@@ -1,0 +1,343 @@
+/* src/components/CharacterCreator/CharacterCreator.module.css */
+
+/* Estilos para a grade principal do Passo 1 (só ativa quando não está em 'reveal' ou 'requestName') */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: flex-start; /* Alinha ao topo para grids de alturas diferentes */
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%; /* Garante que o grid ocupe o espaço disponível */
+}
+
+.leftColumn, .rightColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.mainImage {
+  width: 100%;
+  max-width: 280px; /* Tamanho para a imagem do urso ou personagem na coluna esquerda */
+  height: auto;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 1rem;
+}
+
+.primaryButton, .secondaryButton, .mainCtaButton, .productButton, .confirmNameButton { /* Adicionado confirmNameButton */
+  font-family: var(--font-mali);
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primaryButton, .secondaryButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1); /* Sombra adicionada aos botões pequenos */
+}
+
+.primaryButton {
+  background-color: var(--color-jackboo-primary-orange);
+  color: white;
+  border: 2px solid var(--color-jackboo-primary-orange);
+}
+.primaryButton:hover {
+    background-color: #e07b00;
+}
+
+.secondaryButton {
+  background-color: white;
+  color: var(--color-jackboo-primary-orange);
+  border: 2px solid var(--color-jackboo-light-orange);
+}
+
+.secondaryButton:hover {
+    border-color: var(--color-jackboo-primary-orange);
+    background-color: var(--color-jackboo-orange-lightest);
+}
+
+
+.mainCtaButton {
+  background-color: var(--color-jackboo-primary-orange);
+  color: white;
+  border: none;
+  font-size: 1.3rem;
+  padding: 1rem 2.5rem;
+  width: 100%;
+  max-width: 300px;
+  box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3);
+}
+.mainCtaButton:hover:not(:disabled) {
+    background-color: #e07b00;
+}
+
+.mainCtaButton:disabled {
+    background-color: #ffcda1;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.nameCard {
+  width: 100%;
+  min-height: 400px; /* Altura mínima para consistência */
+  background-color: var(--color-jackboo-orange-lightest);
+  border-radius: 25px;
+  border: 3px solid var(--color-jackboo-light-orange);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  gap: 1.5rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  overflow: hidden; /* Garante que as animações internas não vazem */
+}
+
+.placeholderText {
+  font-family: var(--font-mali);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-dark-blue);
+  opacity: 0.5;
+}
+
+.generatedContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.nameLabel {
+  font-family: var(--font-mali);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text-dark-blue);
+  text-align: center;
+}
+
+/* Input de nome pequeno que aparece no nameCard */
+.nameInput {
+  width: 100%;
+  max-width: 280px;
+  padding: 1rem;
+  border: none;
+  border-radius: 50px;
+  font-family: var(--font-mali);
+  font-size: 1.1rem;
+  text-align: center;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+}
+
+.nameInput:focus {
+  outline: 2px solid var(--color-jackboo-primary-orange);
+}
+
+/* --- ESTILOS DOS NOVOS CARDS DE PRODUTO (Passo 2) --- */
+.productChoiceGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  max-width: 1000px;
+  margin: 3rem auto 0;
+}
+
+.productCard {
+  background-color: var(--color-jackboo-orange-lightest);
+  border-radius: 25px;
+  border: 3px solid var(--color-jackboo-light-orange);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2.5rem 2rem;
+  gap: 1rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transição adicionada */
+}
+
+.productCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+}
+
+.productTitle {
+  font-family: var(--font-luckiest-guy);
+  font-size: 2rem;
+  color: var(--color-text-dark-blue);
+}
+
+.productDescription {
+  font-family: var(--font-mali);
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: var(--color-text-dark-blue);
+  opacity: 0.9;
+  min-height: 80px; /* Garante alinhamento */
+}
+
+.productButton {
+  background-color: var(--color-jackboo-primary-orange);
+  color: white;
+  border: none;
+  font-size: 1.2rem;
+  padding: 0.8rem 2.5rem;
+  box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3);
+}
+.productButton:hover {
+    background-color: #e07b00;
+}
+
+/* --- SPINNER DE CARREGAMENTO --- */
+.spinnerWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  font-family: var(--font-mali);
+  font-size: 1.2rem;
+  color: var(--color-text-dark-blue);
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(255, 140, 0, 0.2);
+  border-top-color: var(--color-jackboo-primary-orange);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- ESTILOS PARA A NOVA ETAPA DE REVELAÇÃO --- */
+.characterRevealContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 500px;
+  position: relative;
+  /* Retirado o fundo para usar o background da página */
+}
+
+.characterRevealImage {
+    max-width: 400px;
+    height: auto;
+    object-fit: contain;
+}
+
+.revealMessage {
+    font-family: var(--font-luckiest-guy);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    color: var(--color-text-dark-blue); /* Cor ajustada para ser legível sobre o fundo verde da página */
+    margin-top: 1.5rem;
+    text-align: center;
+    line-height: 1.3;
+    text-shadow: 1px 1px 0px rgba(255,255,255,0.5); /* Sombra leve para destaque */
+}
+
+.highlightName {
+    color: var(--color-jackboo-primary-orange); /* Destaca o nome com a cor primária */
+}
+
+
+/* --- ESTILOS DOS CONFETES (APENAS PARA O COMPONENTE CharacterCreator) --- */
+.confettiOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1; /* Fica atrás da imagem do personagem */
+}
+
+.confettiPiece {
+  position: absolute;
+  width: 8px;
+  height: 16px;
+  opacity: 0.6;
+  top: -20px;
+  animation-name: dropConfetti;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes dropConfetti {
+  0% {
+    transform: translateY(0) rotate(0);
+  }
+  100% {
+    transform: translateY(calc(100% + 20px)) rotate(360deg);
+  }
+}
+
+
+/* --- REMOVIDOS ESTILOS PARA A NOVA ETAPA DE PEDIR O NOME INLINE --- */
+/*
+.nameRequestContainer { ... }
+.jackbooAsking { ... }
+.speechBubbleSimple { ... }
+.speechBubbleSimple::after { ... }
+.nameInputBox { ... }
+.nameInputLarge { ... }
+.confirmNameButton { ... }
+.jackbooAsking img { ... }
+*/
+
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .grid, .productChoiceGrid {
+    grid-template-columns: 1fr;
+  }
+  .leftColumn, .rightColumn {
+    width: 100%;
+  }
+  .rightColumn {
+    margin-top: 2rem;
+  }
+  .mainImage {
+    max-width: 200px;
+  }
+  .nameCard {
+      min-height: 300px;
+  }
+  .characterRevealContainer {
+      min-height: 350px;
+  }
+  .characterRevealImage {
+      max-width: 250px;
+  }
+  .revealMessage {
+      font-size: 1.4rem;
+  }
+  /* REMOVIDOS AJUSTES RESPONSIVOS PARA A UI INLINE DE PEDIR NOME */
+  /*
+  .nameRequestContainer { ... }
+  .jackbooAsking { ... }
+  .jackbooAsking img { ... }
+  .speechBubbleSimple { ... }
+  .speechBubbleSimple::after { ... }
+  .nameInputLarge { ... }
+  .confirmNameButton { ... }
+  */
+}

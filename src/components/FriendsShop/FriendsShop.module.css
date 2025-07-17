@@ -1,0 +1,285 @@
+/* src/components/FriendsShop/FriendsShop.module.css */
+
+.section {
+  padding: 5rem 2rem;
+  background-color: var(--color-jackboo-orange-lightest);
+  overflow: hidden;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+}
+
+.title {
+  font-family: var(--font-mali);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 700;
+  color: var(--color-text-dark-blue);
+  line-height: 1.3;
+}
+
+.highlight {
+  position: relative;
+  display: inline-block;
+  color: #ff8b01;
+}
+
+.highlight::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: -5%;
+  width: 110%;
+  height: 18px;
+  background-color: #fdda58;
+  opacity: 0.9;
+  z-index: -1;
+  border-radius: 5px;
+  transform: rotate(-1.5deg);
+}
+
+.viewAllButton {
+  font-family: var(--font-mali);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-jackboo-primary-orange);
+  background-color: transparent;
+  padding: 0.8rem 1.8rem;
+  border: 2px solid var(--color-jackboo-primary-orange);
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.viewAllButton:hover {
+  background-color: var(--color-jackboo-primary-orange);
+  color: white;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+}
+
+.bookCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem; /* Aumentado o gap para acomodar o autor */
+  width: 100%;
+  background-color: white; /* Adicionado um fundo branco para o card */
+  border-radius: 20px;
+  padding: 1rem;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+}
+
+/* --- INÍCIO: ESTILOS DO AUTOR ADICIONADOS --- */
+.authorLink {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.authorInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 1rem;
+    background-color: var(--color-jackboo-beige-creme);
+    border-radius: 20px;
+    border: 2px solid var(--color-jackboo-rosy-beige);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: all 0.2s ease;
+}
+
+.authorInfo:hover {
+    border-color: var(--color-jackboo-primary-orange);
+    transform: translateY(-2px);
+}
+
+.authorAvatarWrapper {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid var(--color-jackboo-light-orange);
+}
+
+.authorAvatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.authorName {
+  font-family: var(--font-mali);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--color-text-dark-blue);
+}
+
+.authorName strong {
+    font-weight: 700;
+    color: var(--color-jackboo-primary-orange);
+}
+/* --- FIM: ESTILOS DO AUTOR ADICIONADOS --- */
+
+
+.imageWrapper {
+  padding: 0.5rem;
+  border-radius: 12px;
+  border: 3px solid var(--color-jackboo-light-orange);
+  background-color: white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  margin-bottom: 0.5rem;
+}
+
+.bookImage {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* --- TÍTULO DO LIVRO ADICIONADO --- */
+.bookTitle {
+  font-family: var(--font-mali);
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--color-text-dark-blue);
+  min-height: 40px; /* Garante alinhamento vertical */
+  line-height: 1.3;
+  text-align: center;
+}
+
+.bookPrice {
+  font-family: var(--font-mali);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-text-dark-blue);
+  opacity: 0.9;
+  text-align: center;
+}
+
+.cardActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 0.5rem;
+  margin-top: auto; /* Empurra as ações para o final do card */
+}
+
+.likesWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mali);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-text-dark-blue);
+  cursor: pointer;
+  user-select: none;
+}
+
+.heartIcon {
+  width: 28px;
+  height: 28px;
+  stroke: var(--color-text-red-heart);
+  stroke-width: 2;
+  fill: none;
+  transition: fill 0.2s ease-in-out, transform 0.2s ease;
+}
+
+.heartIcon.liked {
+  fill: var(--color-text-red-heart);
+  stroke: var(--color-text-red-heart);
+}
+
+.viewBookButton {
+  font-family: var(--font-mali);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white;
+  background-color: var(--color-jackboo-light-orange);
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* --- RESPONSIVIDADE ATUALIZADA --- */
+@media (max-width: 992px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 4rem 1.5rem;
+  }
+  
+  .header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .grid {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    padding: 3rem 1rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr; /* Coluna única no mobile */
+    gap: 1.5rem;
+  }
+
+  .title {
+    font-size: 2.2rem;
+  }
+
+  .bookTitle {
+    font-size: 1.2rem;
+  }
+  
+  .bookPrice {
+    font-size: 1.1rem;
+  }
+
+  .likesWrapper {
+    font-size: 1.1rem;
+    gap: 0.3rem;
+  }
+
+  .heartIcon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .viewBookButton {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+  }
+}

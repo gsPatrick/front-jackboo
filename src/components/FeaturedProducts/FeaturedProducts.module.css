@@ -1,0 +1,181 @@
+/* src/components/FeaturedProducts/FeaturedProducts.module.css */
+
+.section {
+  padding: 6rem 2rem; /* Aumentado padding vertical e adicionado lateral */
+  background-color: var(--color-jackboo-beige-ultra-light);
+  overflow: hidden;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* --- HEADER --- */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem; /* Aumentado margin-bottom */
+}
+
+.title {
+  font-family: var(--font-mali);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 700;
+  color: var(--color-text-dark-blue);
+  line-height: 1.3;
+}
+
+.highlight {
+  position: relative;
+  display: inline-block;
+  color: #ff8b01;
+}
+
+.highlight::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: -5%;
+  width: 110%;
+  height: 18px;
+  background-color: #fdda58;
+  opacity: 0.9;
+  z-index: -1;
+  border-radius: 5px;
+  transform: rotate(-1.5deg);
+}
+
+.viewAllButton {
+  font-family: var(--font-mali);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-jackboo-primary-orange);
+  background-color: transparent;
+  padding: 0.8rem 1.8rem;
+  border: 2px solid var(--color-jackboo-primary-orange);
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.viewAllButton:hover {
+  background-color: var(--color-jackboo-primary-orange);
+  color: white;
+  transform: scale(1.05);
+}
+
+/* --- ALTERAÇÃO: DE CARROSSEL PARA GRID --- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 colunas em desktop */
+  gap: 2.5rem;
+}
+
+.productCard {
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+  display: flex; /* Adicionado para organizar conteúdo interno */
+  flex-direction: column; /* Conteúdo empilhado verticalmente */
+  width: 100%; /* Ocupa a célula do grid */
+}
+
+.imageWrapper {
+  background-color: var(--color-jackboo-blue-lightest);
+  border-radius: 20px 20px 0 0; /* Apenas cantos superiores arredondados */
+  margin-bottom: 0; /* Removido margin-bottom */
+  overflow: hidden;
+}
+
+.productImage {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.productCard:hover .productImage {
+    transform: scale(1.08);
+}
+
+.productInfo {
+  padding: 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Faz esta área crescer para ocupar o espaço */
+}
+
+.productName {
+  font-family: var(--font-mali);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-dark-blue);
+  margin-bottom: 0.5rem;
+}
+
+.productPrice {
+  font-family: var(--font-mali);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-text-dark-blue);
+  opacity: 0.8;
+  margin-bottom: 1.5rem; /* Espaço entre preço e botão */
+}
+
+/* --- NOVO: ESTILO PARA O BOTÃO ADICIONADO --- */
+.viewProductButton {
+  font-family: var(--font-mali);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white;
+  background-color: var(--color-jackboo-light-orange);
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  margin-top: auto; /* Empurra o botão para a base do card */
+  align-self: center; /* Centraliza o botão */
+  width: 80%; /* Define uma largura para o botão */
+  max-width: 200px;
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 colunas em tablets */
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 4rem 1.5rem;
+  }
+  .container {
+    padding: 0;
+  }
+  .header {
+    flex-direction: column;
+    align-items: center; /* Centraliza no mobile */
+    text-align: center;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr; /* 1 coluna em celulares */
+    gap: 2rem;
+  }
+  .productName {
+    font-size: 1.3rem;
+  }
+}

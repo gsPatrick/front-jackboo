@@ -1,0 +1,114 @@
+/* src/components/JackbooClub/JackbooClub.module.css */
+
+.section {
+  width: 100%;
+  padding: 4rem 2rem; /* Aumentado o padding para uma seção maior */
+  background-color: var(--color-jackboo-orange-lightest);
+  overflow: hidden;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.content {
+  flex: 1;
+  max-width: 450px;
+}
+
+.title {
+  font-family: var(--font-luckiest-guy);
+  font-size: clamp(2.8rem, 5vw, 4rem); /* Título maior */
+  color: var(--color-text-dark-blue);
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  font-family: var(--font-mali);
+  font-size: clamp(1.2rem, 2.5vw, 1.5rem); /* Subtítulo maior */
+  color: var(--color-text-dark-blue);
+  line-height: 1.6;
+  margin-bottom: 2.5rem; /* Mais espaço antes do botão */
+  max-width: 400px;
+}
+
+.ctaButton {
+  font-family: var(--font-mali);
+  font-size: 1.4rem; /* Botão maior */
+  font-weight: 700;
+  color: white;
+  background-color: var(--color-jackboo-primary-orange);
+  padding: 1.2rem 3rem; /* Botão maior */
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(255, 140, 0, 0.4);
+  transition: all 0.3s ease;
+}
+
+.illustration {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.jackbooImage {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+  .container {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+  
+  .content {
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    order: 2;
+  }
+
+  .subtitle {
+    max-width: 500px;
+  }
+  
+  .illustration {
+    order: 1;
+    margin-bottom: 1rem;
+  }
+
+  .jackbooImage {
+    max-width: 350px;
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    padding: 3rem 1.5rem;
+  }
+  
+  .title {
+    font-size: 2.5rem;
+  }
+
+  .subtitle {
+    font-size: 1.1rem;
+  }
+
+  .ctaButton {
+    font-size: 1.2rem;
+    padding: 1rem 2.5rem;
+  }
+}

@@ -1,0 +1,71 @@
+/* src/components/EmptyCart/EmptyCart.module.css */
+.wrapper { 
+  text-align: center; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  gap: 1rem; 
+  margin-top: 4rem; 
+  padding-bottom: 2rem; /* Adiciona um pouco de padding para o balão não cortar */
+}
+.jackbooContainer {
+  position: relative;
+  margin-bottom: 2rem; /* Espaço entre o JackBoo e o título */
+}
+
+.speechBubble {
+  position: absolute;
+  background-color: white;
+  padding: 0.8rem 1.2rem;
+  border-radius: 20px;
+  font-family: var(--font-mali);
+  font-weight: 700;
+  color: var(--color-text-dark-blue);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  text-align: center;
+  /* Posicionamento do balão */
+  top: -60px; /* Acima da cabeça do JackBoo */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 250px;
+}
+
+.speechBubble::after {
+  content: '';
+  position: absolute;
+  bottom: -10px; /* Cauda para baixo */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border: 15px solid transparent;
+  border-top-color: white; /* Cor da cauda */
+  border-bottom: 0;
+  border-left: 0; /* Ajuste para ter uma ponta mais orgânica */
+  border-right: 0; /* Ajuste para ter uma ponta mais orgânica */
+}
+
+.title { 
+  font-family: var(--font-luckiest-guy); 
+  font-size: 2.5rem; 
+  color: var(--color-text-dark-blue); 
+}
+.subtitle { 
+  font-family: var(--font-mali); 
+  font-size: 1.2rem; 
+  color: var(--color-text-dark-blue); 
+  opacity: 0.8; 
+  max-width: 400px; 
+  margin-bottom: 1rem; 
+}
+.shopButton { 
+  font-family: var(--font-mali); 
+  font-weight: 700; 
+  font-size: 1.2rem; 
+  color: white; 
+  background-color: var(--color-jackboo-primary-orange); 
+  padding: 1rem 2.5rem; 
+  border: none; 
+  border-radius: 50px; 
+  cursor: pointer; 
+}

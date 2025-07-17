@@ -1,0 +1,84 @@
+/* src/app/(admin)/admin/page.module.css */
+.title {
+    font-family: var(--font-mali);
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 700;
+    color: var(--color-text-dark-blue);
+}
+
+.subtitle {
+    font-family: var(--font-mali);
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-top: 0.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.statCard {
+    background-color: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+.statIcon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin: 0 auto 1rem auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-dark-blue);
+    font-size: 1.8rem;
+}
+
+.statValue {
+    font-family: var(--font-luckiest-guy);
+    font-size: 2.5rem;
+    color: var(--color-text-dark-blue);
+}
+
+.statLabel {
+    font-family: var(--font-mali);
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+.sectionTitle {
+    font-family: var(--font-mali);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text-dark-blue);
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #eef2f7;
+    padding-bottom: 0.8rem;
+}
+
+.quickAccessGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.quickAccessCard {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--color-text-dark-blue);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}

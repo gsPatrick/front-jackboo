@@ -1,0 +1,11 @@
+/* src/components/ClubFAQ/ClubFAQ.module.css */
+.section { padding: 5rem 2rem; background-color: var(--color-jackboo-beige-ultra-light); text-align: center; }
+.sectionTitle { font-family: var(--font-luckiest-guy); font-size: 3rem; color: var(--color-text-dark-blue); margin-bottom: 3rem; }
+.faqList { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
+.faqItem { background-color: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; }
+.question { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; cursor: pointer; background-color: #fff; }
+.questionText { font-family: var(--font-mali); font-weight: 700; font-size: 1.2rem; color: var(--color-text-dark-blue); margin: 0; }
+.icon { font-size: 1.2rem; color: var(--color-jackboo-primary-orange); transition: transform 0.3s ease; }
+.iconOpen { transform: rotate(180deg); }
+.answer { padding: 0 1.5rem 1.5rem; background-color: #fcfcfc; }
+.answer p { font-family: var(--font-mali); font-size: 1rem; color: var(--color-text-dark-blue); opacity: 0.8; margin: 0; line-height: 1.6; }

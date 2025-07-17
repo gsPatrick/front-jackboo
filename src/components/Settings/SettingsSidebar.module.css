@@ -1,0 +1,66 @@
+/* src/components/Settings/SettingsSidebar.module.css */
+.sidebar {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 25px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+  height: fit-content; /* A sidebar se ajusta à altura do conteúdo */
+  position: sticky; /* Fica fixa na tela enquanto rola o conteúdo principal */
+  top: 100px; /* Ajuste a distância do topo (header + um pouco) */
+}
+
+.sidebarNav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem; /* Espaço entre os botões de navegação */
+}
+
+.navButton {
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--color-text-dark-blue);
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 0.8rem 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%; /* O botão preenche a largura do LI */
+    transition: all 0.2s ease;
+}
+
+.navButton:hover:not(.active) {
+    background-color: var(--color-jackboo-beige-ultra-light);
+    color: var(--color-jackboo-primary-orange);
+}
+
+.navButton.active {
+    background-color: var(--color-jackboo-primary-orange);
+    color: white;
+    box-shadow: 0 2px 8px rgba(255, 140, 0, 0.3);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .sidebar {
+        padding: 1.5rem;
+        position: static; /* Não fixa mais no mobile */
+        top: auto;
+    }
+    .sidebarNav ul {
+        flex-direction: row; /* Botões lado a lado em mobile */
+        flex-wrap: wrap; /* Permite quebrar linha */
+        justify-content: center;
+        gap: 0.6rem;
+    }
+    .navButton {
+        font-size: 1rem;
+        padding: 0.6rem 1.2rem;
+        text-align: center; /* Centraliza texto no botão mobile */
+        width: auto; /* Largura automática */
+    }
+}

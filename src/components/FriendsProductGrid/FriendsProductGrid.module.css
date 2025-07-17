@@ -1,0 +1,284 @@
+/* src/components/FriendsProductGrid/FriendsProductGrid.module.css */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  position: relative;
+  min-height: 500px;
+}
+
+.bookCard {
+  background-color: white;
+  border-radius: 20px;
+  border: 3px solid white;
+  padding: 1.5rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  /* Ajustado gap geral */
+  gap: 0.8rem;
+  position: relative;
+  overflow: hidden; /* Esconde o que sair das bordas, importante para a animação da capa */
+
+  /* Transições adicionadas nos variants do componente JS */
+}
+
+.bookCard[style] {
+  border-color: rgba(0, 0, 0, 0.05);
+}
+
+/* --- SEÇÃO DO AUTOR (AGORA NO TOPO, DENTRO DO FLUXO) --- */
+.authorLink {
+    text-decoration: none;
+    color: inherit;
+    width: 100%;
+    /* Centraliza o contêiner do autor */
+    display: flex;
+    justify-content: center;
+    /* Margem inferior para espaçar do conteúdo abaixo */
+    margin-bottom: 1.5rem;
+    /* Removido o position: absolute e ajustes de top/transform */
+}
+
+.authorInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 1rem;
+    background-color: var(--color-jackboo-beige-creme);
+    border-radius: 20px;
+    border: 2px solid var(--color-jackboo-rosy-beige);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    width: fit-content;
+     /* Removido o tilt */
+    /* transform: rotate(-3deg); */
+}
+
+.authorInfo:hover {
+    border-color: var(--color-jackboo-primary-orange);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+
+.authorAvatarWrapper {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid var(--color-jackboo-light-orange);
+}
+
+.authorAvatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.authorName {
+  font-family: var(--font-mali);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--color-text-dark-blue);
+  line-height: 1.2;
+  text-align: left;
+}
+
+.authorName strong {
+    font-weight: 700;
+    color: var(--color-jackboo-primary-orange);
+}
+
+
+/* --- CAPA DO LIVRO --- */
+.bookCoverWrapper {
+   width: 100%;
+   border-radius: 15px;
+   overflow: hidden;
+   box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+   transition: transform 0.4s ease;
+    /* Margem inferior para espaçar do título/preço */
+    margin-bottom: 1rem;
+    /* Removido o padding top */
+}
+
+/* Efeito de zoom na imagem ao passar o mouse no card */
+.bookCard:hover .bookCoverWrapper {
+     transform: scale(1.08);
+}
+
+
+.bookCover {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 0;
+}
+
+/* --- DETALHES DO LIVRO --- */
+.bookTitle {
+  font-family: var(--font-mali);
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--color-text-dark-blue);
+  margin-top: 0;
+  min-height: 40px;
+  line-height: 1.3;
+}
+
+.bookPrice {
+  font-family: var(--font-mali);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--color-jackboo-primary-orange);
+  opacity: 0.9;
+  margin: 0.5rem 0;
+}
+
+/* --- Contêiner de Ações (Likes e Botão Ver Livro) --- */
+.cardActions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0 0.5rem;
+    margin-top: auto;
+    padding-top: 0.5rem;
+    border-top: 1px dashed rgba(0,0,0,0.08);
+    gap: 0.8rem;
+}
+
+.likesWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mali);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-dark-blue);
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+  padding: 0.5rem;
+  border-radius: 15px;
+  background-color: var(--color-jackboo-blue-lightest);
+  border: 2px solid var(--color-jackboo-blue-lightest);
+  transition: border-color 0.2s ease;
+}
+
+.likesWrapper:hover {
+    border-color: var(--color-jackboo-light-orange);
+}
+
+
+.heartIcon {
+  width: 20px;
+  height: 20px;
+  stroke: var(--color-text-red-heart);
+  stroke-width: 2;
+  fill: none;
+  transition: fill 0.2s ease-in-out;
+}
+
+.heartIcon.liked {
+  fill: var(--color-text-red-heart);
+  stroke: var(--color-text-red-heart);
+}
+
+.viewBookButton {
+  font-family: var(--font-mali);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--color-text-dark-blue);
+  background-color: var(--color-jackboo-light-orange);
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+   flex-grow: 1;
+}
+
+.viewBookButton:hover {
+    background-color: var(--color-jackboo-primary-orange);
+    color: white;
+}
+
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1.5rem;
+         min-height: 400px;
+    }
+
+    .bookCard {
+        padding: 1rem;
+        gap: 0.5rem;
+    }
+
+    .authorLink {
+        margin-bottom: 1rem; /* Espaço menor em mobile */
+    }
+
+    .authorInfo {
+        padding: 0.4rem 0.8rem;
+        gap: 0.5rem;
+    }
+
+    .authorAvatarWrapper {
+        width: 30px;
+        height: 30px;
+    }
+     .authorName {
+        font-size: 0.75rem;
+     }
+
+    .bookCoverWrapper {
+         margin-bottom: 0.8rem; /* Espaço menor em mobile */
+    }
+
+
+    .bookTitle {
+        font-size: 1.1rem;
+        min-height: 35px;
+    }
+
+    .bookPrice {
+        font-size: 1rem;
+        margin: 0.2rem 0 0.8rem 0;
+    }
+
+    .cardActions {
+      flex-direction: row;
+      justify-content: space-between;
+      gap: 0.6rem;
+      padding: 0;
+      margin-top: 0.5rem;
+       padding-top: 0.5rem;
+    }
+
+    .likesWrapper {
+        font-size: 0.9rem;
+        gap: 0.3rem;
+         padding: 0.3rem 0.6rem;
+    }
+
+    .heartIcon {
+        width: 16px;
+        height: 16px;
+    }
+
+    .viewBookButton {
+        font-size: 0.85rem;
+        padding: 0.3rem 0.6rem;
+        flex-grow: 1;
+    }
+}

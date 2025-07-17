@@ -1,0 +1,279 @@
+/* src/app/profile/[slug]/page.module.css */
+.main {
+  padding: 4rem 2rem;
+  background-color: var(--color-jackboo-beige-ultra-light);
+  min-height: calc(100vh - 80px);
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.pageTitle {
+  font-family: var(--font-luckiest-guy);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  color: var(--color-text-dark-blue);
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.highlight {
+  position: relative;
+  display: inline-block;
+  color: var(--color-jackboo-primary-orange);
+}
+
+.highlight::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: -5%;
+  width: 110%;
+  height: 18px;
+  background-color: var(--color-jackboo-yellow-highlight);
+  opacity: 0.9;
+  z-index: -1;
+  border-radius: 5px;
+  transform: rotate(-1.5deg);
+}
+
+/* --- SEÇÃO DE INFORMAÇÕES DO USUÁRIO --- */
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  background: white;
+  border-radius: 25px;
+  padding: 2rem;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+}
+
+.avatarWrapper {
+  flex-shrink: 0;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid var(--color-jackboo-primary-orange);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.userDetails {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.userName {
+  font-family: var(--font-luckiest-guy);
+  font-size: 2.5rem;
+  color: var(--color-text-dark-blue);
+  margin: 0 0 0.5rem 0;
+}
+
+.userDetails > p {
+  font-family: var(--font-mali);
+  font-size: 1.1rem;
+  color: var(--color-text-dark-blue);
+  opacity: 0.9;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.detailIcon {
+  color: var(--color-jackboo-light-orange);
+  font-size: 1.2rem;
+}
+
+/* --- SEÇÃO DE BIO --- */
+.bioSection {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    background-color: var(--color-jackboo-beige-ultra-light);
+    padding: 1rem;
+    border-radius: 15px;
+    border: 2px dashed var(--color-jackboo-light-orange);
+}
+.bioText {
+    font-family: var(--font-mali);
+    font-size: 1rem;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--color-text-dark-blue);
+    opacity: 0.8;
+    margin: 0;
+    flex-grow: 1;
+}
+.bioTextarea {
+    width: 100%;
+    min-height: 60px;
+    border: 2px solid var(--color-jackboo-light-orange);
+    border-radius: 10px;
+    padding: 0.5rem;
+    font-family: var(--font-mali);
+    resize: vertical;
+}
+.bioTextarea:focus { outline: none; border-color: var(--color-jackboo-primary-orange); }
+.editBioButton {
+    background: none;
+    border: none;
+    color: var(--color-jackboo-primary-orange);
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.sectionDivider {
+  border: none;
+  border-top: 3px dashed var(--color-jackboo-light-orange);
+  margin: 3rem auto;
+  width: 80%;
+}
+
+/* --- SEÇÃO GENÉRICA (PERSONAGENS E COMPETIÇÕES) --- */
+.extraSection {
+    background-color: white;
+    border-radius: 25px;
+    padding: 2rem;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+}
+
+.sectionTitle {
+  font-family: var(--font-luckiest-guy);
+  font-size: 2.5rem;
+  color: var(--color-text-dark-blue);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* --- GALERIA DE PERSONAGENS E LIVROS EM CARROSSEL --- */
+.carouselContainer, .booksCarouselContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+.characterGallery, .booksGallery {
+  flex-grow: 1;
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  padding: 1rem 0.5rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.characterGallery::-webkit-scrollbar, .booksGallery::-webkit-scrollbar { display: none; }
+
+.navArrow {
+  flex-shrink: 0;
+  background-color: var(--color-jackboo-light-orange);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.navArrow:hover { background-color: var(--color-jackboo-primary-orange); }
+
+.characterCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.characterImage {
+    width: 100px;
+    height: 100px;
+    border-radius: 20px;
+    object-fit: cover;
+    border: 4px solid white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    transition: transform 0.2s;
+}
+.characterCard:hover .characterImage { transform: scale(1.1); }
+.characterName {
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--color-text-dark-blue);
+    background-color: var(--color-jackboo-beige-ultra-light);
+    padding: 0.2rem 0.8rem;
+    border-radius: 10px;
+}
+
+/* --- HISTÓRICO DE COMPETIÇÕES --- */
+.competitionsGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.competitionColumn { display: flex; flex-direction: column; gap: 1rem; }
+.competitionTitle { font-family: var(--font-luckiest-guy); font-size: 1.5rem; color: var(--color-text-dark-blue); display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; border-bottom: 2px solid var(--color-jackboo-light-orange); padding-bottom: 0.5rem; }
+.competitionCard { background-color: var(--color-jackboo-beige-ultra-light); border-radius: 10px; padding: 0.8rem 1rem; display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mali); border-left: 5px solid var(--color-jackboo-light-orange); }
+.competitionName { font-size: 1rem; font-weight: 700; }
+.competitionStatus { font-size: 0.9rem; font-weight: 700; color: var(--color-jackboo-primary-orange); }
+.competitionRank { font-weight: 700; display: flex; align-items: center; gap: 0.3rem; }
+.rank1 { color: #FFD700; border-left-color: #FFD700; }
+.rank2 { color: #C0C0C0; border-left-color: #C0C0C0; }
+.rank3 { color: #CD7F32; border-left-color: #CD7F32; }
+.emptyMessageSmall { font-family: var(--font-mali); font-size: 1rem; text-align: center; opacity: 0.6; padding: 1rem; }
+
+/* --- SEÇÃO DE LIVROS --- */
+.booksSection { background-color: white; border-radius: 25px; padding: 2rem; box-shadow: 0 8px 25px rgba(0,0,0,0.07); }
+.emptyMessage { font-family: var(--font-mali); font-size: 1.3rem; color: var(--color-text-dark-blue); text-align: center; opacity: 0.7; margin-top: 3rem; }
+.tabsContainer { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
+.tabButton { font-family: var(--font-mali); font-weight: 700; font-size: 1.1rem; padding: 0.8rem 1.5rem; border-radius: 25px; border: 2px solid var(--color-jackboo-light-orange); background-color: white; color: var(--color-text-dark-blue); cursor: pointer; transition: all 0.2s ease; }
+.tabButton:hover:not(.active) { border-color: var(--color-jackboo-primary-orange); color: var(--color-jackboo-primary-orange); }
+.tabButton.active { background-color: var(--color-jackboo-primary-orange); color: white; border-color: var(--color-jackboo-primary-orange); box-shadow: 0 4px 10px rgba(255, 140, 0, 0.3); }
+
+.bookCard {
+  background-color: white;
+  border-radius: 20px;
+  padding: 1rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  width: 220px;
+}
+.bookCoverWrapper { padding: 0.5rem; background-color: white; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+.bookCover { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 10px; }
+.bookTitle { font-family: var(--font-mali); font-weight: 700; font-size: 1.3rem; color: var(--color-text-dark-blue); margin-top: 0.5rem; min-height: 45px; }
+.bookPrice { font-family: var(--font-mali); font-weight: 700; font-size: 1.1rem; color: var(--color-jackboo-primary-orange); opacity: 0.9; margin: 0.5rem 0; }
+.cardActions { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0 0.5rem; margin-top: 0.5rem; }
+.likesWrapper { display: flex; align-items: center; gap: 0.4rem; font-family: var(--font-mali); font-size: 1.1rem; font-weight: 700; color: var(--color-text-dark-blue); cursor: pointer; user-select: none; flex-shrink: 0; }
+.heartIcon { width: 24px; height: 24px; stroke: var(--color-text-red-heart); stroke-width: 2; fill: none; transition: fill 0.2s ease-in-out; }
+.heartIcon.liked { fill: var(--color-text-red-heart); stroke: var(--color-text-red-heart); }
+.viewBookButton { font-family: var(--font-mali); font-size: 1rem; font-weight: 700; color: white; background-color: var(--color-jackboo-light-orange); padding: 0.5rem 1rem; border: none; border-radius: 50px; cursor: pointer; flex-shrink: 0; }
+
+@media (max-width: 768px) {
+  .userInfo, .extraSection, .booksSection { flex-direction: column; text-align: center; padding: 1.5rem; }
+  .avatarWrapper { width: 120px; height: 120px; }
+  .userDetails { align-items: center; }
+  .userName { font-size: 2rem; }
+  .bioSection { flex-direction: column; align-items: center; gap: 1rem; }
+  .userDetails > p { font-size: 1rem; }
+  .sectionTitle { font-size: 2rem; }
+  .competitionsGrid { grid-template-columns: 1fr; gap: 2.5rem; }
+  .tabsContainer { gap: 1rem; margin-bottom: 2rem; }
+  .tabButton { font-size: 1rem; padding: 0.6rem 1.2rem; }
+  .bookCard { width: 180px; }
+  .bookTitle { font-size: 1.1rem; min-height: 40px; }
+  .bookPrice { font-size: 1rem; }
+  .cardActions { flex-direction: column; gap: 0.8rem; align-items: center; padding: 0; margin-top: 0.8rem; }
+  .viewBookButton { width: 100%; }
+}

@@ -1,0 +1,34 @@
+/* src/app/(admin)/admin/earnings/page.module.css */
+.header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; }
+.title { font-family: var(--font-mali); font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 700; color: var(--color-text-dark-blue); }
+.subtitle { font-family: var(--font-mali); font-size: 1.2rem; color: #6c757d; margin-top: 0.5rem; }
+.reportButton { font-family: var(--font-mali); font-weight: 700; background-color: var(--color-jackboo-primary-orange); color: white; border: none; border-radius: 10px; padding: 0.8rem 1.5rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer; }
+
+.summaryGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+.summaryCard { background-color: white; border-radius: 15px; padding: 1.5rem; display: flex; align-items: center; gap: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+.summaryCard.total { background-color: var(--color-text-dark-blue); color: white; }
+.cardIcon { font-size: 2.5rem; color: var(--color-jackboo-primary-orange); }
+.summaryCard.total .cardIcon { color: white; }
+.cardLabel { font-family: var(--font-mali); font-size: 1rem; margin: 0 0 0.25rem 0; opacity: 0.8; }
+.cardValue { font-family: var(--font-luckiest-guy); font-size: 2rem; margin: 0; }
+.summaryCard.total .cardLabel { opacity: 1; }
+
+.mainContent { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: flex-start; }
+.topAffiliates { background-color: white; border-radius: 15px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+.sectionTitle { font-family: var(--font-mali); font-size: 1.5rem; font-weight: 700; color: var(--color-text-dark-blue); margin-bottom: 1.5rem; }
+
+.affiliatesTable { width: 100%; border-collapse: collapse; font-family: var(--font-mali); }
+.affiliatesTable th, .affiliatesTable td { padding: 0.8rem; text-align: left; border-bottom: 1px solid #eef2f7; }
+.affiliatesTable th { font-weight: 700; color: #6c757d; }
+.positionCell { text-align: center; }
+.positionBadge { font-weight: 700; color: white; padding: 0.3rem 0.6rem; border-radius: 5px; }
+.pos1 { background-color: #FFD700; color: #4A331C; }
+.pos2 { background-color: #C0C0C0; }
+.pos3 { background-color: #CD7F32; }
+.userCell { font-weight: 700; }
+.earningsCell { font-weight: 700; color: var(--color-text-dark-green); }
+
+.chartPlaceholder { background-color: white; border-radius: 15px; padding: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; color: #6c757d; font-family: var(--font-mali); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 300px; }
+.chartPlaceholder svg { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+
+@media (max-width: 992px) { .mainContent { grid-template-columns: 1fr; } }

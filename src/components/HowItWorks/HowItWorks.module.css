@@ -1,0 +1,128 @@
+/* src/components/HowItWorks/HowItWorks.module.css */
+
+.section {
+  padding: 8rem 2rem 6rem;
+  background: linear-gradient(180deg, var(--color-jackboo-beige-ultra-light) 0%, #E9F6FA 70%, #E0F2F7 100%);
+  position: relative;
+  overflow: hidden;
+  border-top: 5px solid #fff;
+  border-bottom: 5px solid #fff;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.title {
+  font-family: var(--font-mali);
+  font-size: clamp(2.8rem, 7vw, 5rem); /* Tamanho de fonte grande e responsivo */
+  font-weight: 700;
+  color: var(--color-text-dark-blue);
+  text-align: center;
+  margin-bottom: 4rem;
+  line-height: 1.3;
+}
+
+.highlightOrange {
+  position: relative;
+  display: inline-block;
+  color: #ff8b01;
+}
+
+.highlightOrange::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: -5%;
+  width: 110%;
+  height: 15px;
+  background-color: #fdda58;
+  opacity: 0.9;
+  z-index: -1;
+  border-radius: 5px;
+  transform: rotate(-1.5deg);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2.5rem;
+}
+
+.card {
+  padding: 2rem 1.5rem;
+  border-radius: 30px;
+  box-shadow: 0 8px 20px rgba(47, 74, 110, 0.1);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 2px solid white;
+}
+
+.iconWrapper {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+}
+
+/* --- FONTES MAIORES NOS CARDS --- */
+.cardTitle {
+  font-family: var(--font-mali);
+  font-size: 1.9rem; /* Aumentado para melhor leitura */
+  font-weight: 700;
+  color: var(--color-text-dark-blue);
+  margin: 0.5rem 0;
+}
+
+.cardDescription {
+  font-family: var(--font-mali);
+  font-size: 1.2rem; /* Aumentado significativamente */
+  color: var(--color-text-dark-blue);
+  opacity: 0.9;
+  line-height: 1.6; /* Mais espaçamento entre linhas */
+  min-height: 65px; /* Ajustado para o novo tamanho */
+}
+
+.illustrationWrapper {
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+.illustration {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 4rem 1rem;
+  }
+  
+  .title {
+    margin-bottom: 3rem;
+  }
+
+  .highlightOrange::after {
+    height: 12px;
+    bottom: 4px;
+  }
+  
+  /* --- AJUSTES DE FONTE PARA MOBILE --- */
+  .cardTitle {
+    font-size: 1.7rem;
+  }
+
+  .cardDescription {
+    font-size: 1.1rem;
+  }
+}

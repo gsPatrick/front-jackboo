@@ -1,0 +1,203 @@
+/* src/components/CharacterDetailModal/CharacterDetailModal.module.css */
+
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(47, 74, 110, 0.7);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal {
+  width: 100%;
+  max-width: 700px; /* Aumentado para acomodar 3 livros */
+  background-color: var(--color-jackboo-beige-ultra-light);
+  border-radius: 30px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  padding: 2.5rem;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--color-text-dark-blue);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+}
+.closeButton:hover { opacity: 1; transform: scale(1.1); }
+
+.characterInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px dashed var(--color-jackboo-light-orange);
+}
+
+.characterImageWrapper {
+    background-color: white;
+    padding: 0.5rem;
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+.characterImage { width: 180px; height: 180px; object-fit: contain; border-radius: 15px; }
+.characterName { font-family: var(--font-luckiest-guy); font-size: 2.5rem; color: var(--color-text-dark-blue); }
+
+.booksSection { margin-top: 2rem; }
+.booksTitle { font-family: var(--font-mali); font-weight: 700; font-size: 1.5rem; color: var(--color-text-dark-blue); text-align: center; margin-bottom: 1.5rem; }
+
+/* --- ABAS --- */
+.tabsContainer {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+.tabButton {
+    font-family: var(--font-mali);
+    font-weight: 700;
+    padding: 0.5rem 1.5rem;
+    border-radius: 20px;
+    border: 2px solid var(--color-jackboo-light-orange);
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.tabButton.active {
+    background-color: var(--color-jackboo-primary-orange);
+    color: white;
+    border-color: var(--color-jackboo-primary-orange);
+}
+
+.booksGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Sempre 3 colunas */
+  gap: 1.5rem;
+  min-height: 320px; /* Altura mínima para evitar "pulo" ao trocar de aba/página */
+}
+
+.bookCardWrapper {
+    display: flex; /* Para forçar altura igual */
+}
+.bookCard {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* Ajustado */
+  padding: 0.8rem;
+  border-radius: 15px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background-color: white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  position: relative; /* Para o badge de tipo */
+}
+.bookCard:hover { box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+.bookTypeBadge {
+  position: absolute;
+  top: 1rem;
+  left: -5px;
+  background-color: var(--color-jackboo-primary-orange);
+  color: white;
+  font-family: var(--font-mali);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.8rem;
+  border-radius: 5px;
+  transform: rotate(-5deg);
+  z-index: 2;
+}
+
+.bookCoverWrapper { width: 100%; position: relative; }
+.bookCover {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 0.5rem;
+}
+.bookTitle {
+  font-family: var(--font-mali);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--color-text-dark-blue);
+  flex-grow: 1;
+}
+
+.bookDetails {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.bookPrice {
+  font-family: var(--font-mali);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--color-jackboo-primary-orange);
+}
+
+.likesWrapper { display: flex; align-items: center; gap: 0.3rem; font-size: 0.9rem; font-weight: 700; color: var(--color-text-dark-blue); cursor: pointer; }
+.heartIcon { width: 18px; height: 18px; stroke: var(--color-text-red-heart); stroke-width: 2; fill: none; transition: fill 0.2s; }
+.heartIcon.liked { fill: var(--color-text-red-heart); }
+
+.viewBookButton {
+  width: 100%;
+  margin-top: 0.8rem;
+  padding: 0.5rem;
+  font-family: var(--font-mali);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--color-text-dark-blue);
+  background-color: var(--color-jackboo-light-orange);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.viewBookButton:hover {
+  background-color: var(--color-jackboo-primary-orange);
+  color: white;
+}
+
+
+.emptyMessage {
+  font-family: var(--font-mali);
+  text-align: center;
+  opacity: 0.7;
+  margin-top: 1rem;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsividade do Modal */
+@media (max-width: 640px) {
+  .modal { padding: 1.5rem; }
+  .booksGrid { grid-template-columns: repeat(2, 1fr); min-height: auto; }
+}
+@media (max-width: 420px) {
+  .booksGrid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,12 @@
+/* src/components/CartItem/CartItem.module.css */
+.item { display: grid; grid-template-columns: 100px 1fr auto auto auto; align-items: center; gap: 1.5rem; padding: 1.5rem 0; border-bottom: 1px solid #eee; }
+.image { border-radius: 15px; }
+.details { display: flex; flex-direction: column; gap: 0.25rem; }
+.name { font-family: var(--font-mali); font-weight: 700; font-size: 1.2rem; color: var(--color-text-dark-blue); }
+.price { font-family: var(--font-mali); font-size: 1rem; color: var(--color-text-dark-blue); opacity: 0.7; }
+.quantityControl { display: flex; align-items: center; gap: 1rem; }
+.quantityControl button { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ddd; background: white; cursor: pointer; display:flex; align-items:center; justify-content:center; }
+.quantityControl span { font-family: var(--font-mali); font-weight: 700; font-size: 1.2rem; }
+.total { font-family: var(--font-mali); font-weight: 700; font-size: 1.2rem; color: var(--color-text-dark-blue); min-width: 80px; text-align: right; }
+.removeButton { background: none; border: none; color: #aaa; cursor: pointer; font-size: 1.2rem; transition: color 0.2s; }
+.removeButton:hover { color: var(--color-text-red-heart); }

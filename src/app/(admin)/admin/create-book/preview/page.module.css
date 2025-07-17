@@ -1,0 +1,185 @@
+/* src/app/(admin)/admin/create-book/preview/page.module.css */
+
+.loadingContainer, .errorContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80vh;
+    font-family: var(--font-mali);
+    color: #6c757d;
+    text-align: center;
+}
+.loadingContainer h2 {
+    font-size: 1.8rem;
+    color: var(--color-text-dark-blue);
+}
+.loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid var(--color-jackboo-primary-orange);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1.5rem;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 4rem); /* Altura total menos padding */
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-shrink: 0;
+}
+
+.title {
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: var(--color-text-dark-blue);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.finalizeButton {
+    font-family: var(--font-mali);
+    font-weight: 700;
+    color: white;
+    background-color: var(--color-text-dark-green);
+    padding: 0.7rem 1.2rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.finalizeButton:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.previewArea {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-grow: 1;
+    min-height: 0; /* Essencial para flexbox funcionar corretamente em altura */
+}
+
+.navButton {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #495057;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.navButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pageWrapper {
+    flex-grow: 1;
+    height: 100%;
+    background-color: #f8f9fa;
+    border: 1px solid #eef2f7;
+    border-radius: 10px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.pageContent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.pageOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    font-family: var(--font-mali);
+    font-weight: 700;
+}
+.pageOverlay.generating {
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(5px);
+    color: var(--color-text-dark-blue);
+    font-size: 1.2rem;
+}
+.pageOverlay.failed {
+    background-color: rgba(255, 222, 222, 0.9);
+    color: var(--color-text-red-heart);
+    font-size: 1.5rem;
+}
+.pageOverlay.failed p {
+    font-size: 1rem;
+    color: #8c2a3e;
+    max-width: 80%;
+}
+
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    flex-shrink: 0;
+    font-family: var(--font-mali);
+}
+
+.pageIndicator {
+    font-weight: 700;
+    color: #6c757d;
+}
+
+.regenerateButton {
+    background-color: var(--color-jackboo-primary-orange);
+    border: none;
+    color: white;
+    font-weight: 700;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.regenerateButton:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.spinningIcon {
+    animation: spin 1.5s linear infinite;
+}

@@ -1,0 +1,264 @@
+/* src/components/Championship/KnockoutBracket.module.css */
+
+.bracketWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+}
+
+.bracketContainer {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  overflow-x: auto;
+  padding: 1rem 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-jackboo-light-orange) var(--color-jackboo-beige-ultra-light);
+  width: 100%;
+}
+
+.bracketContainer::-webkit-scrollbar { height: 8px; }
+.bracketContainer::-webkit-scrollbar-track { background: var(--color-jackboo-beige-ultra-light); border-radius: 10px; }
+.bracketContainer::-webkit-scrollbar-thumb { background-color: var(--color-jackboo-light-orange); border-radius: 10px; }
+
+.round {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  min-width: 160px;
+}
+
+.roundTitle {
+  font-family: var(--font-luckiest-guy);
+  font-size: 1.6rem;
+  color: var(--color-text-dark-blue);
+  margin-bottom: 1rem;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.matchesList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  align-items: center;
+  width: 100%;
+}
+
+/* Alinhamento vertical dos confrontos */
+.roundQuarters .matchesList { padding-top: 0; gap: 4.5rem; } /* Maior gap entre confrontos */
+.roundSemis .matchesList { padding-top: 45px; padding-bottom: 45px; }
+
+.match {
+  background-color: white;
+  border-radius: 12px;
+  padding: 0.6rem 0.8rem;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  width: 140px;
+  text-align: center;
+  position: relative;
+  border: 1px solid #eee; /* Borda sutil */
+}
+
+/* Linhas que conectam os confrontos */
+.match:not(.finalMatch)::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 15px;
+    height: 2px;
+    background-color: #ccc;
+}
+.leftRound .match::after { right: -16px; transform: translateY(-50%); }
+.rightRound .match::after { left: -16px; transform: translateY(-50%); }
+
+.matchesList::before {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: calc(50% - 22px); /* Ajustar altura da linha vertical */
+    background-color: #ccc;
+    top: 25%;
+}
+.leftRound .matchesList::before { right: -24px; }
+.rightRound .matchesList::before { left: -24px; }
+
+
+.match.completed { background-color: #f8f8f8; }
+.match.active { border: 2px dashed var(--color-jackboo-primary-orange); }
+
+.participant {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--font-mali);
+  font-size: 0.8rem;
+  color: var(--color-text-dark-blue);
+  width: 100%;
+  justify-content: space-between;
+  transition: opacity 0.3s ease;
+  border-radius: 8px;
+  padding: 2px 4px;
+}
+
+.participant.loser { opacity: 0.5; background-color: #ffefef; color: #d35d5d; }
+.participant.winner { font-weight: 700; background-color: #e8f7e0; color: #3d6b35; }
+.participant.empty { opacity: 0.7; }
+
+.avatarWrapper {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
+}
+.avatarPlaceholder {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: 2px dashed #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-luckiest-guy);
+    font-size: 1rem;
+    color: #aaa;
+}
+.participantAvatar { width: 100%; height: 100%; object-fit: cover; }
+.winnerIcon {
+    position: absolute;
+    bottom: -3px;
+    right: -3px;
+    font-size: 0.9rem;
+    color: var(--color-text-dark-green);
+    background-color: white;
+    border-radius: 50%;
+}
+.participantName {
+    flex-grow: 1;
+    text-align: left;
+    margin-left: 0.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60px;
+}
+.participantScore {
+     font-weight: 700;
+     flex-shrink: 0;
+     min-width: 15px;
+     text-align: right;
+}
+.vs {
+    font-family: var(--font-luckiest-guy);
+    font-size: 0.9rem;
+    color: var(--color-text-dark-blue);
+    margin: 0.1rem 0;
+}
+
+/* --- COLUNA CENTRAL --- */
+.centerColumn {
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     justify-content: space-between; /* Espaça o campeão e o Jack */
+     flex-shrink: 0;
+     min-width: 200px;
+     margin: 0 1rem;
+}
+
+.finalMatchWrapper, .championDisplay {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.championDisplay {
+    padding: 1rem;
+    background-color: var(--color-jackboo-beige-creme);
+    border-radius: 20px;
+    border: 2px solid var(--color-jackboo-yellow-highlight);
+    box-shadow: 0 5px 15px rgba(255, 198, 64, 0.4);
+}
+
+.championTitle {
+    font-family: var(--font-luckiest-guy);
+    font-size: 1.5rem;
+    color: var(--color-jackboo-primary-orange);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.championCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+.championAvatar {
+    border-radius: 50%;
+    border: 4px solid var(--color-jackboo-primary-orange);
+}
+.championName {
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--color-text-dark-blue);
+}
+
+.jackCharacter {
+    position: relative;
+    text-align: center;
+}
+.jackSpeechBubble {
+    background-color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 15px;
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--color-text-dark-blue);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 0.5rem;
+}
+.jackImage {
+    width: 100px;
+    height: auto;
+    object-fit: contain;
+}
+
+/* --- DISPUTA DE 3º LUGAR --- */
+.thirdPlaceArea {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 300px;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 2px dashed var(--color-jackboo-light-orange);
+}
+.thirdPlaceArea .matchesList { padding: 0; gap: 0.8rem; }
+
+
+/* --- Responsividade --- */
+@media (max-width: 992px) {
+    .bracketContainer {
+        justify-content: flex-start; /* Alinha para permitir scroll */
+    }
+}
+@media (max-width: 768px) {
+    .roundQuarters .matchesList { gap: 3rem; }
+    .roundSemis .matchesList { padding-top: 30px; padding-bottom: 30px; }
+    .centerColumn { min-width: 160px; margin: 0 0.5rem; }
+}

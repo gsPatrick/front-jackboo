@@ -1,0 +1,14 @@
+/* src/components/SubscriptionPlans/SubscriptionPlans.module.css */
+.section { padding: 5rem 2rem; background-color: var(--color-jackboo-orange-lightest); text-align: center; }
+.sectionTitle { font-family: var(--font-luckiest-guy); font-size: 3rem; color: var(--color-text-dark-blue); margin-bottom: 3rem; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
+.card { background-color: white; border-radius: 25px; padding: 2rem; box-shadow: 0 8px 20px rgba(0,0,0,0.07); display: flex; flex-direction: column; align-items: center; gap: 1rem; position: relative; border: 3px solid transparent; }
+.card.featured { border-color: var(--color-jackboo-primary-orange); box-shadow: 0 10px 25px rgba(255, 140, 0, 0.2); }
+.featuredBadge { position: absolute; top: -15px; background-color: var(--color-jackboo-yellow-highlight); color: var(--color-text-dark-blue); font-family: var(--font-mali); font-weight: 700; padding: 0.5rem 1rem; border-radius: 10px; transform: rotate(3deg); }
+.planName { font-family: var(--font-luckiest-guy); font-size: 2.2rem; color: var(--color-text-dark-blue); }
+.price { font-family: var(--font-mali); font-weight: 700; font-size: 2.5rem; color: var(--color-jackboo-primary-orange); }
+.frequency { font-size: 1.2rem; opacity: 0.8; }
+.description { font-family: var(--font-mali); font-size: 1rem; color: var(--color-text-dark-blue); opacity: 0.8; min-height: 45px; }
+.benefitsList { list-style: none; padding: 0; margin: 1rem 0; text-align: left; width: 100%; font-family: var(--font-mali); font-size: 1.1rem; color: var(--color-text-dark-blue); }
+.benefitsList li { margin-bottom: 0.5rem; }
+.chooseButton { background-color: var(--color-jackboo-primary-orange); color: white; padding: 1rem 2.5rem; border-radius: 50px; font-family: var(--font-mali); font-weight: 700; font-size: 1.2rem; border: none; cursor: pointer; margin-top: 1rem; }

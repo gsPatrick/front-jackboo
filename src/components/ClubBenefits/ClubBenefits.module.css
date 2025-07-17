@@ -1,0 +1,8 @@
+/* src/components/ClubBenefits/ClubBenefits.module.css */
+.section { padding: 5rem 2rem; background-color: var(--color-jackboo-beige-ultra-light); text-align: center; }
+.sectionTitle { font-family: var(--font-luckiest-guy); font-size: 3rem; color: var(--color-text-dark-blue); margin-bottom: 3rem; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
+.card { background-color: white; border-radius: 20px; padding: 2rem; box-shadow: 0 8px 20px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.iconWrapper { background-color: var(--color-jackboo-blue-lightest); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--color-jackboo-primary-orange); }
+.cardTitle { font-family: var(--font-mali); font-weight: 700; font-size: 1.5rem; color: var(--color-text-dark-blue); }
+.cardDescription { font-family: var(--font-mali); font-size: 1rem; color: var(--color-text-dark-blue); opacity: 0.8; }

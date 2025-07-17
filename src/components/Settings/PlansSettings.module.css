@@ -1,0 +1,172 @@
+/* src/components/Settings/PlansSettings.module.css */
+
+.plansContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+}
+
+.sectionTitle {
+  font-family: var(--font-luckiest-guy);
+  font-size: 2.5rem;
+  color: var(--color-text-dark-blue);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* Informações do Plano Atual */
+.currentPlanInfo {
+    background-color: var(--color-jackboo-orange-lightest);
+    border: 2px solid var(--color-jackboo-light-orange);
+    border-radius: 15px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1rem;
+    width: 100%;
+    max-width: 500px; /* Aumentado um pouco para mais detalhes */
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+     text-align: left; /* Alinha o texto dentro do card */
+}
+
+.currentPlanInfo p,
+.currentPlanInfo li {
+    font-family: var(--font-mali);
+    font-size: 1.1rem;
+    color: var(--color-text-dark-blue);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.planStatusRow {
+    font-weight: 700;
+     /* Adicionado padding inferior para separar do resto */
+    padding-bottom: 0.8rem;
+     border-bottom: 1px dashed var(--color-jackboo-light-orange);
+     margin-bottom: 0.8rem !important;
+}
+
+.planStatusIcon {
+    font-size: 1.2rem;
+}
+.planStatusText {
+    font-weight: 700;
+     /* Cores definidas inline no JS para flexibilidade */
+}
+
+
+.planDetailRow {
+     /* Estilo base definido acima */
+}
+
+.planIcon {
+    color: var(--color-jackboo-primary-orange);
+     font-size: 1.1rem;
+}
+.planNameText, .planPriceText, .planBillingDateText {
+    font-weight: 700;
+}
+
+/* Benefícios do Plano */
+.planBenefits {
+    margin-top: 1rem;
+     padding-top: 1rem;
+    border-top: 1px dashed var(--color-jackboo-light-orange);
+}
+.planBenefits h4 {
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--color-text-dark-blue);
+    margin: 0 0 0.8rem 0;
+}
+.planBenefits ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.planBenefitIcon {
+    color: var(--color-text-dark-green); /* Cor para o checkmark */
+    font-weight: 700;
+}
+
+
+/* Botão Desativar */
+.deactivateButton {
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0.6rem 1.5rem;
+    border: 2px solid #ff0000;
+    border-radius: 50px;
+    cursor: pointer;
+    background-color: white;
+    color: #ff0000;
+    margin-top: 1.5rem;
+    align-self: center; /* Centraliza o botão */
+     transition: all 0.2s ease;
+}
+.deactivateButton:hover {
+    background-color: #ff0000;
+    color: white;
+}
+
+
+.explorePlansText {
+    font-family: var(--font-mali);
+    font-size: 1.2rem;
+    color: var(--color-text-dark-blue);
+    opacity: 0.9;
+    margin-bottom: 1rem;
+}
+
+.viewClubButton {
+  font-family: var(--font-mali);
+  font-weight: 700;
+  font-size: 1.2rem;
+  padding: 1rem 2.5rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  background-color: var(--color-jackboo-primary-orange);
+  color: white;
+  margin-top: 1rem;
+  box-shadow: 0 5px 15px rgba(255, 140, 0, 0.4);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .sectionTitle {
+        font-size: 2rem;
+    }
+    .currentPlanInfo {
+        padding: 1.2rem 1.5rem;
+        max-width: 100%;
+    }
+    .currentPlanInfo p,
+    .currentPlanInfo li {
+        font-size: 1rem;
+    }
+     .planBenefits h4 {
+         font-size: 1.1rem;
+     }
+    .explorePlansText {
+        font-size: 1.1rem;
+    }
+     .viewClubButton {
+        font-size: 1.1rem;
+        padding: 0.8rem 2rem;
+     }
+     .deactivateButton {
+         font-size: 0.9rem;
+         padding: 0.5rem 1.2rem;
+     }
+}

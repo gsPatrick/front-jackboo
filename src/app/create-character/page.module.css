@@ -1,0 +1,32 @@
+/* src/app/create-character/page.module.css */
+.main {
+    padding: 4rem 2rem;
+    background-color: var(--color-jackboo-beige-ultra-light); /* Cor padrão */
+    transition: background-color 0.5s ease;
+}
+
+/* NOVO: Estilo para quando estiver na etapa de preview */
+.main.previewBackground {
+    padding: 0; /* Remove padding para o fundo ocupar tudo */
+    background-image: url('/images/cover.png');
+    background-size: cover;
+    background-position: center bottom;
+    min-height: calc(100vh - 80px); /* Ocupa a altura da tela menos o header */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.pageTitle {
+  font-family: var(--font-luckiest-guy);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  color: var(--color-text-dark-blue);
+  text-align: center;
+  margin-bottom: 3rem;
+}

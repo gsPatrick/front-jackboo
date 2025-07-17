@@ -1,0 +1,92 @@
+/* src/app/settings/page.module.css */
+.main {
+  padding: 4rem 2rem;
+  background-color: var(--color-jackboo-beige-ultra-light); /* Fundo suave */
+  min-height: calc(100vh - 80px); /* Ocupa a altura da tela menos o header */
+}
+
+.container {
+  max-width: 1000px; /* Container levemente maior que o perfil, para caber a sidebar */
+  margin: 0 auto;
+  width: 100%;
+}
+
+.pageTitle {
+  font-family: var(--font-luckiest-guy);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  color: var(--color-text-dark-blue);
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.highlight {
+  position: relative;
+  display: inline-block;
+  color: var(--color-jackboo-primary-orange);
+}
+
+.highlight::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: -5%;
+  width: 110%;
+  height: 18px;
+  background-color: var(--color-jackboo-yellow-highlight);
+  opacity: 0.9;
+  z-index: -1;
+  border-radius: 5px;
+  transform: rotate(-1.5deg);
+}
+
+/* --- NOVO: LAYOUT COM SIDEBAR E CONTEÚDO --- */
+.settingsLayout {
+    display: grid;
+    grid-template-columns: 250px 1fr; /* Coluna para sidebar e coluna para conteúdo */
+    gap: 2.5rem;
+    align-items: flex-start; /* Alinha os itens no topo */
+}
+
+.contentArea {
+    background-color: white;
+    border-radius: 25px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+    padding: 2.5rem; /* Padding interno para a área de conteúdo */
+    min-height: 500px; /* Altura mínima para a área de conteúdo */
+     position: relative; /* Necessário para a transição de saída dos filhos AnimatePresence */
+     overflow: hidden; /* Esconde o conteúdo que sai durante a transição */
+}
+
+/* Wrapper para o conteúdo da seção que entra/sai (para dar padding e sombra) */
+.sectionContentWrapper {
+    width: 100%;
+    height: 100%;
+    /* O conteúdo real das sections (ProfileSettings, etc.) terá padding interno */
+}
+
+
+/* --- REMOVIDOS ESTILOS ANTIGOS DA NAVEGAÇÃO EM ABAS --- */
+/*
+.tabsContainer { ... }
+.tabButton { ... }
+.tabButton:hover:not(.active) { ... }
+.tabButton.active { ... }
+.tabContent { ... }
+*/
+
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .pageTitle {
+        font-size: 2rem;
+    }
+    .settingsLayout {
+        grid-template-columns: 1fr; /* Sidebar e conteúdo empilhados em mobile */
+        gap: 2rem;
+    }
+     /* Sidebar ficará no topo por padrão com flex-direction column */
+
+     .contentArea {
+        padding: 1.5rem; /* Padding menor em mobile */
+     }
+}
