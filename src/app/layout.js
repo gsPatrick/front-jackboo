@@ -1,8 +1,9 @@
 // src/app/layout.js
 import './globals.css';
 import { Luckiest_Guy, Mali } from 'next/font/google';
-import Header from '@/components/Header/Header'; // Importe o Header aqui
+import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
+import { AuthProvider } from '@/contexts/AuthContext'; // <-- IMPORTAR O PROVIDER
 
 const luckiestGuy = Luckiest_Guy({
   subsets: ['latin'],
@@ -25,9 +26,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="pt-BR">
       <body className={`${luckiestGuy.variable} ${mali.variable}`}>
-        <Header /> {/* Adicione o Header aqui */}
-        <main>{children}</main> {/* O conteúdo da página ficará dentro de <main> */}
-        <Footer />
+        <AuthProvider> {/* --- ENVOLVE TUDO COM O PROVIDER --- */}
+          <Header />
+          <main>{children}</main>
+          <Footer />
+        </AuthProvider> {/* --- FECHA O PROVIDER --- */}
       </body>
     </html>
   );

@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation'; // Necessário para redirecionamento
+import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
 
@@ -49,10 +49,13 @@ export default function LoginPage() {
 
             console.log('Login bem-sucedido:', data);
 
-            // Simulação de sucesso: Salvar token e dados do usuário (realmente necessário em uma app)
-            // localStorage.setItem('token', data.token);
-            // localStorage.setItem('user', JSON.stringify(data.user));
-            alert('Login bem-sucedido! (Na aplicação real, você seria redirecionado)');
+            // --- CORREÇÃO AQUI: DESCOMENTE AS LINHAS ABAIXO ---
+            // Salvar token e dados do usuário no localStorage
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify(data.user)); // Para salvar a role e outros dados do usuário
+            // --- FIM DA CORREÇÃO ---
+            
+            alert('Login bem-sucedido!'); // Mantenha o alert se desejar
 
             // Redireciona para a área administrativa após o login
             router.push('/admin');

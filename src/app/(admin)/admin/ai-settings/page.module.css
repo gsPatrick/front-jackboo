@@ -126,6 +126,18 @@
     color: var(--color-text-red-heart);
 }
 
+/* Mensagens de status (NOVO) */
+.loadingMessage, .errorMessage, .emptyMessage {
+    font-family: var(--font-mali);
+    color: #6c757d;
+    text-align: center;
+    padding: 2rem;
+}
+.errorMessage {
+    color: var(--color-text-red-heart);
+}
+
+
 @media (max-width: 768px) {
     .main {
         padding: 1rem;

@@ -33,7 +33,8 @@
 
 .settingsGrid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    /* Alterado para 3 colunas em telas grandes */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
     gap: 2rem;
     align-items: start;
 }
@@ -87,7 +88,12 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    padding: 0 1.5rem; /* Adicionado padding para os formGroups no card */
 }
+/* Removendo padding dos formGroup diretos para usar o padding do container */
+.settingCard .formGroup:first-child { padding-top: 1.5rem; }
+.settingCard .formGroup:last-of-type { padding-bottom: 1.5rem; }
+
 
 .formGroup label {
     font-family: var(--font-mali);

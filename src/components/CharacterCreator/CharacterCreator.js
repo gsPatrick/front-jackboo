@@ -1,7 +1,7 @@
-// src/components/CharacterCreator/CharacterCreator.js
+
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './CharacterCreator.module.css';
@@ -9,6 +9,10 @@ import { FaCamera, FaImages, FaCheck } from 'react-icons/fa';
 import InfoModal from '../InfoModal/InfoModal';
 import StoryFormModal from '../StoryFormModal/StoryFormModal';
 import WarningModal from '../WarningModal/WarningModal';
+import { useAuth } from '@/contexts/AuthContext';
+import { authService, contentService } from '@/services/api';
+
+const API_BASE_URL = 'https://geral-jackboo.r954jc.easypanel.host';
 
 // Componente Spinner de Carregamento
 const LoadingSpinner = () => (
@@ -45,123 +49,161 @@ const mainStep1Variants = {
     exit: { opacity: 0, y: -30, transition: { duration: 0.3 } },
 };
 
-
 const CharacterCreator = ({ onCreationComplete }) => {
-  // step1Substate: 'upload', 'loading', 'reveal', 'naming'
+  const { user, login, isLoading: isAuthLoading } = useAuth();
+  const fileInputRef = useRef(null);
+
   const [step1Substate, setStep1Substate] = useState('upload');
-  const [currentStep, setCurrentStep] = useState(1); // 1: Passo 1, 2: Escolha de Livro
-  const [characterName, setCharacterName] = useState(''); // Nome final do personagem/criança
+  const [currentStep, setCurrentStep] = useState(1);
+  const [characterName, setCharacterName] = useState('');
+  const [generatedImageUrl, setGeneratedImageUrl] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
 
-  // Estado para controlar a abertura do InfoModal NA ETAPA 1 (mantido)
   const [isInitialInfoModalOpen, setIsInitialInfoModalOpen] = useState(false);
-
-  // Estados existentes para outros modais (na Etapa 2)
-  // REMOVIDO: const [isInfoModalOpen, setIsInfoModalOpen] = useState(false); // Este era o InfoModal NA ETAPA 2
   const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
   const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
 
-  // REMOVIDO: Estado para saber qual livro foi escolhido antes do InfoModal (Etapa 2)
-  // const [chosenBookType, setChosenBookType] = useState(null);
+  const submitCharacter = async (file) => {
+    if (!file) {
+      alert("Nenhum arquivo selecionado para upload.");
+      return;
+    }
 
+    setStep1Substate('loading');
+    
+    // CORREÇÃO: Criação robusta do FormData
+    const formData = new FormData();
+    // O nome do campo 'drawing' DEVE corresponder ao que o Multer espera no backend.
+    formData.append('drawing', file, file.name);
 
-  // Efeito para controlar o timer da revelação
+    try {
+      const newCharacter = await contentService.createCharacter(formData);
+      
+      console.log('Personagem criado com sucesso:', newCharacter);
+      setCharacterName(newCharacter.name);
+
+      // CORREÇÃO: Construção da URL completa para exibição
+      if (newCharacter.generatedCharacterUrl && newCharacter.generatedCharacterUrl.startsWith('/uploads')) {
+        setGeneratedImageUrl(`${API_BASE_URL}${newCharacter.generatedCharacterUrl}`);
+      } else {
+        setGeneratedImageUrl('/images/character-placeholder.png');
+        console.warn("URL da imagem gerada é inválida:", newCharacter.generatedCharacterUrl);
+      }
+      
+      setStep1Substate('reveal');
+    } catch (error) {
+      console.error("Erro ao criar personagem:", error);
+      alert(`Falha ao criar o personagem: ${error.message}`);
+      handleTryAgain();
+    }
+  };
+
+  useEffect(() => {
+    if (selectedFile && !isAuthLoading) {
+      if (user) {
+        submitCharacter(selectedFile);
+      } else {
+        setIsInitialInfoModalOpen(true);
+      }
+    }
+  }, [selectedFile, isAuthLoading, user]);
+
   useEffect(() => {
     if (step1Substate === 'reveal') {
       const timer = setTimeout(() => {
-        setStep1Substate('naming'); // Vai para a etapa de dar nome após a revelação
-      }, 5000); // 5 segundos
-
+        setStep1Substate('naming');
+      }, 5000);
       return () => clearTimeout(timer);
     }
   }, [step1Substate]);
 
-  // handleUpload AGORA abre o InfoModal inicial (mantido)
-  const handleUpload = () => {
-    setIsInitialInfoModalOpen(true); // Abre o InfoModal inicial
-    // O fluxo continua no onComplete do modal
-  };
-
-  // Função callback para quando o InfoModal INICIAL for concluído (mantido)
-  const handleInitialInfoComplete = (formData) => { // Recebe os dados do modal
-      console.log("Dados iniciais do modal:", formData);
-      setIsInitialInfoModalOpen(false); // Fecha o modal inicial
-      setCharacterName(formData.name.trim()); // Salva o nome da criança
-      // Aqui você pode salvar outros dados do formData se necessário
-
-      setStep1Substate('loading'); // Inicia o estado de loading
-
-      // Simula o upload/processamento após o nome e dados serem confirmados
-      setTimeout(() => {
-        setStep1Substate('reveal'); // Transita para o estado de revelação
-      }, 2500); // Tempo de carregamento simulado
-  };
-
-  // Função callback para quando o InfoModal INICIAL for fechado (cancelado) (mantido)
-  const handleInitialInfoClose = () => {
-      console.log("InfoModal inicial fechado/cancelado");
-      setIsInitialInfoModalOpen(false); // Fecha o modal
-      // O estado do substate deve permanecer 'upload' se ele clicou em upload e cancelou
-      // Não precisa fazer nada aqui, o estado já está como 'upload'
-  };
-
-
-  const handleCreateCharacter = () => {
-    // Este botão agora só aparece no subestado 'naming'
-    if (characterName.trim() !== '') { // O nome já foi validado e salvo antes
-      setCurrentStep(2); // Avança para o Passo 2 (Escolha de Livro)
+  const handleFileSelect = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      console.log("Arquivo selecionado pelo usuário:", file);
+      setSelectedFile(file);
     }
   };
 
-  // REMOVIDO: Funções que iniciavam o fluxo dos modais na ETAPA 2
-  // const handleOpenInfoModalForColoring = () => { ... }
-  // const handleOpenInfoModalForStory = () => { ... }
-  // REMOVIDO: Lógica de prosseguimento após o InfoModal (ETAPA 2)
-  // const handleInfoModalComplete = (formData) => { ... }
+  const handleInitialInfoComplete = async (formData) => {
+    setIsRegistering(true);
+    try {
+      const registrationData = {
+        fullName: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        birthDate: formData.birthDate,
+        nickname: formData.name.split(' ')[0] + Math.floor(Math.random() * 100),
+        password: 'password123',
+      };
+      await authService.register(registrationData);
+      const loginData = await authService.login(registrationData.email, registrationData.password);
+      login(loginData.user, loginData.token);
+      
+      setIsInitialInfoModalOpen(false);
+    } catch (error) {
+      console.error("Erro no fluxo de cadastro/criação:", error);
+      alert(`Falha no processo: ${error.message}`);
+    } finally {
+      setIsRegistering(false);
+    }
+  };
 
+  const handleInitialInfoClose = () => {
+    setIsInitialInfoModalOpen(false);
+    setSelectedFile(null);
+  };
 
-  // Confirmação do WarningModal: abre o StoryFormModal (mantida)
+  const handleCreateCharacter = () => {
+    if (characterName && characterName.trim() !== '') {
+      setCurrentStep(2);
+    }
+  };
+
+  const handleTryAgain = () => {
+    setCharacterName('');
+    setGeneratedImageUrl('');
+    setSelectedFile(null);
+    setStep1Substate('upload');
+  };
+
   const handleWarningConfirm = () => {
     setIsWarningModalOpen(false);
     setIsStoryModalOpen(true);
   };
 
-  // Finalização do StoryFormModal: vai para o BookPreview (mantida)
   const handleStoryFormComplete = () => {
     setIsStoryModalOpen(false);
-    onCreationComplete(); // Vai para o preview
+    onCreationComplete();
   };
-
-  // Lógica para "Tentar Novamente" (mantida)
-  const handleTryAgain = () => {
-      console.log("Tentar novamente clicado");
-      // Reseta os estados relevantes para voltar à tela inicial do Passo 1
-      setCharacterName('');
-      setStep1Substate('upload'); // Volta para a tela de upload
-  };
-
 
   return (
     <>
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileSelect}
+        accept="image/*"
+        style={{ display: 'none' }}
+      />
+
       <AnimatePresence mode="wait">
-        {/* Container principal do Passo 1 */}
-        {/* Usamos uma única AnimatePresence e motion.div para o conteúdo principal do Passo 1 */}
         {currentStep === 1 && (
             <motion.div
-                key="step1-main-content" // Chave para a AnimatePresence externa
+                key="step1-main-content"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5 }}
                 style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
             >
-                {/* --- Conteúdo que muda DENTRO do Passo 1 (Baseado no step1Substate) --- */}
                 <AnimatePresence mode="wait">
                     {step1Substate === 'reveal' ? (
-                        // --- SUB-ESTADO: REVELAÇÃO (Full-width) ---
                         <motion.div
-                            key="reveal-state-single" // Chave única dentro desta AnimatePresence
+                            key="reveal-state-single"
                             className={styles.characterRevealContainer}
-                            variants={mainStep1Variants} // Usa as variantes para a transição
+                            variants={mainStep1Variants}
                             initial="initial"
                             animate="animate"
                             exit="exit"
@@ -171,49 +213,45 @@ const CharacterCreator = ({ onCreationComplete }) => {
                                  animate={{ y: ['0%', '-3%', '0%'], rotate: [-0.5, 0.5, -0.5] }}
                                  transition={{ y: { duration: 4, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }, rotate: { duration: 5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' } }}
                              >
-                                 {/* Usando imagem gerada mockada */}
-                                 <Image src="/images/character-generated.png" alt="Seu Personagem Mágico!" width={400} height={400} className={styles.characterRevealImage} />
+                                 <Image src={generatedImageUrl || '/images/character-placeholder.png'} alt="Seu Personagem Mágico!" width={400} height={400} className={styles.characterRevealImage} unoptimized />
                              </motion.div>
-                             <motion.p // Mensagem personalizada com o nome
+                             <motion.p
                                  initial={{ opacity: 0, y: 20 }}
                                  animate={{ opacity: 1, y: 0, transition: { delay: 0.5, duration: 0.5 } }}
                                  className={styles.revealMessage}
                              >
-                                 {/* Usa o nome da criança aqui! */}
                                  Oi, <span className={styles.highlightName}>{characterName}</span>! <br/>Estava ansioso pra te conhecer... Vamos brincar juntos?!
                              </motion.p>
                         </motion.div>
                     ) : (
-                        // --- SUB-ESTADOS: UPLOAD, LOADING, NAMING (Grid Layout) ---
-                         // Renders when not in 'reveal' state
                         <motion.div
-                            key="grid-state-single" // Chave única dentro desta AnimatePresence
+                            key="grid-state-single"
                              className={styles.grid}
-                             variants={mainStep1Variants} // Usa as variantes para a transição
+                             variants={mainStep1Variants}
                              initial="initial"
                              animate="animate"
                              exit="exit"
                         >
                             <div className={styles.leftColumn}>
-                                {/* Exibe imagem correta dependendo do sub-estado */}
                                 {step1Substate === 'upload' || step1Substate === 'loading' ? (
                                     <Image src="/images/bear-upload.png" alt="JackBoo pedindo para enviar um desenho" width={300} height={300} className={styles.mainImage} />
-                                ) : ( // step1Substate === 'naming'
+                                ) : (
                                     <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}>
-                                         <Image src="/images/character-generated.png" alt="Personagem gerado" width={250} height={250} className={styles.mainImage} />
+                                         <Image src={generatedImageUrl || '/images/character-placeholder.png'} alt="Personagem gerado" width={250} height={250} className={styles.mainImage} unoptimized />
                                     </motion.div>
                                 )}
 
-                                {/* Botões de upload só aparecem no subestado 'upload' */}
                                 {step1Substate === 'upload' && (
                                     <motion.div className={styles.actionButtons} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-                                        {/* Alterado onClick para chamar handleUpload diretamente */}
-                                        <motion.button className={styles.primaryButton} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={handleUpload}><FaCamera/><span>Tirar Foto</span></motion.button>
-                                        <motion.button className={styles.secondaryButton} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={handleUpload}><FaImages/><span>Galeria</span></motion.button>
+                                        <motion.button className={styles.primaryButton} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => fileInputRef.current.click()} disabled={isAuthLoading}>
+                                          <FaCamera/><span>{isAuthLoading ? 'Verificando...' : 'Tirar Foto'}</span>
+                                        </motion.button>
+                                        <motion.button className={styles.secondaryButton} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => fileInputRef.current.click()} disabled={isAuthLoading}>
+                                          <FaImages/><span>{isAuthLoading ? 'Verificando...' : 'Galeria'}</span>
+                                        </motion.button>
                                     </motion.div>
                                 )}
 
-                                {/* Botão Tentar Novamente só aparece no subestado 'naming' */}
                                 {step1Substate === 'naming' && (
                                      <motion.div className={styles.actionButtons} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
                                          <motion.button
@@ -227,14 +265,13 @@ const CharacterCreator = ({ onCreationComplete }) => {
                                      </motion.div>
                                  )}
 
-                                {/* Botão principal "Criar Livro" só aparece na etapa 'naming' */}
                                 {step1Substate === 'naming' && (
                                     <motion.button
                                         className={styles.mainCtaButton}
                                         whileHover={{ scale: 1.05, y: -2 }}
                                         whileTap={{ scale: 0.95 }}
                                         onClick={handleCreateCharacter}
-                                        disabled={characterName.trim() === ''} // Desabilita se o nome estiver vazio
+                                        disabled={!characterName || characterName.trim() === ''}
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0, transition: { delay: 0.3 } }}
                                     >
@@ -244,7 +281,6 @@ const CharacterCreator = ({ onCreationComplete }) => {
                             </div>
 
                             <div className={`${styles.rightColumn} ${styles.nameCard}`}>
-                                {/* AnimatePresence INTERNA para animar o conteúdo DENTRO do NameCard */}
                                 <AnimatePresence mode="wait">
                                     {step1Substate === 'upload' && (
                                         <motion.div key="upload-card" className={styles.placeholderText} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -259,8 +295,8 @@ const CharacterCreator = ({ onCreationComplete }) => {
                                                 id="characterName"
                                                 type="text"
                                                 className={styles.nameInput}
-                                                value={characterName} // Usa o nome final aqui
-                                                onChange={(e) => setCharacterName(e.target.value)} // Permite editar
+                                                value={characterName}
+                                                onChange={(e) => setCharacterName(e.target.value)}
                                                 placeholder="Digite o nome aqui..."
                                             />
                                         </motion.div>
@@ -270,46 +306,33 @@ const CharacterCreator = ({ onCreationComplete }) => {
                         </motion.div>
                     )}
                 </AnimatePresence>
-
             </motion.div>
         )}
 
-        {/* Passo 2: Escolha do Livro (mantido em outra AnimatePresence pois é um passo diferente) */}
         {currentStep === 2 && (
             <motion.div key="step2" className={styles.productChoiceGrid} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5 }}>
                 <div className={styles.productCard}>
                     <h3 className={styles.productTitle}>Livro de Colorir</h3>
                     <Image src="/images/book-coloring.png" alt="Livro de Colorir" width={180} height={180}/>
                     <p className={styles.productDescription}>Use o desenho da criança para gerar um livro cheio de páginas para colorir</p>
-                    {/* Alterado onClick para chamar onCreationComplete diretamente */}
                     <motion.button className={styles.productButton} onClick={onCreationComplete} whileHover={{scale: 1.05}} whileTap={{scale: 0.95}}>Criar</motion.button>
                 </div>
                 <div className={styles.productCard}>
                     <h3 className={styles.productTitle}>História Ilustrada</h3>
                     <Image src="/images/book-story.png" alt="História Ilustrada" width={180} height={180}/>
                     <p className={styles.productDescription}>Transforme seu personagem em uma história ilustrada e personalizada.</p>
-                    {/* Alterado onClick para chamar setIsWarningModalOpen(true) diretamente */}
                     <motion.button className={styles.productButton} onClick={() => setIsWarningModalOpen(true)} whileHover={{scale: 1.05}} whileTap={{scale: 0.95}}>Conte sua história</motion.button>
                 </div>
             </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Modais (renderizados condicionalmente E FORA da AnimatePresence principal do passo) */}
-      {/* InfoModal para a etapa INICIAL (Passo 1) (mantido) */}
       <InfoModal
         show={isInitialInfoModalOpen}
-        onClose={handleInitialInfoClose} // Usa a função de fechar específica para a etapa inicial
-        onComplete={handleInitialInfoComplete} // Usa a função de completar específica para a etapa inicial
+        onClose={handleInitialInfoClose}
+        onComplete={handleInitialInfoComplete}
+        isCompleting={isRegistering}
       />
-      {/* REMOVIDO: InfoModal para a etapa SECUNDÁRIA (Passo 2) */}
-      {/*
-      <InfoModal
-        show={isInfoModalOpen}
-        onClose={() => setIsInfoModalOpen(false)}
-        onComplete={handleInfoModalComplete}
-      />
-      */}
       <WarningModal
         show={isWarningModalOpen}
         onClose={() => setIsWarningModalOpen(false)}
@@ -317,9 +340,9 @@ const CharacterCreator = ({ onCreationComplete }) => {
       />
       <StoryFormModal
         show={isStoryModalOpen}
-        onClose={() => setIsStoryModalOpen(false)} // Corrigido nome da função
+        onClose={() => setIsStoryModalOpen(false)}
         onComplete={handleStoryFormComplete}
-        characterImage="/images/character-generated.png" // Passa a imagem gerada mockada
+        characterImage="/images/character-generated.png"
       />
     </>
   );

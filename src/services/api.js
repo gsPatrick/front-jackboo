@@ -1,102 +1,117 @@
 // src/services/api.js
 
-// Importa funções de navegação ou manipulação de estado global se necessário
-// Ex: import { useRouter } from 'next/navigation';
-// Ex: import { useAuthStore } from '@/store/authStore';
-
 const API_BASE_URL = 'https://geral-jackboo.r954jc.easypanel.host/api';
 
-// Função para obter o token de autenticação (deve vir do seu estado global/local storage)
+// --- Callback global para deslogar em caso de erro 401 ---
+let onUnauthorizedCallback = () => {};
+export const setOnUnauthorizedCallback = (callback) => {
+  onUnauthorizedCallback = callback;
+};
+// -----------------------------------------------------------
+
 const getToken = () => {
-  // Lógica para buscar o token. Ex:
-  // return localStorage.getItem('token');
-  // Ou de um store global:
-  // const token = useAuthStore.getState().token; return token;
-  // Por enquanto, vamos retornar um placeholder
-  console.warn("getToken() precisa ser implementado para buscar o token de autenticação.");
-  return null; // Retorna null se não houver token
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('token');
+  }
+  return null;
 };
 
-// Função genérica para lidar com chamadas de API
+// Função genérica para todas as chamadas de API
 const apiRequest = async (endpoint, options = {}) => {
   const token = getToken();
   const headers = {
-    'Content-Type': 'application/json',
-    ...(token && { 'Authorization': `Bearer ${token}` }), // Adiciona o header de autorização se o token existir
-    ...options.headers, // Permite adicionar outros headers customizados
+    ...(token && { 'Authorization': `Bearer ${token}` }),
+    ...options.headers,
   };
+
+  let requestBody = options.body;
+
+  if (requestBody instanceof FormData) {
+    // Para FormData, o navegador define o Content-Type automaticamente com o boundary
+  } else if (requestBody && typeof requestBody === 'object') {
+    headers['Content-Type'] = 'application/json';
+    requestBody = JSON.stringify(requestBody);
+  }
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
     headers,
+    body: requestBody,
   });
 
-  // Trata erros HTTP e respostas não-JSON
   if (!response.ok) {
+    if (response.status === 401) {
+      console.log("API retornou 401 Unauthorized. Chamando callback de logout.");
+      onUnauthorizedCallback();
+    }
+    
     let errorData;
     try {
       errorData = await response.json();
     } catch (e) {
-      // Se a resposta não for JSON (ex: 204 No Content, ou erro de servidor sem corpo JSON)
-      errorData = { message: response.statusText || 'Erro desconhecido' };
+      errorData = { message: response.statusText || 'Erro desconhecido na API' };
     }
-    console.error(`Erro na API ${endpoint}:`, errorData);
-    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    console.error(`Erro na API ${endpoint} [${response.status}]:`, errorData);
+    throw new Error(errorData.message || `Erro ${response.status} ao chamar ${endpoint}`);
   }
 
-  // Retorna os dados JSON, ou null se for uma resposta sem conteúdo (ex: 204)
   return response.status === 204 ? null : await response.json();
 };
 
-// --- ENDPOINTS ESPECÍFICOS ---
 
-// Autenticação e Usuário
+// --- SERVIÇO DE AUTENTICAÇÃO ---
 export const authService = {
-  register: async (userData) => {
-    return apiRequest('/auth/register', {
-      method: 'POST',
-      body: JSON.stringify(userData),
-    });
-  },
-  login: async (email, password) => {
-    return apiRequest('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    });
-  },
-  // Adicionar aqui outras funções de auth conforme a documentação (registerAdmin, getUsers, getUserById, etc.)
-  // Exemplo:
-  // getAllUsers: async () => {
-  //   return apiRequest('/auth/users', { method: 'GET' });
-  // },
-  // getUserById: async (id) => {
-  //   return apiRequest(`/auth/users/${id}`, { method: 'GET' });
-  // },
-  // updateUser: async (id, userData) => {
-  //    return apiRequest(`/auth/users/${id}`, { method: 'PUT', body: JSON.stringify(userData) });
-  // },
-  // deleteUser: async (id) => {
-  //      return apiRequest(`/auth/users/${id}`, { method: 'DELETE' });
-  // },
+  register: (userData) => apiRequest('/auth/register', { method: 'POST', body: userData }),
+  login: (email, password) => apiRequest('/auth/login', { method: 'POST', body: { email, password } }),
+  getUserProfile: () => apiRequest('/auth/profile', { method: 'GET' }),
+  getSettings: () => apiRequest('/auth/settings', { method: 'GET' }),
+  updateSetting: (key, value) => apiRequest(`/auth/settings/${key}`, { method: 'PUT', body: { value } }),
 };
 
-// Outros serviços podem ser adicionados aqui conforme a necessidade:
-// export const addressService = { ... };
-// export const shopService = { ... };
-// export const contentService = { ... };
-// ... etc.
+// --- SERVIÇO DE CONTEÚDO (Personagens/Livros do Usuário) ---
+export const contentService = {
+  createCharacter: (formData) => apiRequest('/content/characters', { method: 'POST', body: formData }),
+  getMyCharacters: () => apiRequest('/content/characters', { method: 'GET' }),
+  deleteCharacter: (id) => apiRequest(`/content/characters/${id}`, { method: 'DELETE' }),
+  createColoringBook: (bookData) => apiRequest('/content/books/create-coloring', { method: 'POST', body: bookData }),
+  createStoryBook: (bookData) => apiRequest('/content/books/create-story', { method: 'POST', body: bookData }),
+  getMyBooks: () => apiRequest('/content/books', { method: 'GET' }),
+};
 
-// --- Dicas para Implementação ---
-// 1. Gerenciamento de Token: A função `getToken` é crucial. Certifique-se de que ela
-//    recupere o token armazenado corretamente (localStorage, Context API, Zustand, etc.)
-//    e que seja chamada sempre que `apiRequest` for usar autenticação.
-// 2. Tratamento de Erros: A função `apiRequest` lança um erro em caso de resposta
-//    não-OK. Os componentes que chamam esses serviços devem usar `try...catch`
-//    para lidar com esses erros (ex: mostrar mensagem para o usuário).
-// 3. Configuração de Cabeçalhos: O `Content-Type` é definido como `application/json`
-//    por padrão. Para rotas que usam `multipart/form-data` (como criação de personagens
-//    ou submissão de desenhos), você precisará configurar o `Content-Type`
-//    especificamente na chamada da função (ex: `headers: { 'Content-Type': 'multipart/form-data' }`)
-//    e usar `JSON.stringify` apenas para corpos JSON. O `fetch` cuida disso para `multipart`.
-// 4. Mocking: Durante o desenvolvimento, você pode usar bibliotecas como `msw` (Mock Service Worker)
-//    para simular as respostas da API antes de ter os endpoints funcionando.
+// --- SERVIÇOS DE ADMIN ---
+
+export const adminCharactersService = {
+    listOfficialCharacters: () => apiRequest('/admin/characters', { method: 'GET' }),
+    createOfficialCharacter: (formData) => apiRequest('/admin/characters', { method: 'POST', body: formData }),
+    updateOfficialCharacter: (id, formData) => apiRequest(`/admin/characters/${id}`, { method: 'PUT', body: formData }),
+    deleteOfficialCharacter: (id) => apiRequest(`/admin/characters/${id}`, { method: 'DELETE' }),
+};
+
+export const adminTaxonomiesService = {
+  // Funções de listagem para formulários
+  listAllAiSettings: () => apiRequest('/admin/taxonomies/ai-settings', { method: 'GET' }),
+  listCategories: () => apiRequest('/admin/taxonomies/categories', { method: 'GET' }),
+  listAgeRatings: () => apiRequest('/admin/taxonomies/age-ratings', { method: 'GET' }),
+
+  // CRUD completo para Print Formats
+  listPrintFormats: () => apiRequest('/admin/taxonomies/print-formats', { method: 'GET' }),
+  createPrintFormat: (formatData) => apiRequest('/admin/taxonomies/print-formats', { method: 'POST', body: formatData }),
+  updatePrintFormat: (id, formatData) => apiRequest(`/admin/taxonomies/print-formats/${id}`, { method: 'PUT', body: formatData }),
+  deletePrintFormat: (id) => apiRequest(`/admin/taxonomies/print-formats/${id}`, { method: 'DELETE' }),
+};
+
+export const adminBookGeneratorService = {
+  generateBookPreview: (bookType, generationData) => apiRequest('/admin/generator/preview', { method: 'POST', body: { bookType, ...generationData } }),
+  regeneratePage: (pageId) => apiRequest(`/admin/generator/pages/${pageId}/regenerate`, { method: 'POST' }),
+  finalizeBook: (bookId) => apiRequest(`/admin/generator/books/${bookId}/finalize`, { method: 'POST' }),
+};
+
+// NOVO SERVIÇO PARA GERENCIAR LIVROS OFICIAIS (CRUD)
+export const adminBooksService = {
+    listOfficialBooks: (params = {}) => {
+        const query = new URLSearchParams(params).toString();
+        return apiRequest(`/admin/books${query ? `?${query}` : ''}`, { method: 'GET' });
+    },
+    getOfficialBookById: (id) => apiRequest(`/admin/books/${id}`, { method: 'GET' }), // <<-- CORRIGIDO: Agora está no serviço correto
+    deleteOfficialBook: (id) => apiRequest(`/admin/books/${id}`, { method: 'DELETE' }),
+};

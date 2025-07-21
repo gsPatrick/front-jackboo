@@ -1,56 +1,13 @@
 // src/app/admin/ai-settings/page.js
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './page.module.css';
 import { FaPlus, FaEdit, FaTrash, FaImages } from 'react-icons/fa';
 import AISettingFormModal from '@/components/Admin/AISettingFormModal/AISettingFormModal';
+import { adminAISettingsService } from '@/services/api'; 
 
-// --- DADOS MOCKADOS ATUALIZADOS ---
-const mockInitialSettings = [
-    {
-        id: '1',
-        name: 'Geração de Personagem Principal',
-        type: 'character_generation',
-        model: 'dall-e-3',
-        sizes: ['1024x1024'], // MODIFICADO: agora é um array
-        qualities: ['standard', 'hd'], // MODIFICADO: agora é um array
-        styles: ['vivid', 'cartoonish', 'soft'], // MODIFICADO: agora é um array
-        basePromptText: 'Crie um personagem adorável no estilo de um livro infantil, baseado no desenho de uma criança. O personagem deve ter olhos grandes e expressivos, um corpo fofo e ser amigável. Fundo branco.',
-        isActive: true,
-        adminAssets: [ // NOVO: campo para imagens de referência
-            { id: 'asset1', name: 'ref1.png', url: '/images/how-it-works/step1-draw.png' },
-            { id: 'asset2', name: 'ref2.png', url: '/images/how-it-works/step3-character.png' },
-        ],
-    },
-    {
-        id: '2',
-        name: 'Geração de Capa de Livro',
-        type: 'cover_generation',
-        model: 'dall-e-3',
-        sizes: ['1024x1792'], // MODIFICADO
-        qualities: ['hd'], // MODIFICADO
-        styles: ['natural', 'cinematic'], // MODIFICADO
-        basePromptText: 'Crie uma capa de livro infantil vibrante e mágica. O título do livro é [BOOK_TITLE] e o personagem principal é [CHARACTER_NAME]. O cenário é [LOCATION].',
-        isActive: true,
-        adminAssets: [], // NOVO
-    },
-    {
-        id: '3',
-        name: 'Geração de Página de Miolo (Inativo)',
-        type: 'page_generation',
-        model: 'dall-e-2',
-        sizes: ['1024x1024'], // MODIFICADO
-        qualities: ['standard'], // MODIFICADO
-        styles: [], // MODIFICADO
-        basePromptText: 'Ilustração para uma página de livro infantil. O personagem [CHARACTER_NAME] está [ACTION] no cenário [LOCATION].',
-        isActive: false,
-        adminAssets: [], // NOVO
-    },
-];
-
-// --- VARIANTES DE ANIMAÇÃO (sem alteração) ---
 const containerVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { staggerChildren: 0.05 } },
@@ -61,12 +18,32 @@ const itemVariants = {
 };
 
 export default function AiSettingsPage() {
-    const [settings, setSettings] = useState(mockInitialSettings);
+    const [settings, setSettings] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentSetting, setCurrentSetting] = useState(null);
 
+    const fetchSettings = async () => {
+        try {
+            setIsLoading(true);
+            setError(null);
+            const data = await adminAISettingsService.listSettings();
+            setSettings(data); 
+        } catch (err) {
+            console.error("Erro ao buscar configurações de IA:", err);
+            setError("Falha ao carregar configurações: " + err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchSettings();
+    }, []);
+
     const handleCreate = () => {
-        setCurrentSetting(null);
+        setCurrentSetting(null); 
         setIsModalOpen(true);
     };
 
@@ -75,20 +52,30 @@ export default function AiSettingsPage() {
         setIsModalOpen(true);
     };
 
-    const handleDelete = (settingId) => {
-        if (window.confirm('Tem certeza que deseja deletar esta configuração?')) {
-            setSettings(settings.filter(s => s.id !== settingId));
+    const handleDelete = async (typeToDelete) => {
+        if (window.confirm(`Tem certeza que deseja deletar a configuração "${typeToDelete}"? Esta ação não pode ser desfeita.`)) {
+            try {
+                await adminAISettingsService.deleteSetting(typeToDelete);
+                fetchSettings(); 
+                alert("Configuração deletada com sucesso!");
+            } catch (err) {
+                console.error("Erro ao deletar configuração:", err);
+                alert("Falha ao deletar configuração: " + err.message);
+            }
         }
     };
 
-    const handleSave = (settingData) => {
-        if (settingData.id) {
-            setSettings(settings.map(s => s.id === settingData.id ? settingData : s));
-        } else {
-            const newSetting = { ...settingData, id: Date.now().toString() };
-            setSettings([...settings, newSetting]);
+    const handleSave = async (type, settingData) => {
+        try {
+            await adminAISettingsService.createOrUpdateSetting(type, settingData);
+            fetchSettings(); 
+            alert("Configuração salva com sucesso!");
+        } catch (err) {
+            console.error("Erro ao salvar configuração:", err);
+            alert("Falha ao salvar configuração: " + err.message);
+        } finally {
+            setIsModalOpen(false); 
         }
-        setIsModalOpen(false);
     };
 
     return (
@@ -106,53 +93,64 @@ export default function AiSettingsPage() {
                     </motion.button>
                 </div>
 
-                <div className={styles.tableWrapper}>
-                    <table className={styles.table}>
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>Tipo</th>
-                                <th>Modelo</th>
-                                <th>Imagens</th> {/* NOVO */}
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <motion.tbody
-                            variants={containerVariants}
-                            initial="hidden"
-                            animate="visible"
-                        >
-                            <AnimatePresence>
-                                {settings.map(setting => (
-                                    <motion.tr key={setting.id} variants={itemVariants} exit={{ opacity: 0, x: -50 }}>
-                                        <td>{setting.name}</td>
-                                        <td>{setting.type}</td>
-                                        <td>{setting.model}</td>
-                                        {/* NOVO: Célula para contagem de imagens */}
-                                        <td className={styles.imageCountCell}>
-                                            <FaImages />
-                                            <span>{setting.adminAssets.length}</span>
-                                        </td>
-                                        <td>
-                                            <span className={`${styles.statusBadge} ${setting.isActive ? styles.active : styles.inactive}`}>
-                                                {setting.isActive ? 'Ativo' : 'Inativo'}
-                                            </span>
-                                        </td>
-                                        <td className={styles.actionsCell}>
-                                            <motion.button className={styles.actionButton} onClick={() => handleEdit(setting)} whileHover={{ scale: 1.1 }} title="Editar">
-                                                <FaEdit />
-                                            </motion.button>
-                                            <motion.button className={`${styles.actionButton} ${styles.deleteButton}`} onClick={() => handleDelete(setting.id)} whileHover={{ scale: 1.1 }} title="Deletar">
-                                                <FaTrash />
-                                            </motion.button>
-                                        </td>
-                                    </motion.tr>
-                                ))}
-                            </AnimatePresence>
-                        </motion.tbody>
-                    </table>
-                </div>
+                {isLoading && <p className={styles.loadingMessage}>Carregando configurações...</p>}
+                {error && <p className={styles.errorMessage}>{error}</p>}
+                {!isLoading && !error && settings.length === 0 && (
+                    <p className={styles.emptyMessage}>Nenhuma configuração de IA encontrada. Crie uma nova!</p>
+                )}
+
+                {!isLoading && !error && settings.length > 0 && (
+                    <div className={styles.tableWrapper}>
+                        <table className={styles.table}>
+                            <thead>
+                                <tr>
+                                    <th>Nome</th> {/* Agora exibe o nome amigável */}
+                                    <th>Tipo</th> {/* Exibe o identificador técnico */}
+                                    <th>Prompt Base</th>
+                                    <th>Modelo (Tamanho)</th>
+                                    <th>Estilo / Qualidade</th>
+                                    <th>Imagens Ref.</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <motion.tbody
+                                variants={containerVariants}
+                                initial="hidden"
+                                animate="visible"
+                            >
+                                <AnimatePresence>
+                                    {settings.map(setting => (
+                                        <motion.tr key={setting.id || setting.type} variants={itemVariants} exit={{ opacity: 0, x: -50 }}>
+                                            <td>{setting.name}</td> {/* Exibe o nome */}
+                                            <td>{setting.type}</td> {/* Exibe o tipo */}
+                                            <td>{setting.basePromptText.substring(0, 70)}{setting.basePromptText.length > 70 ? '...' : ''}</td>
+                                            <td>{setting.model} ({setting.size})</td>
+                                            <td>{setting.style} / {setting.quality}</td>
+                                            <td className={styles.imageCountCell}>
+                                                <FaImages />
+                                                <span>{setting.baseAssets ? setting.baseAssets.length : 0}</span>
+                                            </td>
+                                            <td>
+                                                <span className={`${styles.statusBadge} ${setting.isActive ? styles.active : styles.inactive}`}>
+                                                    {setting.isActive ? 'Ativo' : 'Inativo'}
+                                                </span>
+                                            </td>
+                                            <td className={styles.actionsCell}>
+                                                <motion.button className={styles.actionButton} onClick={() => handleEdit(setting)} whileHover={{ scale: 1.1 }} title="Editar">
+                                                    <FaEdit />
+                                                </motion.button>
+                                                <motion.button className={`${styles.actionButton} ${styles.deleteButton}`} onClick={() => handleDelete(setting.type)} whileHover={{ scale: 1.1 }} title="Deletar">
+                                                    <FaTrash />
+                                                </motion.button>
+                                            </td>
+                                        </motion.tr>
+                                    ))}
+                                </AnimatePresence>
+                            </motion.tbody>
+                        </table>
+                    </div>
+                )}
             </div>
 
             <AISettingFormModal

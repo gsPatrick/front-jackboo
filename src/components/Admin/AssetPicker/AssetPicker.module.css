@@ -4,7 +4,32 @@
 .pickerHeader { padding: 1rem 1.5rem; border-bottom: 1px solid #eef2f7; display: flex; justify-content: space-between; align-items: center; }
 .pickerHeader h4 { font-family: var(--font-mali); font-weight: 700; margin: 0; }
 .closeButton { background-color: var(--color-jackboo-primary-orange); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 700; cursor: pointer; }
-.pickerGrid { padding: 1.5rem; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
+.pickerBody { /* NOVO: Para permitir scroll do conteúdo */
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex-grow: 1; /* Permite que o body ocupe o espaço restante */
+    display: flex; /* Para centralizar mensagens de status */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.pickerGrid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+    gap: 1rem; 
+    width: 100%; /* Ocupa toda a largura do pickerBody */
+}
 .assetItem { position: relative; aspect-ratio: 1 / 1; border-radius: 10px; overflow: hidden; cursor: pointer; border: 3px solid transparent; transition: border-color 0.2s; }
 .assetItem.selected { border-color: var(--color-jackboo-primary-orange); }
 .assetOverlay { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); padding: 0.8rem; color: white; font-family: var(--font-mali); font-size: 0.9rem; font-weight: 700; }
+
+/* Mensagens de status (NOVO) */
+.loadingMessage, .errorMessage, .emptyMessage {
+    font-family: var(--font-mali);
+    color: #6c757d;
+    text-align: center;
+    padding: 2rem;
+}
+.errorMessage {
+    color: var(--color-text-red-heart);
+}

@@ -85,6 +85,8 @@
   display: flex; /* Adicionado para organizar conteúdo interno */
   flex-direction: column; /* Conteúdo empilhado verticalmente */
   width: 100%; /* Ocupa a célula do grid */
+  color: inherit; /* Garante que o link não mude a cor do texto */
+  text-decoration: none; /* Garante que o link não tenha sublinhado */
 }
 
 .imageWrapper {
@@ -146,6 +148,30 @@
   align-self: center; /* Centraliza o botão */
   width: 80%; /* Define uma largura para o botão */
   max-width: 200px;
+}
+
+/* --- NOVO: ESTILOS PARA ESTADOS DE CARREGAMENTO E VAZIO --- */
+.loadingMessage, .emptyMessage {
+  font-family: var(--font-mali);
+  font-size: clamp(1.8rem, 4vw, 2.2rem);
+  font-weight: 700;
+  color: var(--color-text-dark-blue);
+  text-align: center;
+  padding: 4rem 2rem;
+  opacity: 0.7;
+}
+
+.emptyContainer {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.emptySubMessage {
+  font-family: var(--font-mali);
+  font-size: 1.3rem;
+  color: var(--color-text-dark-blue);
+  opacity: 0.6;
+  margin-top: 0.5rem;
 }
 
 /* Responsividade */

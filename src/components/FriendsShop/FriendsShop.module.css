@@ -80,6 +80,8 @@
   border-radius: 20px;
   padding: 1rem;
   box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+  color: inherit; /* Garante que o link não mude a cor do texto */
+  text-decoration: none; /* Garante que o link não tenha sublinhado */
 }
 
 /* --- INÍCIO: ESTILOS DO AUTOR ADICIONADOS --- */
@@ -219,6 +221,30 @@
   border-radius: 50px;
   cursor: pointer;
   white-space: nowrap;
+}
+
+/* --- NOVO: ESTILOS PARA ESTADOS DE CARREGAMENTO E VAZIO --- */
+.loadingMessage, .emptyMessage {
+  font-family: var(--font-mali);
+  font-size: clamp(1.8rem, 4vw, 2.2rem);
+  font-weight: 700;
+  color: var(--color-text-dark-blue);
+  text-align: center;
+  padding: 4rem 2rem;
+  opacity: 0.7;
+}
+
+.emptyContainer {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.emptySubMessage {
+  font-family: var(--font-mali);
+  font-size: 1.3rem;
+  color: var(--color-text-dark-blue);
+  opacity: 0.6;
+  margin-top: 0.5rem;
 }
 
 /* --- RESPONSIVIDADE ATUALIZADA --- */

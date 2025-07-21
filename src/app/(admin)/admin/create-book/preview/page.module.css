@@ -1,6 +1,6 @@
 /* src/app/(admin)/admin/create-book/preview/page.module.css */
 
-.loadingContainer, .errorContainer {
+.loadingContainer, .errorContainer, .emptyContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -146,6 +146,11 @@
     font-size: 1rem;
     color: #8c2a3e;
     max-width: 80%;
+}
+.pageOverlay.pending { /* NOVO */
+    background-color: rgba(240, 248, 255, 0.9);
+    color: #007bff;
+    font-size: 1.2rem;
 }
 
 

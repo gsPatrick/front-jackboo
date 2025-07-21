@@ -1,104 +1,119 @@
 /* src/components/Admin/AdminSidebar/AdminSidebar.module.css */
+
 .sidebar {
-    width: 280px;
+    width: 260px;
     background-color: #ffffff;
     border-right: 1px solid #eef2f7;
     display: flex;
     flex-direction: column;
-    padding: 1.5rem;
     flex-shrink: 0;
-    transition: width 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-.sidebarHeader {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 2.5rem;
-    padding-bottom: 1.5rem;
+.logoContainer {
+    padding: 2rem 1.5rem;
     border-bottom: 1px solid #eef2f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.adminBadge {
-    display: inline-block;
-    margin-top: 1rem;
-    background-color: var(--color-jackboo-primary-orange);
-    color: white;
-    font-family: var(--font-mali);
-    font-weight: 700;
-    font-size: 0.8rem;
-    padding: 0.2rem 0.8rem;
-    border-radius: 50px;
+.nav {
+    flex-grow: 1;
+    padding: 1.5rem 0;
 }
 
-.sidebarNav ul {
+.navList {
     list-style: none;
     padding: 0;
     margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-}
-
-.divider {
-    font-family: var(--font-mali);
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #adb5bd;
-    text-transform: uppercase;
-    padding: 1.5rem 1rem 0.5rem 1rem;
-    letter-spacing: 0.5px;
 }
 
 .navLink {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 0.8rem 1rem;
+    padding: 0.9rem 1.5rem;
+    margin: 0.2rem 1rem;
+    color: #6c757d; /* Cinza sutil */
+    text-decoration: none;
     border-radius: 10px;
+    transition: all 0.2s ease-in-out;
     font-family: var(--font-mali);
     font-weight: 700;
-    font-size: 1.1rem;
-    color: #495057;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    white-space: nowrap;
-    overflow: hidden;
 }
 
 .navLink:hover {
-    background-color: var(--color-jackboo-beige-ultra-light);
-    color: var(--color-jackboo-primary-orange);
+    background-color: #f8f9fa;
+    color: var(--color-text-dark-blue);
 }
 
 .navLink.active {
-    background-color: var(--color-jackboo-primary-orange);
-    color: white;
-    box-shadow: 0 4px 10px rgba(255, 140, 0, 0.3);
+    background-color: var(--color-jackboo-primary-orange-light);
+    color: var(--color-jackboo-primary-orange);
+    font-weight: 700;
 }
 
-.navIcon {
+.icon {
     font-size: 1.2rem;
-    width: 20px;
+    margin-right: 1rem;
+    width: 20px; /* Alinhamento dos ícones */
     text-align: center;
-    flex-shrink: 0;
 }
 
+.label {
+    font-size: 1rem;
+}
+
+.footer {
+    padding: 1.5rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #adb5bd;
+    border-top: 1px solid #eef2f7;
+    font-family: var(--font-mali);
+}
+
+/* Responsividade para telas menores */
 @media (max-width: 768px) {
     .sidebar {
         width: 100%;
         height: auto;
         flex-direction: row;
-        overflow-x: auto;
-        padding: 0.5rem;
-        gap: 0.5rem;
+        align-items: center;
+        border-right: none;
+        border-bottom: 1px solid #eef2f7;
+        padding: 0 1rem;
+        justify-content: space-between;
     }
-    .sidebarHeader { display: none; }
-    .divider { display: none; }
-    .sidebarNav ul {
+
+    .logoContainer {
+        border-bottom: none;
+        padding: 0.5rem 0;
+    }
+
+    .nav {
+        padding: 0;
+    }
+
+    .navList {
+        display: flex;
         flex-direction: row;
     }
-    .navLabel {
-        display: none;
+
+    .navLink {
+        padding: 0.8rem;
+        margin: 0 0.2rem;
+    }
+    
+    .label {
+        display: none; /* Esconde o texto dos links em telas pequenas */
+    }
+
+    .icon {
+        margin-right: 0;
+    }
+    
+    .footer {
+        display: none; /* Esconde o rodapé em telas pequenas */
     }
 }
