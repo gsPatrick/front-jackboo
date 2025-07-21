@@ -1,3 +1,4 @@
+// src/components/CharacterCreator/CharacterCreator.js
 
 'use client';
 
@@ -81,7 +82,8 @@ const CharacterCreator = ({ onCreationComplete }) => {
       const newCharacter = await contentService.createCharacter(formData);
       
       console.log('Personagem criado com sucesso:', newCharacter);
-      setCharacterName(newCharacter.name);
+      // REMOVIDO: O nome do personagem não é mais definido automaticamente.
+      // setCharacterName(newCharacter.name);
 
       // CORREÇÃO: Construção da URL completa para exibição
       if (newCharacter.generatedCharacterUrl && newCharacter.generatedCharacterUrl.startsWith('/uploads')) {
@@ -220,7 +222,7 @@ const CharacterCreator = ({ onCreationComplete }) => {
                                  animate={{ opacity: 1, y: 0, transition: { delay: 0.5, duration: 0.5 } }}
                                  className={styles.revealMessage}
                              >
-                                 Oi, <span className={styles.highlightName}>{characterName}</span>! <br/>Estava ansioso pra te conhecer... Vamos brincar juntos?!
+                                 Uau! Você me deu vida...<br/>Estou pronto para viver grandes aventuras com você!
                              </motion.p>
                         </motion.div>
                     ) : (
@@ -290,7 +292,7 @@ const CharacterCreator = ({ onCreationComplete }) => {
                                     {step1Substate === 'loading' && <LoadingSpinner key="loading-card" />}
                                     {step1Substate === 'naming' && (
                                         <motion.div key="naming-card-input" className={styles.generatedContent} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}>
-                                            <label htmlFor="characterName" className={styles.nameLabel}>Nome do seu personagem:</label>
+                                            <label htmlFor="characterName" className={styles.nameLabel}>Qual será o nome dele?</label>
                                             <input
                                                 id="characterName"
                                                 type="text"
