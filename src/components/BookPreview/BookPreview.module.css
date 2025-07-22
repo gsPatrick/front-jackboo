@@ -23,18 +23,18 @@
   width: 100%;
   max-width: 650px; /* Livro maior */
   aspect-ratio: 1 / 1; /* Mantém a proporção quadrada */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
+  /* REMOVIDO: display: flex; */ /* Remove essas linhas se ainda estiverem aqui */
+  /* REMOVIDO: justify-content: center; */
+  /* REMOVIDO: align-items: center; */
+  overflow: hidden; /* Importante para esconder conteúdo que transborda durante a animação */
 }
 
 .pageWrapper {
-    position: absolute;
+    position: absolute; /* Pages are absolutely positioned within carousel */
     width: 100%;
     height: 100%;
     padding: 1rem; /* Espaço para a sombra não ser cortada */
-    display: flex;
+    display: flex; /* Manter aqui para centralizar a imagem dentro do pageWrapper */
     justify-content: center;
     align-items: center;
 }
@@ -111,6 +111,78 @@
     line-height: 1.5;
     color: var(--color-text-dark-blue);
     opacity: 0.9;
+}
+
+/* Estilos para o spinner geral do BookPreview (se o livro ainda não foi carregado) */
+.spinnerWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Centraliza verticalmente o spinner na tela de loading */
+  gap: 1rem;
+  font-family: var(--font-mali);
+  font-size: 1.2rem;
+  color: var(--color-text-dark-blue);
+  margin-top: 3rem; /* Ajuste o espaçamento conforme necessário */
+  height: 100%; /* Permite que o wrapper ocupe o espaço para centralizar */
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(255, 140, 0, 0.2);
+  border-top-color: var(--color-jackboo-primary-orange);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Reutilizando a animação de rotação */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Estilos para o placeholder de página individual (carregando/pendente) */
+.pageLoadingPlaceholder {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: #f0f8ff; /* Um fundo suave para o placeholder */
+    border-radius: 20px;
+    font-family: var(--font-mali);
+    color: var(--color-text-dark-blue);
+    font-size: 1.1rem;
+    gap: 1rem;
+    padding: 1rem;
+    text-align: center;
+}
+
+.pageLoadingPlaceholder .spinner { /* Estilo para o spinner dentro do placeholder de página */
+    width: 30px;
+    height: 30px;
+    border-width: 3px;
+}
+
+/* Estilos para o placeholder de página individual (falha) */
+.pageFailedPlaceholder {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 222, 222, 0.9); /* Fundo vermelho suave para erro */
+    color: var(--color-text-red-heart);
+    border-radius: 20px;
+    font-family: var(--font-mali);
+    font-size: 1.1rem;
+    gap: 1rem;
+    padding: 1rem;
+    text-align: center;
 }
 
 @media (max-width: 768px) {

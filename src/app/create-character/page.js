@@ -7,20 +7,24 @@ import BookPreview from '@/components/BookPreview/BookPreview';
 import styles from './page.module.css';
 
 const CreateCharacterPage = () => {
-  // Este estado agora controla qual componente principal é exibido
   const [isPreviewing, setIsPreviewing] = useState(false);
+  const [bookToPreview, setBookToPreview] = useState(null);
+
+  const handleGoToPreview = (bookData) => {
+    setBookToPreview(bookData);
+    setIsPreviewing(true);
+  };
 
   return (
-    // A classe do <main> muda para aplicar o fundo verde
     <main className={`${styles.main} ${isPreviewing ? styles.previewBackground : ''}`}>
       <div className={styles.container}>
         {!isPreviewing ? (
           <>
             <h1 className={styles.pageTitle}>Crie seu personagem</h1>
-            <CharacterCreator onCreationComplete={() => setIsPreviewing(true)} />
+            <CharacterCreator onCreationComplete={handleGoToPreview} />
           </>
         ) : (
-          <BookPreview />
+          <BookPreview book={bookToPreview} />
         )}
       </div>
     </main>

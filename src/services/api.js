@@ -73,9 +73,15 @@ export const contentService = {
   createCharacter: (formData) => apiRequest('/content/characters', { method: 'POST', body: formData }),
   getMyCharacters: () => apiRequest('/content/characters', { method: 'GET' }),
   deleteCharacter: (id) => apiRequest(`/content/characters/${id}`, { method: 'DELETE' }),
-  createColoringBook: (bookData) => apiRequest('/content/books/create-coloring', { method: 'POST', body: bookData }),
+  // <-- ADICIONADO: Função para atualizar o nome do personagem -->
+  updateCharacterName: (id, name) => apiRequest(`/content/characters/${id}/name`, { method: 'PUT', body: { name } }),
+  // <-- MODIFICADO: createColoringBook agora espera um objeto com apenas characterId -->
+  createColoringBook: ({ characterId }) => apiRequest('/content/books/create-coloring', { method: 'POST', body: { characterId } }),
   createStoryBook: (bookData) => apiRequest('/content/books/create-story', { method: 'POST', body: bookData }),
   getMyBooks: () => apiRequest('/content/books', { method: 'GET' }),
+  getBookStatus: (bookId) => apiRequest(`/content/books/${bookId}/status`, { method: 'GET' }),
+
+
 };
 
 // --- SERVIÇOS DE ADMIN ---
