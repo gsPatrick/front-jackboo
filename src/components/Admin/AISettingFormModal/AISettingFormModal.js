@@ -1,226 +1,219 @@
-// src/components/Admin/AISettingFormModal/AISettingFormModal.js
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Image from 'next/image';
 import styles from './AISettingFormModal.module.css';
+import { FaComments, FaImage, FaTimes, FaLink, FaArrowLeft } from 'react-icons/fa';
+import Image from 'next/image';
 import AssetPicker from '../AssetPicker/AssetPicker';
+import { adminAISettingsService } from '@/services/api';
 
-// Modelos OpenAI DALL-E suportados (hardcoded para o frontend, ou buscado de um endpoint de settings se houver)
-const OPENAI_MODELS = ['dall-e-3', 'dall-e-2'];
-const OPENAI_SIZES = ['1024x1024', '1792x1024', '1024x1792'];
-const OPENAI_QUALITIES = ['standard', 'hd'];
-const OPENAI_STYLES = ['vivid', 'natural'];
+// --- Subcomponente para a tela de seleção inicial ---
+const EngineSelectionScreen = ({ onSelect }) => (
+    <div className={styles.engineSelectionContainer}>
+        <h3 className={styles.engineTitle}>Para qual finalidade é este template?</h3>
+        <div className={styles.engineOptions}>
+            <motion.div className={styles.engineCard} onClick={() => onSelect('text')} whileHover={{ y: -5 }}>
+                <FaComments className={styles.engineIcon} />
+                <h4>Texto / Lógica (GPT)</h4>
+                <p>Para gerar roteiros, descrições, títulos ou analisar imagens.</p>
+            </motion.div>
+            <motion.div className={styles.engineCard} onClick={() => onSelect('image')} whileHover={{ y: -5 }}>
+                <FaImage className={styles.engineIcon} />
+                <h4>Geração de Imagem (Leonardo)</h4>
+                <p>Para criar personagens, páginas de colorir, capas e ilustrações.</p>
+            </motion.div>
+        </div>
+    </div>
+);
 
-// Lista de TYPES pré-definidos para as configurações de IA no sistema.
-// Estes devem ser os mesmos tipos que seu backend (OpenAISetting.js) espera.
-const SYSTEM_AI_TYPES = [
-    { value: 'character_drawing', label: 'Desenho de Personagem' },
-    { value: 'coloring_book_page', label: 'Página de Colorir' },
-    { value: 'story_book_illustration', label: 'Ilustração de Livro de História' },
-    { value: 'story_intro', label: 'Página de Introdução da História' },
-    { value: 'story_page_text', label: 'Página de Texto da História' },
-    { value: 'special_jack_friends', label: 'Página Especial Jack e Amigos' },
-    { value: 'story_cover', label: 'Capa/Contracapa de História' },
-    { value: 'coloring_cover', label: 'Capa/Contracapa de Colorir' },
-];
-
-
-const backdropVariants = { hidden: { opacity: 0 }, visible: { opacity: 1 } };
-const modalVariants = {
-    hidden: { opacity: 0, y: 50, scale: 0.95 },
-    visible: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 150, damping: 20 } },
-    exit: { opacity: 0, y: 50, scale: 0.95, transition: { duration: 0.2 } },
-};
-
-const AISettingFormModal = ({ show, onClose, onSave, settingData }) => {
+// --- Componente principal do Modal ---
+export default function AISettingFormModal({ show, onClose, onSave, settingData }) {
     const initialState = {
-        type: '', // Identificador único técnico
-        name: '', // Nome amigável para o admin
-        basePromptText: '',
-        model: OPENAI_MODELS[0],
-        size: OPENAI_SIZES[0],
-        quality: OPENAI_QUALITIES[0],
-        style: OPENAI_STYLES[0],
-        isActive: true,
-        baseAssets: [], 
+        type: '', name: '', basePromptText: '', isActive: true,
+        model: 'b2614463-296c-462a-9586-aafdb8f00e36', size: '1024x1024', quality: 'standard', style: 'vivid',
+        baseAssets: [],
+        helperPromptId: '',
     };
+    
     const [formData, setFormData] = useState(initialState);
+    const [templateEngine, setTemplateEngine] = useState(null);
     const [isAssetPickerOpen, setIsAssetPickerOpen] = useState(false);
+    const [textTemplates, setTextTemplates] = useState([]);
 
     useEffect(() => {
-        if (settingData) {
-            setFormData({ ...initialState, ...settingData, baseAssets: settingData.baseAssets || [] });
-        } else {
-            setFormData(initialState); 
+        if (show) {
+            adminAISettingsService.listSettings()
+                .then(allSettings => {
+                    // CORREÇÃO: Um template de texto é aquele que é ativo e NÃO tem um 'model' definido.
+                    const filtered = allSettings.filter(s => s.isActive && !s.model);
+                    setTextTemplates(filtered);
+                })
+                .catch(err => console.error("Falha ao carregar templates de texto para o dropdown", err));
+        }
+    }, [show]);
+
+    useEffect(() => {
+        if (show) {
+            if (settingData) {
+                // Um template é de imagem se tiver o campo 'model' preenchido.
+                const isImg = !!settingData.model;
+                setTemplateEngine(isImg ? 'image' : 'text');
+                setFormData({ 
+                    ...initialState, 
+                    ...settingData, 
+                    baseAssets: settingData.baseAssets || [],
+                    helperPromptId: settingData.helperPromptId || ''
+                });
+            } else {
+                setTemplateEngine(null);
+                setFormData(initialState);
+            }
         }
     }, [settingData, show]);
-
+    
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
     };
-    
+
     const handleToggleAsset = (asset) => {
-        setFormData(prev => {
-            const existingAssets = prev.baseAssets || []; 
-            const isSelected = existingAssets.some(a => a.id === asset.id);
-            if (isSelected) {
-                return { ...prev, baseAssets: existingAssets.filter(a => a.id !== asset.id) };
-            } else {
-                return { ...prev, baseAssets: [...existingAssets, asset] };
-            }
-        });
+        setFormData(prev => ({
+            ...prev,
+            baseAssets: prev.baseAssets.some(a => a.id === asset.id)
+                ? prev.baseAssets.filter(a => a.id !== asset.id)
+                : [...prev.baseAssets, asset]
+        }));
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Verifica se o 'type' já foi selecionado para novas configurações
-        if (!settingData && !formData.type) {
-            alert("Por favor, selecione um Tipo de Configuração.");
-            return;
-        }
-
-        const finalData = {
+        
+        let payload = {
             ...formData,
-            baseAssetIds: (formData.baseAssets || []).map(a => a.id),
+            baseAssetIds: formData.baseAssets.map(asset => asset.id)
         };
-        delete finalData.baseAssets; 
+        delete payload.baseAssets;
 
-        onSave(finalData.type, finalData);
+        // CORREÇÃO: Se o motor for de texto, anula os campos específicos de imagem para evitar inconsistência.
+        if (templateEngine === 'text') {
+            payload.model = null;
+            payload.size = null;
+            payload.quality = null;
+            payload.style = null;
+        }
+        
+        onSave(formData.type, payload);
+    };
+
+    const handleBackToSelection = () => {
+        setTemplateEngine(null);
+        setFormData(initialState);
     };
 
     return (
-        <>
-            <AnimatePresence>
-                {show && (
-                    <motion.div className={styles.backdrop} variants={backdropVariants} initial="hidden" animate="visible" exit="hidden" onClick={onClose}>
-                        <motion.div className={styles.modal} variants={modalVariants} onClick={(e) => e.stopPropagation()}>
-                            <div className={styles.modalHeader}>
-                                <h3>{settingData ? 'Editar' : 'Criar Nova'} Configuração de IA</h3>
-                                <button className={styles.closeButton} onClick={onClose}>×</button>
-                            </div>
-                            <div className={styles.modalBody}>
-                                <form onSubmit={handleSubmit} className={styles.form}>
-                                    <div className={styles.formGroup}>
-                                        <label htmlFor="name">Nome da Configuração (Amigável)</label>
-                                        <input
-                                            type="text"
-                                            id="name"
-                                            name="name"
-                                            value={formData.name}
-                                            onChange={handleChange}
-                                            placeholder="Ex: Estilo JackBoo para Personagens"
-                                            required
-                                        />
-                                    </div>
-                                    <div className={styles.formGroup}>
-                                        <label htmlFor="type">Tipo de Configuração (Identificador Interno)</label>
-                                        {settingData ? (
-                                            // Se estiver editando, exibe o tipo como texto desabilitado
-                                            <input type="text" id="type" name="type" value={formData.type} disabled />
-                                        ) : (
-                                            // Se estiver criando, exibe um dropdown para escolher o tipo
-                                            <select id="type" name="type" value={formData.type} onChange={handleChange} required>
-                                                <option value="">Selecione um tipo...</option>
-                                                {SYSTEM_AI_TYPES.map(aiType => (
-                                                    <option key={aiType.value} value={aiType.value}>
-                                                        {aiType.label} ({aiType.value})
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        )}
-                                        {settingData ? (
-                                            <p className={styles.hint}>O tipo não pode ser alterado para configurações existentes.</p>
-                                        ) : (
-                                            <p className={styles.hint}>Este é o identificador único da configuração para o sistema. Não pode ser alterado após a criação.</p>
-                                        )}
-                                    </div>
+        <AnimatePresence>
+            {show && (
+                <motion.div className={styles.backdrop} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
+                    <motion.div className={styles.modal} initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles.modalHeader}>
+                            <h3>{settingData ? 'Editar' : 'Criar'} Template de IA</h3>
+                            <button className={styles.closeButton} onClick={onClose}>×</button>
+                        </div>
+                        <div className={styles.modalBody}>
+                            <AnimatePresence mode="wait">
+                                {!templateEngine && !settingData ? (
+                                    <motion.div key="selection" exit={{ opacity: 0, scale: 0.95 }}>
+                                       <EngineSelectionScreen onSelect={setTemplateEngine} />
+                                    </motion.div>
+                                ) : (
+                                    <motion.form key="form" onSubmit={handleSubmit} className={styles.form} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                        {!settingData && <button type="button" onClick={handleBackToSelection} className={styles.backButton}><FaArrowLeft /> Mudar tipo de motor</button>}
+                                        
+                                        <div className={styles.formGroup}>
+                                            <label>Nome do Template</label>
+                                            <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Ex: Geração de Personagem (Usuário)" required />
+                                        </div>
+                                        <div className={styles.formGroup}>
+                                            <label>Identificador Único (Type)</label>
+                                            <input type="text" name="type" value={formData.type} onChange={handleChange} placeholder="Ex: USER_character_drawing" required disabled={!!settingData} />
+                                            <p className={styles.hint}>Chave do sistema. Uma vez salvo, não pode ser alterado.</p>
+                                        </div>
+                                        <div className={styles.formGroup}>
+                                            <label>Texto do Prompt (Template)</label>
+                                            <textarea name="basePromptText" value={formData.basePromptText} onChange={handleChange} rows={templateEngine === 'image' ? 5 : 10} required />
+                                            <p className={styles.hint}>{'Use placeholders como {{DESCRIPTION}}, {{THEME}}, etc.'}</p>
+                                        </div>
 
-                                    <div className={styles.formGroup}>
-                                        <label htmlFor="basePromptText">Prompt Base</label>
-                                        <textarea id="basePromptText" name="basePromptText" value={formData.basePromptText} onChange={handleChange} rows={6} required />
-                                        <p className={styles.hint}>Use placeholders como [TITLE], [CHARACTER_NAME], [CHARACTER_DESC], [LUGAR], [TEMA].</p>
-                                    </div>
-                                    
-                                    <div className={styles.grid}>
-                                        <div className={styles.formGroup}>
-                                            <label htmlFor="model">Modelo</label>
-                                            <select id="model" name="model" value={formData.model} onChange={handleChange} required>
-                                                {OPENAI_MODELS.map(model => (
-                                                    <option key={model} value={model}>{model}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                        <div className={styles.formGroup}>
-                                            <label htmlFor="size">Tamanho</label>
-                                            <select id="size" name="size" value={formData.size} onChange={handleChange} required>
-                                                {OPENAI_SIZES.map(size => (
-                                                    <option key={size} value={size}>{size}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                        <div className={styles.formGroup}>
-                                            <label htmlFor="quality">Qualidade</label>
-                                            <select id="quality" name="quality" value={formData.quality} onChange={handleChange} required>
-                                                {OPENAI_QUALITIES.map(quality => (
-                                                    <option key={quality} value={quality}>{quality}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                        <div className={styles.formGroup}>
-                                            <label htmlFor="style">Estilo</label>
-                                            <select id="style" name="style" value={formData.style} onChange={handleChange} required>
-                                                {OPENAI_STYLES.map(style => (
-                                                    <option key={style} value={style}>{style}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    </div>
+                                        {templateEngine === 'image' && (
+                                            <div className={styles.formGroup}>
+                                                <label><FaLink /> Template de Texto Ajudante (Opcional)</label>
+                                                <select name="helperPromptId" value={formData.helperPromptId} onChange={handleChange}>
+                                                    <option value="">Nenhum (usará prompt direto)</option>
+                                                    {textTemplates.map(template => (
+                                                        <option key={template.id} value={template.id}>
+                                                            {template.name} ({template.type})
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <p className={styles.hint}>Associe um template de texto (GPT) para pré-processar informações.</p>
+                                            </div>
+                                        )}
 
-                                    {/* Seção de seleção de Assets */}
-                                    <div className={styles.assetsSection}>
-                                        <label>Imagens de Referência de Estilo (Opcional)</label>
-                                        <p className={styles.hint}>Estas imagens ajudam a IA a entender o estilo visual desejado. Remova-as clicando no 'x'.</p>
-                                        <div className={styles.assetsGrid}>
-                                            {(formData.baseAssets || []).map(asset => (
-                                                <div key={asset.id} className={styles.assetPreview}>
-                                                    <Image src={asset.url} alt={asset.name} width={80} height={80} style={{ objectFit: 'cover' }} unoptimized={true} />
-                                                    <button type="button" className={styles.assetRemoveButton} onClick={() => handleToggleAsset(asset)}>×</button>
+                                        <div className={styles.assetsSection}>
+                                            <label>Assets de Referência de Estilo</label>
+                                            <p className={styles.hint}>Selecione imagens que ajudarão a guiar a IA para o estilo visual desejado (opcional).</p>
+                                            <div className={styles.assetsGrid}>
+                                                {formData.baseAssets.map(asset => (
+                                                    <div key={asset.id} className={styles.assetPreview}>
+                                                        <Image src={asset.url} alt={asset.name} layout="fill" objectFit="cover" unoptimized={true} />
+                                                        <button type="button" className={styles.assetRemoveButton} onClick={() => handleToggleAsset(asset)} title={`Remover ${asset.name}`}><FaTimes /></button>
+                                                    </div>
+                                                ))}
+                                                <button type="button" className={styles.addAssetButton} onClick={() => setIsAssetPickerOpen(true)} title="Adicionar asset">+</button>
+                                            </div>
+                                        </div>
+
+                                        {templateEngine === 'image' && (
+                                            <details className={styles.details} open>
+                                                <summary>Parâmetros de Geração de Imagem</summary>
+                                                <div className={styles.detailsContent}>
+                                                    <div className={styles.grid}>
+                                                        <div className={styles.formGroup}><label>Modelo</label><input type="text" name="model" value={formData.model} onChange={handleChange} /></div>
+                                                        <div className={styles.formGroup}><label>Tamanho</label><input type="text" name="size" value={formData.size} onChange={handleChange} /></div>
+                                                        <div className={styles.formGroup}><label>Qualidade</label><input type="text" name="quality" value={formData.quality} onChange={handleChange} /></div>
+                                                        <div className={styles.formGroup}><label>Estilo</label><input type="text" name="style" value={formData.style} onChange={handleChange} /></div>
+                                                    </div>
                                                 </div>
-                                            ))}
-                                            <button type="button" className={styles.addAssetButton} onClick={() => setIsAssetPickerOpen(true)}>+</button>
+                                            </details>
+                                        )}
+
+                                        <div className={styles.formGroupCheckbox}>
+                                            <input type="checkbox" id="isActive" name="isActive" checked={formData.isActive} onChange={handleChange} />
+                                            <label htmlFor="isActive">Ativo (pode ser usado pelo sistema)</label>
                                         </div>
-                                    </div>
-
-                                    <div className={styles.formGroupCheckbox}>
-                                        <input type="checkbox" id="isActive" name="isActive" checked={formData.isActive} onChange={handleChange} />
-                                        <label htmlFor="isActive">Ativo (Permitir uso desta configuração)</label>
-                                    </div>
-                                    
-                                    <div className={styles.modalFooter}>
-                                        <motion.button type="button" className={styles.cancelButton} onClick={onClose}>Cancelar</motion.button>
-                                        <motion.button type="submit" className={styles.saveButton}>Salvar</motion.button>
-                                    </div>
-                                </form>
-                            </div>
-                        </motion.div>
+                                        
+                                        <div className={styles.modalFooter}>
+                                            <button type="button" className={styles.cancelButton} onClick={onClose}>Cancelar</button>
+                                            <button type="submit" className={styles.saveButton}>Salvar Template</button>
+                                        </div>
+                                    </motion.form>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                        
+                        <AnimatePresence>
+                            {isAssetPickerOpen && (
+                                <AssetPicker 
+                                    selectedAssetIds={formData.baseAssets.map(a => a.id)}
+                                    onToggleAsset={handleToggleAsset}
+                                    onClose={() => setIsAssetPickerOpen(false)}
+                                />
+                            )}
+                        </AnimatePresence>
                     </motion.div>
-                )}
-            </AnimatePresence>
-
-            <AnimatePresence>
-                {isAssetPickerOpen && (
-                    <AssetPicker
-                        selectedAssetIds={(formData.baseAssets || []).map(a => a.id)}
-                        onToggleAsset={handleToggleAsset}
-                        onClose={() => setIsAssetPickerOpen(false)}
-                    />
-                )}
-            </AnimatePresence>
-        </>
+                </motion.div>
+            )}
+        </AnimatePresence>
     );
-};
-
-export default AISettingFormModal;
+}

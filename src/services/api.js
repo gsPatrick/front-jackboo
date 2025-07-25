@@ -73,33 +73,52 @@ export const contentService = {
   createCharacter: (formData) => apiRequest('/content/characters', { method: 'POST', body: formData }),
   getMyCharacters: () => apiRequest('/content/characters', { method: 'GET' }),
   deleteCharacter: (id) => apiRequest(`/content/characters/${id}`, { method: 'DELETE' }),
-  // <-- ADICIONADO: Função para atualizar o nome do personagem -->
   updateCharacterName: (id, name) => apiRequest(`/content/characters/${id}/name`, { method: 'PUT', body: { name } }),
-  // <-- MODIFICADO: createColoringBook agora espera um objeto com apenas characterId -->
   createColoringBook: ({ characterId }) => apiRequest('/content/books/create-coloring', { method: 'POST', body: { characterId } }),
   createStoryBook: (bookData) => apiRequest('/content/books/create-story', { method: 'POST', body: bookData }),
   getMyBooks: () => apiRequest('/content/books', { method: 'GET' }),
   getBookStatus: (bookId) => apiRequest(`/content/books/${bookId}/status`, { method: 'GET' }),
-
-
 };
 
 // --- SERVIÇOS DE ADMIN ---
+export const adminLeonardoService = {
+  listDatasets: () => apiRequest('/admin/leonardo/datasets', { method: 'GET' }),
+  createDataset: (name, description) => apiRequest('/admin/leonardo/datasets', { method: 'POST', body: { name, description } }),
+  getDatasetDetails: (localDatasetId) => apiRequest(`/admin/leonardo/datasets/${localDatasetId}`, { method: 'GET' }),
+  uploadImageToDataset: (localDatasetId, formData) => apiRequest(`/admin/leonardo/datasets/${localDatasetId}/upload`, { method: 'POST', body: formData }),
+  deleteDataset: (localDatasetId) => apiRequest(`/admin/leonardo/datasets/${localDatasetId}`, { method: 'DELETE' }),
+  listElements: () => apiRequest('/admin/leonardo/elements', { method: 'GET' }),
+  trainElement: (trainingData) => apiRequest('/admin/leonardo/elements/train', { method: 'POST', body: trainingData }),
+  getElementDetails: (localElementId) => apiRequest(`/admin/leonardo/elements/${localElementId}`, { method: 'GET' }),
+  deleteElement: (localElementId) => apiRequest(`/admin/leonardo/elements/${localElementId}`, { method: 'DELETE' }),
+};
+
+export const adminAISettingsService = {
+  listSettings: () => apiRequest('/admin/openai-settings', { method: 'GET' }),
+  createOrUpdateSetting: (type, settingData) => apiRequest(`/admin/openai-settings/${type}`, { method: 'PUT', body: settingData }),
+  deleteSetting: (type) => apiRequest(`/admin/openai-settings/${type}`, { method: 'DELETE' }),
+};
+
+export const adminAssetsService = {
+  listAssets: () => apiRequest('/admin/assets', { method: 'GET' }),
+  createAsset: (formData) => apiRequest('/admin/assets', { method: 'POST', body: formData }),
+  deleteAsset: (id) => apiRequest(`/admin/assets/${id}`, { method: 'DELETE' }),
+};
 
 export const adminCharactersService = {
-    listOfficialCharacters: () => apiRequest('/admin/characters', { method: 'GET' }),
+    listCharacters: () => apiRequest('/admin/characters', { method: 'GET' }),
+    // CORREÇÃO: Agora envia os dados dos templates no FormData
     createOfficialCharacter: (formData) => apiRequest('/admin/characters', { method: 'POST', body: formData }),
-    updateOfficialCharacter: (id, formData) => apiRequest(`/admin/characters/${id}`, { method: 'PUT', body: formData }),
+    createOfficialCharacterByUpload: (formData) => apiRequest('/admin/characters/upload', { method: 'POST', body: formData }),
+    // ...
     deleteOfficialCharacter: (id) => apiRequest(`/admin/characters/${id}`, { method: 'DELETE' }),
 };
 
 export const adminTaxonomiesService = {
-  // Funções de listagem para formulários
-  listAllAiSettings: () => apiRequest('/admin/taxonomies/ai-settings', { method: 'GET' }),
+  // CORREÇÃO: Padronizando os nomes
+  listAiTemplates: () => apiRequest('/admin/taxonomies/ai-settings', { method: 'GET' }),
   listCategories: () => apiRequest('/admin/taxonomies/categories', { method: 'GET' }),
   listAgeRatings: () => apiRequest('/admin/taxonomies/age-ratings', { method: 'GET' }),
-
-  // CRUD completo para Print Formats
   listPrintFormats: () => apiRequest('/admin/taxonomies/print-formats', { method: 'GET' }),
   createPrintFormat: (formatData) => apiRequest('/admin/taxonomies/print-formats', { method: 'POST', body: formatData }),
   updatePrintFormat: (id, formatData) => apiRequest(`/admin/taxonomies/print-formats/${id}`, { method: 'PUT', body: formatData }),
@@ -108,16 +127,19 @@ export const adminTaxonomiesService = {
 
 export const adminBookGeneratorService = {
   generateBookPreview: (bookType, generationData) => apiRequest('/admin/generator/preview', { method: 'POST', body: { bookType, ...generationData } }),
+  getBookById: (bookId) => apiRequest(`/admin/generator/books/${bookId}`, { method: 'GET' }),
   regeneratePage: (pageId) => apiRequest(`/admin/generator/pages/${pageId}/regenerate`, { method: 'POST' }),
   finalizeBook: (bookId) => apiRequest(`/admin/generator/books/${bookId}/finalize`, { method: 'POST' }),
 };
 
-// NOVO SERVIÇO PARA GERENCIAR LIVROS OFICIAIS (CRUD)
 export const adminBooksService = {
-    listOfficialBooks: (params = {}) => {
+    listAllBooks: (params = {}) => {
         const query = new URLSearchParams(params).toString();
         return apiRequest(`/admin/books${query ? `?${query}` : ''}`, { method: 'GET' });
     },
-    getOfficialBookById: (id) => apiRequest(`/admin/books/${id}`, { method: 'GET' }), // <<-- CORRIGIDO: Agora está no serviço correto
     deleteOfficialBook: (id) => apiRequest(`/admin/books/${id}`, { method: 'DELETE' }),
+};
+
+export const adminAIHelperService = {
+  generateText: (prompt) => apiRequest('/admin/ai-helper/generate-text', { method: 'POST', body: { prompt } }),
 };

@@ -19,7 +19,7 @@ export default function AssetPicker({ selectedAssetIds, onToggleAsset, onClose }
                 setError(null);
                 const response = await adminAssetsService.listAssets();
                 // A API retorna { totalItems, assets, ... }, precisamos pegar o array 'assets'
-                setAvailableAssets(response.assets); 
+                setAvailableAssets(response.assets || []); 
             } catch (err) {
                 console.error("Erro ao carregar assets:", err);
                 setError("Falha ao carregar assets. " + err.message);
@@ -43,7 +43,7 @@ export default function AssetPicker({ selectedAssetIds, onToggleAsset, onClose }
                     <h4>Selecione os Assets de Referência</h4>
                     <button onClick={onClose} className={styles.closeButton}>Concluir</button>
                 </div>
-                <div className={styles.pickerBody}> {/* NOVO: Adicionado um body para scroll */}
+                <div className={styles.pickerBody}>
                     {isLoading && <p className={styles.loadingMessage}>Carregando assets...</p>}
                     {error && <p className={styles.errorMessage}>{error}</p>}
                     {!isLoading && !error && availableAssets.length === 0 && (
@@ -59,8 +59,7 @@ export default function AssetPicker({ selectedAssetIds, onToggleAsset, onClose }
                                         className={`${styles.assetItem} ${isSelected ? styles.selected : ''}`}
                                         onClick={() => onToggleAsset(asset)}
                                     >
-                                        {/* CORRIGIDO: Removido layout e objectFit, usando fill e style */}
-                                        <Image src={asset.url} alt={asset.name} fill style={{ objectFit: 'cover' }} unoptimized={true} /> 
+                                        <Image src={asset.url} alt={asset.name} layout="fill" objectFit="cover" unoptimized={true} /> 
                                         <div className={styles.assetOverlay}>
                                             <p>{asset.name}</p>
                                         </div>

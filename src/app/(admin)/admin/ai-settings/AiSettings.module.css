@@ -1,0 +1,171 @@
+/* /app/(admin)/admin/ai-settings/AiSettings.module.css */
+.container {
+    font-family: var(--font-mali);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text-dark-blue);
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: #6c757d;
+    margin-bottom: 2.5rem;
+    max-width: 800px;
+    line-height: 1.6;
+}
+
+.createButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 1rem;
+    color: white;
+    background-color: var(--color-jackboo-primary-orange);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.createButton:hover {
+    background-color: #e07b00;
+}
+
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem;
+    margin-top: 2rem;
+    border: 2px dashed #e0e0e0;
+    border-radius: 15px;
+    color: #a0a0a0;
+    text-align: center;
+}
+
+.emptyState p {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-top: 1rem;
+}
+
+.groupContainer {
+    margin-bottom: 2.5rem;
+}
+
+.groupTitle {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-text-dark-blue);
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--color-jackboo-light-orange);
+    margin-bottom: 1.5rem;
+}
+
+.tableContainer {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    border-bottom: 1px solid #eef2f7;
+    vertical-align: middle;
+}
+
+.table th {
+    font-weight: 700;
+    color: #6c757d;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.table td {
+    color: var(--color-text-dark-blue);
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.strong {
+    font-weight: 700;
+}
+
+.code {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #f8f9fa;
+    padding: 0.2rem 0.5rem;
+    border-radius: 5px;
+    font-size: 0.9rem;
+}
+
+.helperLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-jackboo-blue);
+    font-weight: 700;
+}
+.noHelper {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #90a4ae;
+}
+
+.actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.actionButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    font-size: 0.9rem;
+}
+
+.actionButton.edit {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+.actionButton.edit:hover {
+    background-color: #bbdefb;
+}
+
+.actionButton.delete {
+    background-color: #ffebee;
+    color: #c62828;
+}
+.actionButton.delete:hover {
+    background-color: #ffcdd2;
+}

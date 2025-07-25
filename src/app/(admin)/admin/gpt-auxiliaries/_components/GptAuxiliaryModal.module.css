@@ -1,0 +1,108 @@
+/* /app/(admin)/admin/gpt-auxiliaries/_components/GptAuxiliaryModal.module.css */
+.modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 2.5rem;
+    border-radius: 15px;
+    outline: none;
+    width: 90%;
+    max-width: 700px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    font-family: var(--font-mali);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+}
+
+.modalTitle {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--color-text-dark-blue);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+.formGroup label {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #34495e;
+}
+
+.formGroup input,
+.formGroup textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.formGroup textarea {
+    min-height: 200px;
+    resize: vertical;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #eef2f7;
+}
+
+.confirmButton,
+.cancelButton {
+    padding: 0.8rem 1.5rem;
+    font-family: var(--font-mali);
+    font-weight: 700;
+    border-radius: 50px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+
+.confirmButton {
+    background-color: var(--color-jackboo-primary-orange);
+    color: white;
+}
+
+.confirmButton:hover:not(:disabled) {
+    background-color: #e07b00;
+}
+
+.confirmButton:disabled {
+    background-color: #ffcda1;
+    cursor: not-allowed;
+}
+
+.cancelButton {
+    background-color: #f1f1f1;
+    color: #333;
+}

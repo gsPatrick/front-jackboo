@@ -1,187 +1,145 @@
+// /app/(admin)/admin/characters/page.js
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
-import styles from './page.module.css';
-import { FaPlus, FaEdit, FaTrash, FaTimes, FaImage } from 'react-icons/fa';
 import { adminCharactersService } from '@/services/api';
+import styles from './Characters.module.css';
+import { FaPlus, FaTrash, FaSpinner, FaUpload, FaMagic, FaSync } from 'react-icons/fa';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import UploadCharacterModal from './_components/UploadCharacterModal';
+import GenerateCharacterModal from './_components/GenerateCharacterModal';
 
-// --- Componente Modal (Nenhuma mudança necessária aqui) ---
-const CharacterModal = ({ character, onClose, onSave }) => {
-    const [name, setName] = useState(character ? character.name : '');
-    const [imageFile, setImageFile] = useState(null);
-    const [preview, setPreview] = useState(character ? `https://geral-jackboo.r954jc.easypanel.host${character.generatedCharacterUrl}` : null);
-    const [error, setError] = useState('');
-    const fileInputRef = useRef(null);
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://geral-jackboo.r954jc.easypanel.host';
 
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setImageFile(file);
-            setPreview(URL.createObjectURL(file));
+const AdminCharactersPage = () => {
+    const [characters, setCharacters] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isPolling, setIsPolling] = useState(false);
+
+    const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+    const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
+
+    const fetchCharacters = useCallback(async (isSilent = false) => {
+        if (!isSilent) setIsLoading(true);
+        try {
+            // CORREÇÃO AQUI: Usando o nome da função que está no api.js
+            const data = await adminCharactersService.listCharacters();
+            setCharacters(data.characters || []);
+        } catch (error) {
+            if (!isSilent) toast.error(`Erro ao buscar personagens: ${error.message}`);
+            console.error("Erro ao buscar personagens:", error);
+        } finally {
+            if (!isSilent) setIsLoading(false);
         }
-    };
+    }, []);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError('');
-        if (!name || (!imageFile && !character)) {
-            setError('Nome e Imagem são obrigatórios.');
-            return;
-        }
+    useEffect(() => {
+        fetchCharacters();
+    }, [fetchCharacters]);
 
-        const formData = new FormData();
-        formData.append('name', name);
-        if (imageFile) {
-            formData.append('characterImage', imageFile);
+    useEffect(() => {
+        const charactersBeingGenerated = characters.some(c => !c.generatedCharacterUrl || c.name.includes('Gerando'));
+        if (charactersBeingGenerated && !isPolling) {
+            setIsPolling(true);
+            const intervalId = setInterval(async () => {
+                console.log("Polling for character status...");
+                await fetchCharacters(true);
+            }, 10000); // Poll a cada 10 segundos
+            return () => {
+                clearInterval(intervalId);
+                setIsPolling(false);
+            };
+        } else if (!charactersBeingGenerated && isPolling) {
+            setIsPolling(false);
         }
-        
-        onSave(formData, character ? character.id : null);
+    }, [characters, fetchCharacters, isPolling]);
+
+    const handleDelete = async (id) => {
+        if(window.confirm('Tem certeza que quer deletar este personagem?')) {
+            try {
+                // CORREÇÃO AQUI: Usando o nome da função que está no api.js
+                await adminCharactersService.deleteOfficialCharacter(id);
+                toast.success('Personagem deletado.');
+                fetchCharacters();
+            } catch (error) {
+                toast.error(`Falha ao deletar: ${error.message}`);
+            }
+        }
     };
 
     return (
-        <motion.div className={styles.modalBackdrop} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <motion.div className={styles.modalContent} initial={{ y: -50 }} animate={{ y: 0 }} exit={{ y: -50 }}>
-                <button onClick={onClose} className={styles.closeButton}><FaTimes /></button>
-                <h2>{character ? 'Editar' : 'Criar Novo'} Personagem Oficial</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className={styles.formGroup}>
-                        <label>Nome do Personagem</label>
-                        <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label>Imagem do Personagem</label>
-                        <div className={styles.imageUploadBox} onClick={() => fileInputRef.current.click()}>
-                            <input type="file" ref={fileInputRef} onChange={handleImageChange} accept="image/png, image/jpeg, image/webp" style={{ display: 'none' }} />
-                            {preview ? (
-                                <Image src={preview} alt="Preview" layout="fill" objectFit="cover" unoptimized />
-                            ) : (
-                                <div className={styles.uploadPlaceholder}>
-                                    <FaImage />
-                                    <span>Clique para selecionar uma imagem</span>
+        <motion.div
+            className={styles.container}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+        >
+            <ToastContainer position="bottom-right" theme="colored" autoClose={3000} />
+            <div className={styles.header}>
+                <h1 className={styles.title}>Gerenciar Personagens Oficiais</h1>
+                <div className={styles.headerActions}>
+                     {isPolling && (
+                        <span className={styles.pollingIndicator}>
+                            <FaSync className={styles.spinner} /> Verificando...
+                        </span>
+                    )}
+                    <button className={styles.actionButton} onClick={() => setIsUploadModalOpen(true)}>
+                        <FaUpload /> Adicionar via Upload
+                    </button>
+                    <button className={styles.createButton} onClick={() => setIsGenerateModalOpen(true)}>
+                        <FaMagic /> Gerar com IA
+                    </button>
+                </div>
+            </div>
+            
+            <h2 className={styles.listTitle}>Personagens Existentes</h2>
+            {isLoading && characters.length === 0 ? <p>Carregando...</p> : (
+                <div className={styles.grid}>
+                    {characters.map(char => (
+                        <div key={char.id} className={styles.charCard}>
+                            <div className={styles.imageContainer}>
+                                {char.generatedCharacterUrl ? (
+                                    <Image src={`${APP_URL}${char.generatedCharacterUrl}`} alt={char.name} width={200} height={200} />
+                                ) : (
+                                    <div className={styles.placeholder}>
+                                        <FaSpinner className={styles.spinner} />
+                                        <span>Gerando...</span>
+                                    </div>
+                                )}
+                            </div>
+                            <div className={styles.cardContent}>
+                                <h3>{char.name}</h3>
+                                <div className={styles.actions}>
+                                    <button className={styles.deleteButton} onClick={() => handleDelete(char.id)}><FaTrash/></button>
                                 </div>
-                            )}
+                            </div>
                         </div>
-                    </div>
-                    {error && <p className={styles.errorMessage}>{error}</p>}
-                    <button type="submit" className={styles.saveButton}>{character ? 'Salvar Alterações' : 'Criar Personagem'}</button>
-                </form>
-            </motion.div>
+                    ))}
+                </div>
+            )}
+
+            <UploadCharacterModal 
+                isOpen={isUploadModalOpen}
+                onClose={() => setIsUploadModalOpen(false)}
+                onSuccess={() => {
+                    setIsUploadModalOpen(false);
+                    setTimeout(() => fetchCharacters(), 1000);
+                }}
+            />
+            
+            <GenerateCharacterModal
+                isOpen={isGenerateModalOpen}
+                onClose={() => setIsGenerateModalOpen(false)}
+                onSuccess={() => {
+                    setIsGenerateModalOpen(false);
+                    setTimeout(() => fetchCharacters(), 1000);
+                }}
+            />
+
         </motion.div>
     );
 };
 
-
-// --- Componente Principal da Página ---
-export default function ManageCharactersPage() {
-    const [characters, setCharacters] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingCharacter, setEditingCharacter] = useState(null);
-
-    const fetchCharacters = async () => {
-        try {
-            setIsLoading(true);
-            const data = await adminCharactersService.listOfficialCharacters();
-            setCharacters(data);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchCharacters();
-    }, []);
-
-    const handleOpenModal = (character = null) => {
-        setEditingCharacter(character);
-        setIsModalOpen(true);
-    };
-
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setEditingCharacter(null);
-    };
-
-    const handleSaveCharacter = async (formData, characterId) => {
-        try {
-            if (characterId) {
-                await adminCharactersService.updateOfficialCharacter(characterId, formData);
-            } else {
-                await adminCharactersService.createOfficialCharacter(formData);
-            }
-            fetchCharacters();
-            handleCloseModal();
-        } catch (err) {
-            alert(`Erro ao salvar personagem: ${err.message}`);
-        }
-    };
-    
-    const handleDeleteCharacter = async (characterId) => {
-        if (window.confirm('Tem certeza que deseja deletar este personagem? Esta ação não pode ser desfeita.')) {
-            try {
-                await adminCharactersService.deleteOfficialCharacter(characterId);
-                fetchCharacters();
-            } catch (err) {
-                alert(`Erro ao deletar personagem: ${err.message}`);
-            }
-        }
-    };
-
-    if (isLoading) return <p>Carregando personagens...</p>;
-    if (error) return <p className={styles.errorMessage}>Erro: {error}</p>;
-
-    return (
-        <div className={styles.container}>
-            <div className={styles.header}>
-                <h1>Gerenciar Personagens Oficiais</h1>
-                <button className={styles.addButton} onClick={() => handleOpenModal()}>
-                    <FaPlus /> Adicionar Personagem
-                </button>
-            </div>
-
-            <div className={styles.characterGrid}>
-                {characters.length === 0 ? (
-                    <p>Nenhum personagem oficial encontrado. Clique em "Adicionar Personagem" para começar.</p>
-                ) : (
-                    characters.map(char => (
-                        <motion.div key={char.id} className={styles.characterCard} whileHover={{ y: -5 }}>
-                            <div className={styles.cardImage}>
-                                {/* --- CORREÇÃO AQUI --- */}
-                                <Image 
-                                    src={`https://geral-jackboo.r954jc.easypanel.host${char.generatedCharacterUrl}`} 
-                                    alt={char.name} 
-                                    layout="fill" 
-                                    objectFit="cover" 
-                                    unoptimized
-                                />
-                                {/* --- FIM DA CORREÇÃO --- */}
-                            </div>
-                            <div className={styles.cardContent}>
-                                <h3>{char.name}</h3>
-                                <div className={styles.cardActions}>
-                                    <button onClick={() => handleOpenModal(char)}><FaEdit /> Editar</button>
-                                    <button onClick={() => handleDeleteCharacter(char.id)} className={styles.deleteButton}><FaTrash /> Deletar</button>
-                                </div>
-                            </div>
-                        </motion.div>
-                    ))
-                )}
-            </div>
-
-            <AnimatePresence>
-                {isModalOpen && (
-                    <CharacterModal
-                        character={editingCharacter}
-                        onClose={handleCloseModal}
-                        onSave={handleSaveCharacter}
-                    />
-                )}
-            </AnimatePresence>
-        </div>
-    );
-}
+export default AdminCharactersPage;

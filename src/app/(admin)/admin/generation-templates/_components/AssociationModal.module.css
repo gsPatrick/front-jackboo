@@ -1,0 +1,98 @@
+/* /app/(admin)/admin/generation-templates/_components/AssociationModal.module.css */
+.modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 2.5rem;
+    border-radius: 15px;
+    outline: none;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    font-family: var(--font-mali);
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+}
+
+.modalTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text-dark-blue);
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.elementName {
+    color: var(--color-jackboo-primary-orange);
+}
+
+.subtitle {
+    font-size: 1rem;
+    color: #6c757d;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+}
+
+.formGroup {
+    margin-bottom: 1.5rem;
+}
+
+.formGroup label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #34495e;
+}
+
+.formGroup select {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #eef2f7;
+}
+
+.confirmButton,
+.cancelButton {
+    padding: 0.8rem 1.5rem;
+    font-family: inherit;
+    font-weight: 700;
+    border-radius: 50px;
+    cursor: pointer;
+    border: none;
+}
+
+.confirmButton {
+    background-color: var(--color-jackboo-primary-orange);
+    color: white;
+}
+
+.cancelButton {
+    background-color: #f1f1f1;
+    color: #333;
+}

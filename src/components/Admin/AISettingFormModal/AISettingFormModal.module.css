@@ -1,98 +1,26 @@
 /* src/components/Admin/AISettingFormModal/AISettingFormModal.module.css */
 .backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(47, 74, 110, 0.7);
-    backdrop-filter: blur(5px);
-    z-index: 1050;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(47, 74, 110, 0.7); backdrop-filter: blur(5px);
+    z-index: 1050; display: flex; align-items: center; justify-content: center; padding: 1rem;
 }
-
 .modal {
-    width: 100%;
-    max-width: 800px; /* Aumentado para mais espaço */
-    max-height: 90vh;
-    background-color: white;
-    border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-    display: flex;
-    flex-direction: column;
+    width: 100%; max-width: 800px; max-height: 90vh; background-color: white;
+    border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    display: flex; flex-direction: column;
 }
+.modalHeader { padding: 1.5rem; border-bottom: 1px solid #eef2f7; display: flex; justify-content: space-between; align-items: center; }
+.modalHeader h3 { font-family: var(--font-mali); font-weight: 700; font-size: 1.5rem; color: var(--color-text-dark-blue); margin: 0; }
+.closeButton { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #6c757d; }
+.modalBody { padding: 2rem; overflow-y: auto; }
+.form { display: flex; flex-direction: column; gap: 1.5rem; font-family: var(--font-mali); }
+.formGroup { display: flex; flex-direction: column; gap: 0.5rem; }
+.formGroup label { font-weight: 700; color: var(--color-text-dark-blue); }
+.formGroup input, .formGroup textarea, .formGroup select { width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid #ced4da; font-family: var(--font-mali); font-size: 1rem; background-color: #f8f9fa; }
+.formGroup input:disabled, .formGroup select:disabled { background-color: #e9ecef; cursor: not-allowed; }
+.formGroup textarea { resize: vertical; }
 
-.modalHeader {
-    padding: 1.5rem;
-    border-bottom: 1px solid #eef2f7;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.modalHeader h3 {
-    font-family: var(--font-mali);
-    font-weight: 700;
-    font-size: 1.5rem;
-    color: var(--color-text-dark-blue);
-    margin: 0;
-}
-
-.closeButton {
-    background: none;
-    border: none;
-    font-size: 1.8rem;
-    cursor: pointer;
-    color: #6c757d;
-}
-
-.modalBody {
-    padding: 2rem;
-    overflow-y: auto;
-}
-
-.form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    font-family: var(--font-mali);
-}
-
-.formGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.formGroup label {
-    font-weight: 700;
-    color: var(--color-text-dark-blue);
-}
-
-.formGroup input, .formGroup textarea, .formGroup select {
-    width: 100%;
-    padding: 0.8rem;
-    border-radius: 8px;
-    border: 1px solid #ced4da;
-    font-family: var(--font-mali);
-    font-size: 1rem;
-    background-color: #f8f9fa;
-}
-
-.formGroup input:focus, .formGroup textarea:focus, .formGroup select:focus {
-    outline: none;
-    border-color: var(--color-jackboo-primary-orange);
-    box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.2);
-}
-
-.formGroup textarea {
-    resize: vertical;
-}
-
-.hint { /* NOVO */
+.hint { 
     font-size: 0.85rem;
     color: #6c757d;
     margin-top: 0.25rem;
@@ -104,24 +32,33 @@
     gap: 1.5rem;
 }
 
-/* Removido TagInput styles */
+/* --- ESTILOS PARA SELEÇÃO DE MOTOR --- */
+.engineSelectionContainer { padding: 1rem 0; }
+.engineTitle { font-family: var(--font-mali); text-align: center; margin-bottom: 2rem; color: var(--color-text-dark-blue); }
+.engineOptions { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.engineCard { border: 1px solid #eef2f7; border-radius: 15px; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.2s ease; }
+.engineCard:hover { border-color: var(--color-jackboo-primary-orange); background-color: #fffaf5; transform: translateY(-5px); }
+.engineIcon { font-size: 2.5rem; color: var(--color-jackboo-primary-orange); margin-bottom: 1rem; }
+.engineCard h4 { font-family: var(--font-mali); font-weight: 700; font-size: 1.2rem; margin: 0 0 0.5rem; }
+.engineCard p { color: #6c757d; line-height: 1.5; margin: 0; }
+.backButton { background: none; border: none; cursor: pointer; color: #6c757d; font-weight: 700; margin-bottom: 1.5rem; }
 
-/* NOVO: Estilos para Upload de Imagens */
+/* --- NOVOS ESTILOS PARA SEÇÃO DE ASSETS --- */
 .assetsSection {
     padding-top: 1rem;
     border-top: 1px dashed #e0e0e0;
 }
-.assetsSection label {
+.assetsSection > label { /* Target label direta do formGroup */
     font-weight: 700;
     color: var(--color-text-dark-blue);
-    margin-bottom: 0.8rem;
-    display: block;
+    margin-bottom: 0rem; /* Reduzido */
 }
-.assetsGrid { /* MODIFICADO para alinhar com o novo componente */
+.assetsGrid {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 1rem;
+    padding-top: 0.8rem;
 }
 .assetPreview {
     position: relative;
@@ -147,8 +84,13 @@
     justify-content: center;
     font-size: 1rem;
     line-height: 1;
+    transition: background-color 0.2s;
 }
-.addAssetButton { /* NOVO */
+.assetRemoveButton:hover {
+    background-color: var(--color-text-red-heart);
+}
+
+.addAssetButton {
     width: 80px;
     height: 80px;
     border-radius: 8px;
@@ -159,23 +101,17 @@
     cursor: pointer;
     transition: all 0.2s ease;
 }
-.addAssetButton:hover { /* NOVO */
+.addAssetButton:hover {
     border-color: var(--color-jackboo-primary-orange);
     color: var(--color-jackboo-primary-orange);
 }
 
-.formGroupCheckbox {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-}
-.formGroupCheckbox input {
-    width: auto;
-    accent-color: var(--color-jackboo-primary-orange);
-}
-.formGroupCheckbox label {
-    font-weight: normal;
-}
+.details { border: 1px solid #eef2f7; border-radius: 8px; padding: 0.5rem; }
+.details summary { font-weight: 700; cursor: pointer; padding: 0.5rem; }
+.detailsContent { padding: 1rem; }
+.formGroupCheckbox { display: flex; align-items: center; gap: 0.8rem; }
+.formGroupCheckbox input { width: auto; accent-color: var(--color-jackboo-primary-orange); }
+.formGroupCheckbox label { font-weight: normal; }
 
 .modalFooter {
     padding: 1.5rem;
@@ -183,6 +119,7 @@
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
+    flex-shrink: 0;
 }
 
 .cancelButton, .saveButton {
@@ -194,17 +131,8 @@
     cursor: pointer;
 }
 
-.cancelButton {
-    background-color: #e9ecef;
-    border: 1px solid #ced4da;
-    color: #495057;
-}
-
-.saveButton {
-    background-color: var(--color-jackboo-primary-orange);
-    border: none;
-    color: white;
-}
+.cancelButton { background-color: #e9ecef; border: 1px solid #ced4da; color: #495057; }
+.saveButton { background-color: var(--color-jackboo-primary-orange); border: none; color: white; }
 
 @media (max-width: 768px) {
     .modal { max-width: 95vw; }

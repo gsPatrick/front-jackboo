@@ -1,0 +1,75 @@
+/* /app/(admin)/admin/leonardo/datasets/[datasetId]/Gallery.module.css */
+.container {
+    font-family: var(--font-mali);
+}
+
+.backButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    color: #6c757d;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+}
+
+.title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--color-text-dark-blue);
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: #6c757d;
+    margin-bottom: 2.5rem;
+}
+
+.galleryGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.imageWrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    cursor: pointer; /* Adicionado para indicar que é clicável */
+}
+
+.galleryImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.imageWrapper:hover .galleryImage {
+    transform: scale(1.05);
+}
+
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem;
+    margin-top: 2rem;
+    border: 2px dashed #e0e0e0;
+    border-radius: 15px;
+    color: #a0a0a0;
+    text-align: center;
+}
+
+.emptyState p {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-top: 1rem;
+}

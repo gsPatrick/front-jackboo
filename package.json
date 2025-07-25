@@ -15,6 +15,9 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
-    "react-json-editor-ajrm": "^2.5.14"
+    "react-json-editor-ajrm": "^2.5.14",
+    "react-modal": "^3.16.3",
+    "react-simple-image-viewer": "^1.2.2",
+    "react-toastify": "^11.0.5"
   }
 }

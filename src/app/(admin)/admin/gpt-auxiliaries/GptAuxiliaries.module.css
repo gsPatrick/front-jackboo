@@ -1,0 +1,132 @@
+/* /app/(admin)/admin/gpt-auxiliaries/GptAuxiliaries.module.css */
+.container {
+    font-family: var(--font-mali);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--font-mali);
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: #6c757d;
+    margin-bottom: 2.5rem;
+    max-width: 800px;
+    line-height: 1.6;
+}
+
+.createButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 1rem;
+    color: white;
+    background-color: var(--color-jackboo-primary-orange);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.createButton:hover {
+    background-color: #e07b00;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1.5rem;
+    color: var(--color-text-dark-blue);
+    border-bottom: 1px solid #eef2f7;
+}
+
+.cardHeader svg {
+    font-size: 1.5rem;
+    color: var(--color-jackboo-blue);
+}
+
+.cardHeader h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.cardType {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #f8f9fa;
+    padding: 0.2rem 0.5rem;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    margin: 1rem 1.5rem;
+    align-self: flex-start;
+}
+
+.cardPrompt {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    color: #6c757d;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    flex-grow: 1;
+    white-space: pre-wrap; /* Mantém a formatação do prompt */
+    word-break: break-word;
+}
+
+.cardActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #eef2f7;
+    margin-top: auto;
+}
+
+.cardActions button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: inherit;
+    font-weight: 700;
+    border-radius: 20px;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+.cardActions button.deleteButton {
+    background-color: #ffebee;
+    color: #c62828;
+}

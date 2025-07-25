@@ -1,106 +1,109 @@
-'use client';
+// /app/(admin)/admin/books/page.js
+'use client'; // <--- CORREÇÃO AQUI
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import styles from './page.module.css';
-import { FaEye, FaTrash, FaPlus } from 'react-icons/fa';
-import { adminBooksService } from '@/services/api';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import Link from 'next/link';
+import { adminBookGeneratorService, adminBooksService } from '@/services/api';
+import styles from './Books.module.css';
+import { FaEye, FaSync, FaExclamationTriangle, FaCheckCircle, FaSpinner } from 'react-icons/fa';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-export default function ManageBooksPage() {
-    const [booksData, setBooksData] = useState({ books: [], totalItems: 0 });
+const StatusBadge = ({ status }) => {
+    const statusMap = {
+        gerando: { text: 'Gerando', icon: <FaSpinner className={styles.spinner} />, className: 'generating' },
+        privado: { text: 'Pronto (Privado)', icon: <FaCheckCircle />, className: 'success' },
+        publicado: { text: 'Publicado', icon: <FaCheckCircle />, className: 'published' },
+        falha_geracao: { text: 'Falha na Geração', icon: <FaExclamationTriangle />, className: 'failed' },
+    };
+    const currentStatus = statusMap[status] || { text: status, className: 'default' };
+    return (
+        <span className={`${styles.statusBadge} ${styles[currentStatus.className]}`}>
+            {currentStatus.icon} {currentStatus.text}
+        </span>
+    );
+};
+
+const BooksListPage = () => {
+    const [books, setBooks] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
-    
-    // Define a URL base diretamente aqui
-    const API_BASE_URL = 'https://geral-jackboo.r954jc.easypanel.host';
 
-    const fetchBooks = async () => {
+    const fetchBooks = useCallback(async () => {
+        setIsLoading(true);
         try {
-            setIsLoading(true);
-            const data = await adminBooksService.listOfficialBooks();
-            setBooksData(data);
-        } catch (err) {
-            setError(err.message);
+            // Usando o serviço genérico que busca todos os livros
+            const data = await adminBooksService.listAllBooks();
+            // Supondo que a API retorne um objeto { books: [...] } ou similar
+            setBooks(data.books || data || []);
+        } catch (error) {
+            toast.error(`Erro ao buscar livros: ${error.message}`);
         } finally {
             setIsLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchBooks();
-    }, []);
-
-    const handleDeleteBook = async (bookId) => {
-        if (window.confirm('Tem certeza que deseja deletar este livro? Todos os seus dados e páginas serão perdidos.')) {
-            try {
-                await adminBooksService.deleteOfficialBook(bookId);
-                fetchBooks(); // Recarrega a lista
-            } catch (err) {
-                alert(`Erro ao deletar livro: ${err.message}`);
-            }
-        }
-    };
-
-    if (isLoading) return <p className={styles.loadingMessage}>Carregando livros oficiais...</p>;
-    if (error) return <p className={styles.errorMessage}>Erro: {error}</p>;
+    }, [fetchBooks]);
 
     return (
-        <div className={styles.container}>
+        <motion.div
+            className={styles.container}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+        >
+            <ToastContainer position="bottom-right" theme="colored" />
             <div className={styles.header}>
-                <h1>Livros Oficiais</h1>
-                <Link href="/admin/create-book" passHref>
-                    <button className={styles.addButton}>
-                        <FaPlus /> Criar Novo Livro
-                    </button>
-                </Link>
+                <h1 className={styles.title}>Gerenciar Livros Oficiais</h1>
+                <button className={styles.refreshButton} onClick={fetchBooks} disabled={isLoading}>
+                    <FaSync className={isLoading ? styles.spinner : ''} />
+                    Atualizar Lista
+                </button>
             </div>
+            <p className={styles.subtitle}>
+                Visualize todos os livros do catálogo, acompanhe o status da geração e gerencie cada um deles.
+            </p>
 
-            <div className={styles.booksGrid}>
-                {booksData.books.length === 0 ? (
-                    <p>Nenhum livro oficial encontrado.</p>
-                ) : (
-                    booksData.books.map(book => {
-                        // Lógica para determinar a URL da capa
-                        const coverUrl = book.variations[0]?.coverUrl || book.mainCharacter?.generatedCharacterUrl || '/images/placeholder.png';
-                        const fullImageUrl = coverUrl.startsWith('/') ? `${API_BASE_URL}${coverUrl}` : coverUrl;
-
-                        return (
-                            <motion.div key={book.id} className={styles.bookCard} whileHover={{ y: -5 }}>
-                                <div className={styles.cardImage}>
-                                    {/* --- CORREÇÃO AQUI --- */}
-                                    <Image
-                                        src={fullImageUrl}
-                                        alt={`Capa de ${book.title}`}
-                                        layout="fill"
-                                        objectFit="cover"
-                                        unoptimized
-                                    />
-                                    <span className={`${styles.statusBadge} ${styles[book.status]}`}>
-                                        {book.status}
-                                    </span>
-                                </div>
-                                <div className={styles.cardContent}>
-                                    <h3>{book.title}</h3>
-                                    <p>
-                                        Criado em: {format(new Date(book.createdAt), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
-                                    </p>
-                                    <div className={styles.cardActions}>
-                                        <Link href={`/admin/create-book/preview?bookId=${book.id}`} passHref>
-                                            <button className={styles.viewButton}><FaEye /> Ver/Editar</button>
+            <div className={styles.tableContainer}>
+                <table className={styles.table}>
+                    <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>Status</th>
+                            <th>Tipo</th>
+                            <th>Data de Criação</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {isLoading ? (
+                            <tr><td colSpan="5" style={{ textAlign: 'center' }}>Carregando livros...</td></tr>
+                        ) : books.length === 0 ? (
+                            <tr><td colSpan="5" style={{ textAlign: 'center' }}>Nenhum livro encontrado.</td></tr>
+                        ) : (
+                            books.map(book => (
+                                <tr key={book.id}>
+                                    <td className={styles.strong}>{book.title}</td>
+                                    <td><StatusBadge status={book.status} /></td>
+                                    <td>{book.variations?.[0]?.type || 'N/A'}</td>
+                                    <td>{new Date(book.createdAt).toLocaleDateString('pt-BR')}</td>
+                                    <td>
+                                        <Link href={`/admin/books/${book.id}`} passHref>
+                                           <div className={styles.actionButton}>
+                                                <FaEye /> Detalhes
+                                           </div>
                                         </Link>
-                                        <button onClick={() => handleDeleteBook(book.id)} className={styles.deleteButton}><FaTrash /></button>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        );
-                    })
-                )}
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
             </div>
-            {/* TODO: Adicionar paginação se necessário */}
-        </div>
+        </motion.div>
     );
-}
+};
+
+export default BooksListPage;

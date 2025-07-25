@@ -1,316 +1,172 @@
+// /app/(admin)/admin/create-book/page.js
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { adminBookGeneratorService, adminCharactersService, adminTaxonomiesService } from '@/services/api';
+import styles from './CreateBook.module.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { FaMagic, FaSpinner } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
-import styles from './page.module.css';
-import { FaPalette, FaFeatherAlt, FaArrowLeft, FaMagic } from 'react-icons/fa';
-import { adminTaxonomiesService, adminBookGeneratorService, adminCharactersService } from '@/services/api';
 
-// --- COMPONENTES INTERNOS DE FORMULÁRIO ---
-
-const ColoringBookForm = ({ onBack, onGenerate, availablePrintFormats, officialCharacters }) => {
+const CreateBookPage = () => {
     const [formData, setFormData] = useState({
-        title: '',
-        mainCharacterId: '',
+        bookType: 'coloring',
         theme: '',
-        printFormatId: '',
-        pageCount: 10,
-    });
-    const [formError, setFormError] = useState(null);
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        setFormError(null);
-        if (!formData.title || !formData.mainCharacterId || !formData.theme || !formData.printFormatId || !formData.pageCount) {
-            setFormError("Por favor, preencha todos os campos obrigatórios.");
-            return;
-        }
-        onGenerate('coloring', formData);
-    };
-
-    return (
-        <motion.form onSubmit={handleSubmit} className={styles.formContainer} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <button type="button" onClick={onBack} className={styles.backButton}><FaArrowLeft /> Mudar tipo de livro</button>
-            <h2 className={styles.formTitle}>Novo Livro de Colorir</h2>
-            {formError && <p className={styles.errorMessage}>{formError}</p>}
-            <div className={styles.formGroup}>
-                <label>Título do Livro</label>
-                <input name="title" type="text" value={formData.title} onChange={handleChange} placeholder="Ex: O Jardim Secreto de JackBoo" required />
-            </div>
-            <div className={styles.formGroup}>
-                <label>Personagem Principal</label>
-                <select name="mainCharacterId" value={formData.mainCharacterId} onChange={handleChange} required>
-                    <option value="">Selecione...</option>
-                    {officialCharacters.map(char => <option key={char.id} value={char.id}>{char.name}</option>)}
-                </select>
-            </div>
-            <div className={styles.formGroup}>
-                <label>Tema Principal</label>
-                <input name="theme" type="text" value={formData.theme} onChange={handleChange} placeholder="Ex: Aventura no Zoológico, Férias na Praia" required />
-            </div>
-            <div className={styles.grid}>
-                <div className={styles.formGroup}>
-                    <label>Formato de Impressão</label>
-                    <select name="printFormatId" value={formData.printFormatId} onChange={handleChange} required>
-                        <option value="">Selecione...</option>
-                        {availablePrintFormats.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
-                    </select>
-                </div>
-                <div className={styles.formGroup}>
-                    <label>Quantidade de Páginas de Colorir</label>
-                    <input name="pageCount" type="number" value={formData.pageCount} onChange={handleChange} min="1" required />
-                </div>
-            </div>
-            <div className={styles.submitWrapper}>
-                <button type="submit" className={styles.submitButton}><FaMagic /> Gerar Livro</button>
-            </div>
-        </motion.form>
-    );
-};
-
-const StoryBookForm = ({ onBack, onGenerate, availablePrintFormats, officialCharacters }) => {
-    const [formData, setFormData] = useState({
         title: '',
-        mainCharacterId: '',
-        theme: '',
-        location: '',
-        summary: '',
+        characterId: '',
         printFormatId: '',
-        pageCount: 8,
+        pageCount: '10',
+        aiTemplateId: '' // Voltamos a usar aiTemplateId
     });
-    const [formError, setFormError] = useState(null);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        setFormError(null);
-        if (!formData.title || !formData.mainCharacterId || !formData.theme || !formData.location || !formData.summary || !formData.printFormatId || !formData.pageCount) {
-            setFormError("Por favor, preencha todos os campos obrigatórios.");
-            return;
-        }
-        onGenerate('story', formData);
-    };
-
-    return (
-        <motion.form onSubmit={handleSubmit} className={styles.formContainer} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <button type="button" onClick={onBack} className={styles.backButton}><FaArrowLeft /> Mudar tipo de livro</button>
-            <h2 className={styles.formTitle}>Novo Livro de História</h2>
-            {formError && <p className={styles.errorMessage}>{formError}</p>}
-            <div className={styles.formGroup}>
-                <label>Título do Livro</label>
-                <input name="title" type="text" value={formData.title} onChange={handleChange} placeholder="Ex: A Grande Aventura na Floresta Encantada" required />
-            </div>
-            <div className={styles.formGroup}>
-                <label>Personagem Principal</label>
-                <select name="mainCharacterId" value={formData.mainCharacterId} onChange={handleChange} required>
-                    <option value="">Selecione...</option>
-                    {officialCharacters.map(char => <option key={char.id} value={char.id}>{char.name}</option>)}
-                </select>
-            </div>
-            <div className={styles.formGroup}>
-                <label>Tema da História</label>
-                <input name="theme" type="text" value={formData.theme} onChange={handleChange} placeholder="Ex: Uma jornada sobre coragem, O mistério da floresta" required />
-            </div>
-            <div className={styles.formGroup}>
-                <label>Onde a história se passa?</label>
-                <input name="location" type="text" value={formData.location} onChange={handleChange} placeholder="Ex: Numa cidade flutuante, num reino subaquático" required />
-            </div>
-            <div className={styles.formGroup}>
-                <label>Mini-resumo para guiar a história</label>
-                <textarea name="summary" rows="3" value={formData.summary} onChange={handleChange} placeholder="Ex: JackBoo encontra um mapa antigo e decide procurar um tesouro perdido, mas descobre que a maior riqueza é a amizade." required />
-            </div>
-            <div className={styles.grid}>
-                <div className={styles.formGroup}>
-                    <label>Formato de Impressão</label>
-                    <select name="printFormatId" value={formData.printFormatId} onChange={handleChange} required>
-                        <option value="">Selecione...</option>
-                        {availablePrintFormats.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
-                    </select>
-                </div>
-                <div className={styles.formGroup}>
-                    <label>Quantidade de Cenas (1 cena = 1 ilust. + 1 texto)</label>
-                    <input name="pageCount" type="number" value={formData.pageCount} onChange={handleChange} min="1" required />
-                </div>
-            </div>
-            <div className={styles.submitWrapper}>
-                <button type="submit" className={styles.submitButton}><FaMagic /> Gerar Livro</button>
-            </div>
-        </motion.form>
-    );
-};
-
-
-// --- COMPONENTE PRINCIPAL DA PÁGINA ---
-
-export default function CreateBookPage() {
-    const [bookType, setBookType] = useState(null);
-    const [availablePrintFormats, setAvailablePrintFormats] = useState([]);
-    const [officialCharacters, setOfficialCharacters] = useState([]);
-    const [isLoadingOptions, setIsLoadingOptions] = useState(true);
-    const [errorOptions, setErrorOptions] = useState(null);
-    const [isGenerating, setIsGenerating] = useState(false); // Mantido para feedback visual no botão, se desejar
+    const [characters, setCharacters] = useState([]);
+    const [printFormats, setPrintFormats] = useState([]);
+    const [aiTemplates, setAiTemplates] = useState([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
-        const fetchOptions = async () => {
+        const fetchData = async () => {
             try {
-                setIsLoadingOptions(true);
-                setErrorOptions(null);
-
-                const [printFormatsRes, charactersRes] = await Promise.all([
+                const [charData, formatData, templateData] = await Promise.all([
+                    adminCharactersService.listCharacters(),
                     adminTaxonomiesService.listPrintFormats(),
-                    adminCharactersService.listOfficialCharacters(),
+                    adminTaxonomiesService.listAiTemplates()
                 ]);
-                
-                setAvailablePrintFormats(printFormatsRes);
-                setOfficialCharacters(charactersRes);
 
-            } catch (err) {
-                console.error("Erro ao carregar opções para geração de livro:", err);
-                setErrorOptions("Falha ao carregar opções: " + err.message);
-            } finally {
-                setIsLoadingOptions(false);
+                setCharacters(charData.characters || []);
+                setPrintFormats(formatData || []);
+                setAiTemplates(templateData || []);
+                
+            } catch (error) {
+                toast.error(`Erro ao carregar dados iniciais: ${error.message}`);
             }
         };
-        fetchOptions();
+        fetchData();
     }, []);
 
-    const handleGenerate = (type, formData) => {
-        // Define o estado de geração para desabilitar o botão e evitar múltiplos cliques
-        setIsGenerating(true);
-        try {
-            // 1. Cria um objeto URLSearchParams para construir a query string
-            const params = new URLSearchParams();
-            
-            params.append('bookType', type);
-            params.append('title', formData.title);
-            params.append('characterId', formData.mainCharacterId);
-            params.append('printFormatId', formData.printFormatId);
-            params.append('pageCount', formData.pageCount);
-            params.append('theme', formData.theme);
-
-            // Adiciona parâmetros específicos de livro de história se existirem
-            if (type === 'story') {
-                params.append('location', formData.location || '');
-                params.append('summary', formData.summary || '');
-            }
-            
-            // 2. Redireciona para a nova página de geração com os parâmetros na URL
-            router.push(`/admin/create-book/generating?${params.toString()}`);
-            
-        } catch (err) {
-            console.error("Erro ao preparar para geração:", err);
-            alert("Ocorreu um erro inesperado ao tentar iniciar a geração: " + err.message);
-            setIsGenerating(false); // Reseta o estado em caso de erro
-        }
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    if (isLoadingOptions) {
-        return (
-            <motion.div className={styles.container}>
-                <p className={styles.loadingMessage}>Carregando opções e personagens...</p>
-            </motion.div>
-        );
-    }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const { bookType, characterId, printFormatId, aiTemplateId, title, theme } = formData;
+        if (!bookType || !characterId || !printFormatId || !aiTemplateId || !title.trim() || !theme.trim()) {
+            toast.warn('Todos os campos são obrigatórios.');
+            return;
+        }
 
-    if (errorOptions) {
-        return (
-            <motion.div className={styles.container}>
-                <p className={styles.errorMessage}>{errorOptions}</p>
-            </motion.div>
-        );
-    }
+        setIsSubmitting(true);
+        try {
+            await adminBookGeneratorService.generateBookPreview(bookType, formData);
+            toast.success(`Geração do livro "${formData.title}" iniciada! Você será redirecionado.`);
+            
+            setTimeout(() => {
+                router.push('/admin/books');
+            }, 2000);
+
+        } catch (error) {
+            toast.error(`Falha ao iniciar geração: ${error.message}`);
+            setIsSubmitting(false);
+        }
+    };
     
-    if (availablePrintFormats.length === 0) {
-         return (
-            <motion.div className={styles.container}>
-                <p className={styles.errorMessage}>Nenhum formato de impressão ativo encontrado. Por favor, <a href="/admin/print-formats">configure os formatos de impressão</a> antes de criar um livro.</p>
-            </motion.div>
+    // O filtro volta a ser específico para o tipo de livro
+    const filteredTemplates = useMemo(() => {
+        if (!aiTemplates || aiTemplates.length === 0) return [];
+        const filterType = formData.bookType;
+        return aiTemplates.filter(t => 
+            t.type && t.type.startsWith('ADMIN_') && t.type.includes(filterType)
         );
-    }
-    if (officialCharacters.length === 0) {
-        return (
-            <motion.div className={styles.container}>
-                <p className={styles.errorMessage}>Nenhum personagem oficial encontrado. Por favor, <a href="/admin/characters">crie personagens oficiais</a> antes de criar um livro.</p>
-            </motion.div>
-        );
-    }
+    }, [aiTemplates, formData.bookType]);
+
 
     return (
         <motion.div
             className={styles.container}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
         >
-            <div className={styles.header}>
-                <h1 className={styles.title}>Criar Novo Livro Oficial</h1>
-                <p className={styles.subtitle}>Siga os passos para gerar um novo livro para a plataforma.</p>
-            </div>
+            <ToastContainer position="bottom-right" theme="colored" />
+            <h1 className={styles.title}>Criar Livro Oficial</h1>
+            <p className={styles.subtitle}>
+                Use este formulário para gerar um novo livro para o catálogo oficial da JackBoo. A geração ocorrerá em segundo plano.
+            </p>
 
-            <div className={styles.content}>
-                <AnimatePresence mode="wait">
-                    {!bookType ? (
-                        <motion.div
-                            key="selection"
-                            className={styles.typeSelector}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                        >
-                            <h2 className={styles.stepTitle}>Passo 1: Escolha o tipo de livro</h2>
-                            <div className={styles.cardContainer}>
-                                <motion.div 
-                                    className={styles.typeCard} 
-                                    onClick={() => setBookType('coloring')}
-                                    whileHover={{ y: -10 }}
-                                >
-                                    <FaPalette className={styles.typeIcon} />
-                                    <h3>Livro de Colorir</h3>
-                                    <p>Foco em um tema para atividades de pintura.</p>
-                                </motion.div>
-                                <motion.div 
-                                    className={styles.typeCard} 
-                                    onClick={() => setBookType('story')}
-                                    whileHover={{ y: -10 }}
-                                >
-                                    <FaFeatherAlt className={styles.typeIcon} />
-                                    <h3>Livro de História</h3>
-                                    <p>Crie uma narrativa com ilustrações e texto.</p>
-                                </motion.div>
-                            </div>
-                        </motion.div>
-                    ) : (
-                        <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                            <h2 className={styles.stepTitle}>Passo 2: Preencha os detalhes</h2>
-                            {isGenerating && <p className={styles.generatingMessage}>Redirecionando para a tela de geração...</p>}
-                            {bookType === 'coloring' && 
-                                <ColoringBookForm 
-                                    onBack={() => setBookType(null)} 
-                                    onGenerate={handleGenerate} 
-                                    availablePrintFormats={availablePrintFormats}
-                                    officialCharacters={officialCharacters}
-                                />}
-                            {bookType === 'story' && 
-                                <StoryBookForm 
-                                    onBack={() => setBookType(null)} 
-                                    onGenerate={handleGenerate}
-                                    availablePrintFormats={availablePrintFormats}
-                                    officialCharacters={officialCharacters}
-                                />}
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
+            <form onSubmit={handleSubmit} className={styles.form}>
+                <div className={styles.card}>
+                    <h2 className={styles.cardTitle}>1. Tipo e Título</h2>
+                    <div className={styles.formGrid}>
+                        <div className={styles.formGroup}>
+                            <label htmlFor="bookType">Tipo de Livro</label>
+                            <select id="bookType" name="bookType" value={formData.bookType} onChange={handleChange}>
+                                <option value="coloring">Livro de Colorir</option>
+                                <option value="story">Livro de História</option>
+                            </select>
+                        </div>
+                         <div className={styles.formGroup}>
+                            <label htmlFor="title">Título do Livro</label>
+                            <input id="title" name="title" type="text" value={formData.title} onChange={handleChange} placeholder="Ex: A Aventura de Fagulha na Floresta"/>
+                        </div>
+                         <div className={styles.formGroup}>
+                            <label htmlFor="theme">Tema Principal</label>
+                            <input id="theme" name="theme" type="text" value={formData.theme} onChange={handleChange} placeholder="Ex: Amizade e Coragem"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={styles.card}>
+                    <h2 className={styles.cardTitle}>2. Conteúdo e Personagem</h2>
+                    <div className={styles.formGrid}>
+                        <div className={styles.formGroup}>
+                            <label htmlFor="characterId">Personagem Principal</label>
+                            <select id="characterId" name="characterId" value={formData.characterId} onChange={handleChange}>
+                                <option value="" disabled>Selecione um personagem...</option>
+                                {characters.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                            </select>
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label htmlFor="pageCount">Número de Páginas</label>
+                            <input id="pageCount" name="pageCount" type="number" value={formData.pageCount} onChange={handleChange} min="4" max="40"/>
+                        </div>
+                    </div>
+                </div>
+                
+                 <div className={styles.card}>
+                    <h2 className={styles.cardTitle}>3. Configuração Técnica e de IA</h2>
+                     <div className={styles.formGrid}>
+                        <div className={styles.formGroup}>
+                            <label htmlFor="printFormatId">Formato de Impressão</label>
+                            <select id="printFormatId" name="printFormatId" value={formData.printFormatId} onChange={handleChange}>
+                                <option value="" disabled>Selecione um formato...</option>
+                                {printFormats.map(f => <option key={f.id} value={f.id}>{f.name} ({f.pageWidth}x{f.pageHeight}cm)</option>)}
+                            </select>
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label htmlFor="aiTemplateId">Template de Geração de IA</label>
+                            <select id="aiTemplateId" name="aiTemplateId" value={formData.aiTemplateId} onChange={handleChange}>
+                                <option value="" disabled>Selecione um template...</option>
+                                {filteredTemplates.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                            </select>
+                             <small>Apenas templates com tipo `ADMIN_{formData.bookType}` são exibidos.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={styles.actions}>
+                    <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
+                        {isSubmitting ? <FaSpinner className={styles.spinner} /> : <FaMagic />}
+                        {isSubmitting ? 'Iniciando Geração...' : 'Gerar Livro'}
+                    </button>
+                </div>
+            </form>
         </motion.div>
     );
-}
+};
+
+export default CreateBookPage;

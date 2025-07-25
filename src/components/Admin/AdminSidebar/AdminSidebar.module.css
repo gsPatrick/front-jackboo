@@ -34,7 +34,7 @@
     align-items: center;
     padding: 0.9rem 1.5rem;
     margin: 0.2rem 1rem;
-    color: #6c757d; /* Cinza sutil */
+    color: #6c757d;
     text-decoration: none;
     border-radius: 10px;
     transition: all 0.2s ease-in-out;
@@ -56,12 +56,48 @@
 .icon {
     font-size: 1.2rem;
     margin-right: 1rem;
-    width: 20px; /* Alinhamento dos ícones */
+    width: 20px;
     text-align: center;
 }
 
 .label {
     font-size: 1rem;
+}
+
+.dropdownToggle {
+    cursor: pointer;
+    position: relative;
+}
+
+/* NOVO: Estilo para destacar o menu pai quando um filho está ativo */
+.parentActive {
+    color: var(--color-text-dark-blue);
+    background-color: #f8f9fa;
+}
+/* FIM DO NOVO ESTILO */
+
+.chevron {
+    margin-left: auto;
+    font-size: 0.8rem;
+    transition: transform 0.3s ease;
+}
+
+.chevron.open {
+    transform: rotate(180deg);
+}
+
+.submenu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+.submenuLink {
+    padding-left: 3.5rem; /* Indentação para itens do submenu */
+    font-size: 0.95rem;
+    padding-top: 0.7rem;
+    padding-bottom: 0.7rem;
 }
 
 .footer {
@@ -93,27 +129,10 @@
 
     .nav {
         padding: 0;
-    }
-
-    .navList {
-        display: flex;
-        flex-direction: row;
-    }
-
-    .navLink {
-        padding: 0.8rem;
-        margin: 0 0.2rem;
-    }
-    
-    .label {
-        display: none; /* Esconde o texto dos links em telas pequenas */
-    }
-
-    .icon {
-        margin-right: 0;
+        display: none; /* Em telas muito pequenas, o menu pode ser ocultado por um botão de hambúrguer (implementação futura) */
     }
     
     .footer {
-        display: none; /* Esconde o rodapé em telas pequenas */
+        display: none;
     }
 }

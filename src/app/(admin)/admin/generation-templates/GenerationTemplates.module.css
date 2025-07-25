@@ -1,0 +1,115 @@
+/* /app/(admin)/admin/generation-templates/GenerationTemplates.module.css */
+.container {
+    font-family: var(--font-mali);
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text-dark-blue);
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: #6c757d;
+    margin-bottom: 2.5rem;
+    max-width: 800px;
+    line-height: 1.6;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    padding: 1.5rem;
+    color: var(--color-text-dark-blue);
+}
+
+.cardHeader svg {
+    font-size: 1.5rem;
+    color: var(--color-jackboo-primary-orange);
+}
+
+.cardHeader h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.cardDescription {
+    color: #6c757d;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.association {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem;
+}
+
+.association .line {
+    flex-grow: 1;
+    height: 2px;
+    background-color: #eef2f7;
+}
+
+.association .icon {
+    color: #ccc;
+    font-size: 1.2rem;
+    padding: 0 1rem;
+}
+
+.gptSection {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+
+.associatedGpt p, .noGpt p {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text-dark-blue);
+}
+
+.associatedGpt small {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.noGpt {
+    color: #90a4ae;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 1rem;
+}
+
+.gptSection button {
+    margin-top: 1rem;
+    font-family: inherit;
+    font-weight: 700;
+    border: none;
+    border-radius: 20px;
+    padding: 0.6rem 1.5rem;
+    cursor: pointer;
+    background-color: var(--color-jackboo-blue);
+    color: white;
+}

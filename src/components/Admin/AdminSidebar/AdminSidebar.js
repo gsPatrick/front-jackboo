@@ -1,91 +1,152 @@
+// src/components/Admin/AdminSidebar/AdminSidebar.js
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import styles from './AdminSidebar.module.css';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   FaTachometerAlt,
-  FaUserAstronaut,
-  FaFileInvoice,
   FaMagic,
   FaBook,
-  FaTrophy,
-  FaUsers,
-  FaMoneyBillWave,
-  FaCogs, // Mantido para futuras "Configurações Gerais"
+  FaUserAstronaut,
+  FaCogs,
+  FaBrain,
+  FaLayerGroup,
+  FaCubes,
+  FaCommentDots,
+  FaPaintBrush,
+  FaChevronDown,
+  FaUsersCog, // Ícone melhorado para as configurações do usuário
 } from 'react-icons/fa';
 
-// Array com os links de navegação do painel de admin
-const navLinks = [
-  {
-    href: '/admin',
-    icon: <FaTachometerAlt />,
-    label: 'Dashboard',
-  },
-  {
-    href: '/admin/books',
-    icon: <FaBook />,
-    label: 'Livros Oficiais',
-},
-  {
-    href: '/admin/create-book',
-    icon: <FaMagic />,
-    label: 'Criar Livro Oficial',
-  },
-  {
-    href: '/admin/characters',
-    icon: <FaUserAstronaut />,
-    label: 'Personagens Oficiais',
-  },
-  {
-    href: '/admin/print-formats',
-    icon: <FaFileInvoice />,
-    label: 'Formatos de Impressão',
-  },
-  // Adicione outros links de gerenciamento aqui conforme necessário
-  // Exemplo:
-  // {
-  //   href: '/admin/taxonomies',
-  //   icon: <FaTags />,
-  //   label: 'Categorias',
-  // },
+// Links principais da navegação
+const mainLinks = [
+  { href: '/admin', icon: <FaTachometerAlt />, label: 'Dashboard' },
+  { href: '/admin/books', icon: <FaBook />, label: 'Livros Oficiais' },
+  { href: '/admin/create-book', icon: <FaMagic />, label: 'Criar Livro Oficial' },
+  { href: '/admin/characters', icon: <FaUserAstronaut />, label: 'Personagens Oficiais' },
 ];
+
+// Links do submenu de Configurações de Geração
+const generationSettingsLinks = [
+  { href: '/admin/gpt-auxiliaries', icon: <FaCommentDots />, label: 'GPT Auxiliares' },
+  { href: '/admin/generation-templates', icon: <FaPaintBrush />, label: 'Templates de Geração' },
+  // LINK RESTAURADO AQUI
+  { href: '/admin/user-generation-settings', icon: <FaUsersCog />, label: 'Padrões dos Usuários' },
+];
+
+// Links para o submenu Leonardo.AI
+const leonardoLinks = [
+    { href: '/admin/leonardo/datasets', icon: <FaLayerGroup />, label: 'Datasets' },
+    { href: '/admin/leonardo/elements', icon: <FaCubes />, label: 'Elements (Modelos)' },
+];
+
 
 const AdminSidebar = () => {
   const pathname = usePathname();
+  const isParentActive = (links) => links.some(link => pathname.startsWith(link.href));
+
+  const [isGenerationSettingsOpen, setIsGenerationSettingsOpen] = useState(isParentActive(generationSettingsLinks));
+  const [isLeonardoOpen, setIsLeonardoOpen] = useState(isParentActive(leonardoLinks));
 
   return (
     <aside className={styles.sidebar}>
       <div className={styles.logoContainer}>
-        <Image
-          src="/images/jackboo-full-logo.png" // Certifique-se que o caminho está correto
-          alt="JackBoo Logo"
-          width={150}
-          height={40}
-          priority
-        />
+        <Link href="/admin">
+          <Image
+            src="/images/jackboo-full-logo.png"
+            alt="JackBoo Logo"
+            width={150}
+            height={40}
+            priority
+          />
+        </Link>
       </div>
       <nav className={styles.nav}>
         <ul className={styles.navList}>
-          {navLinks.map((link) => (
+          {mainLinks.map((link) => (
             <li key={link.href}>
               <Link href={link.href} passHref>
-                <div 
-                  className={`${styles.navLink} ${pathname === link.href ? styles.active : ''}`}
-                >
+                <div className={`${styles.navLink} ${pathname === link.href ? styles.active : ''}`}>
                   <span className={styles.icon}>{link.icon}</span>
                   <span className={styles.label}>{link.label}</span>
                 </div>
               </Link>
             </li>
           ))}
+
+          {/* Menu de Configurações de Geração */}
+          <li>
+            <div
+              className={`${styles.navLink} ${styles.dropdownToggle} ${isParentActive(generationSettingsLinks) ? styles.parentActive : ''}`}
+              onClick={() => setIsGenerationSettingsOpen(!isGenerationSettingsOpen)}
+            >
+              <span className={styles.icon}><FaCogs /></span>
+              <span className={styles.label}>Config. de Geração</span>
+              <FaChevronDown className={`${styles.chevron} ${isGenerationSettingsOpen ? styles.open : ''}`} />
+            </div>
+            <AnimatePresence>
+              {isGenerationSettingsOpen && (
+                <motion.ul
+                  className={styles.submenu}
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                >
+                  {generationSettingsLinks.map((link) => (
+                    <li key={link.href}>
+                      <Link href={link.href} passHref>
+                        <div className={`${styles.navLink} ${styles.submenuLink} ${pathname.startsWith(link.href) ? styles.active : ''}`}>
+                          <span className={styles.icon}>{link.icon}</span>
+                          <span className={styles.label}>{link.label}</span>
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </motion.ul>
+              )}
+            </AnimatePresence>
+          </li>
+
+          {/* Menu Leonardo.AI */}
+          <li>
+            <div
+              className={`${styles.navLink} ${styles.dropdownToggle} ${isParentActive(leonardoLinks) ? styles.parentActive : ''}`}
+              onClick={() => setIsLeonardoOpen(!isLeonardoOpen)}
+            >
+              <span className={styles.icon}><FaBrain /></span>
+              <span className={styles.label}>Leonardo.AI</span>
+              <FaChevronDown className={`${styles.chevron} ${isLeonardoOpen ? styles.open : ''}`} />
+            </div>
+            <AnimatePresence>
+              {isLeonardoOpen && (
+                <motion.ul
+                  className={styles.submenu}
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                >
+                  {leonardoLinks.map((link) => (
+                    <li key={link.href}>
+                      <Link href={link.href} passHref>
+                        <div className={`${styles.navLink} ${styles.submenuLink} ${pathname.startsWith(link.href) ? styles.active : ''}`}>
+                          <span className={styles.icon}>{link.icon}</span>
+                          <span className={styles.label}>{link.label}</span>
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </motion.ul>
+              )}
+            </AnimatePresence>
+          </li>
         </ul>
       </nav>
       <div className={styles.footer}>
-        {/* Pode ser usado para um link de perfil de admin ou logout no futuro */}
-        <p>© 2024 JackBoo Admin</p>
+        <p>© 2025 JackBoo Admin</p>
       </div>
     </aside>
   );

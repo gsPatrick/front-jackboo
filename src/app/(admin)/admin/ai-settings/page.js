@@ -1,164 +1,156 @@
-// src/app/admin/ai-settings/page.js
+// /app/(admin)/admin/ai-settings/page.js
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import styles from './page.module.css';
-import { FaPlus, FaEdit, FaTrash, FaImages } from 'react-icons/fa';
-import AISettingFormModal from '@/components/Admin/AISettingFormModal/AISettingFormModal';
-import { adminAISettingsService } from '@/services/api'; 
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { FaPlus, FaEdit, FaTrash, FaLink, FaUnlink, FaInfoCircle } from 'react-icons/fa';
+import { adminAISettingsService } from '@/services/api';
+import styles from './AiSettings.module.css';
+import TemplateFormModal from './_components/TemplateFormModal';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.05 } },
-};
-const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-};
-
-export default function AiSettingsPage() {
+const AiSettingsPage = () => {
     const [settings, setSettings] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [currentSetting, setCurrentSetting] = useState(null);
+    const [selectedTemplate, setSelectedTemplate] = useState(null);
 
-    const fetchSettings = async () => {
+    const fetchSettings = useCallback(async () => {
         try {
             setIsLoading(true);
-            setError(null);
             const data = await adminAISettingsService.listSettings();
-            setSettings(data); 
-        } catch (err) {
-            console.error("Erro ao buscar configurações de IA:", err);
-            setError("Falha ao carregar configurações: " + err.message);
+            setSettings(data);
+        } catch (error) {
+            toast.error(`Erro ao buscar templates: ${error.message}`);
         } finally {
             setIsLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchSettings();
-    }, []);
+    }, [fetchSettings]);
 
-    const handleCreate = () => {
-        setCurrentSetting(null); 
+    const handleOpenModal = (template = null) => {
+        setSelectedTemplate(template);
         setIsModalOpen(true);
     };
 
-    const handleEdit = (setting) => {
-        setCurrentSetting(setting);
-        setIsModalOpen(true);
+    const handleCloseModal = () => {
+        setSelectedTemplate(null);
+        setIsModalOpen(false);
     };
 
-    const handleDelete = async (typeToDelete) => {
-        if (window.confirm(`Tem certeza que deseja deletar a configuração "${typeToDelete}"? Esta ação não pode ser desfeita.`)) {
+    const handleDelete = async (type) => {
+        if (window.confirm(`Tem certeza que deseja deletar o template "${type}"? Esta ação não pode ser desfeita.`)) {
             try {
-                await adminAISettingsService.deleteSetting(typeToDelete);
-                fetchSettings(); 
-                alert("Configuração deletada com sucesso!");
-            } catch (err) {
-                console.error("Erro ao deletar configuração:", err);
-                alert("Falha ao deletar configuração: " + err.message);
+                await adminAISettingsService.deleteSetting(type);
+                toast.success('Template deletado com sucesso!');
+                fetchSettings();
+            } catch (error) {
+                toast.error(`Falha ao deletar template: ${error.message}`);
             }
         }
     };
-
-    const handleSave = async (type, settingData) => {
-        try {
-            await adminAISettingsService.createOrUpdateSetting(type, settingData);
-            fetchSettings(); 
-            alert("Configuração salva com sucesso!");
-        } catch (err) {
-            console.error("Erro ao salvar configuração:", err);
-            alert("Falha ao salvar configuração: " + err.message);
-        } finally {
-            setIsModalOpen(false); 
-        }
-    };
+    
+    // Agrupa os templates por prefixo (USER, ADMIN, etc.)
+    const groupedSettings = useMemo(() => {
+        return settings.reduce((acc, setting) => {
+            const prefix = setting.type.split('_')[0] || 'Outros';
+            if (!acc[prefix]) {
+                acc[prefix] = [];
+            }
+            acc[prefix].push(setting);
+            return acc;
+        }, {});
+    }, [settings]);
 
     return (
-        <main className={styles.main}>
-            <div className={styles.container}>
-                <div className={styles.header}>
-                    <h1 className={styles.pageTitle}>Configurações de IA</h1>
-                    <motion.button
-                        className={styles.createButton}
-                        onClick={handleCreate}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                    >
-                        <FaPlus /> Criar Nova
-                    </motion.button>
+        <motion.div
+            className={styles.container}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+        >
+            <ToastContainer position="bottom-right" theme="colored" />
+            <div className={styles.header}>
+                <h1 className={styles.title}>Gerenciar Templates de IA</h1>
+                <button className={styles.createButton} onClick={() => handleOpenModal()}>
+                    <FaPlus /> Criar Novo Template
+                </button>
+            </div>
+            <p className={styles.subtitle}>
+                Configure os prompts que a IA usará para gerar conteúdo. Os tipos (ex: `USER_character_description`) são usados pelo sistema para saber qual template aplicar em cada situação.
+            </p>
+
+            {isLoading ? (
+                <p>Carregando templates...</p>
+            ) : Object.keys(groupedSettings).length === 0 ? (
+                 <div className={styles.emptyState}>
+                    <FaInfoCircle size={40} />
+                    <p>Nenhum template de IA encontrado.</p>
+                    <span>Clique em "Criar Novo Template" para configurar os fluxos de geração.</span>
                 </div>
-
-                {isLoading && <p className={styles.loadingMessage}>Carregando configurações...</p>}
-                {error && <p className={styles.errorMessage}>{error}</p>}
-                {!isLoading && !error && settings.length === 0 && (
-                    <p className={styles.emptyMessage}>Nenhuma configuração de IA encontrada. Crie uma nova!</p>
-                )}
-
-                {!isLoading && !error && settings.length > 0 && (
-                    <div className={styles.tableWrapper}>
-                        <table className={styles.table}>
-                            <thead>
-                                <tr>
-                                    <th>Nome</th> {/* Agora exibe o nome amigável */}
-                                    <th>Tipo</th> {/* Exibe o identificador técnico */}
-                                    <th>Prompt Base</th>
-                                    <th>Modelo (Tamanho)</th>
-                                    <th>Estilo / Qualidade</th>
-                                    <th>Imagens Ref.</th>
-                                    <th>Status</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <motion.tbody
-                                variants={containerVariants}
-                                initial="hidden"
-                                animate="visible"
-                            >
-                                <AnimatePresence>
-                                    {settings.map(setting => (
-                                        <motion.tr key={setting.id || setting.type} variants={itemVariants} exit={{ opacity: 0, x: -50 }}>
-                                            <td>{setting.name}</td> {/* Exibe o nome */}
-                                            <td>{setting.type}</td> {/* Exibe o tipo */}
-                                            <td>{setting.basePromptText.substring(0, 70)}{setting.basePromptText.length > 70 ? '...' : ''}</td>
-                                            <td>{setting.model} ({setting.size})</td>
-                                            <td>{setting.style} / {setting.quality}</td>
-                                            <td className={styles.imageCountCell}>
-                                                <FaImages />
-                                                <span>{setting.baseAssets ? setting.baseAssets.length : 0}</span>
+            ) : (
+                Object.entries(groupedSettings).map(([groupName, groupSettings]) => (
+                    <div key={groupName} className={styles.groupContainer}>
+                        <h2 className={styles.groupTitle}>{groupName}</h2>
+                        <div className={styles.tableContainer}>
+                            <table className={styles.table}>
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Tipo (Chave do Sistema)</th>
+                                        <th>Helper Prompt</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {groupSettings.map(setting => (
+                                        <tr key={setting.id}>
+                                            <td className={styles.strong}>{setting.name}</td>
+                                            <td className={styles.code}>{setting.type}</td>
+                                            <td>
+                                                {setting.helperPrompt ? (
+                                                    <span className={styles.helperLink}><FaLink /> {setting.helperPrompt.name}</span>
+                                                ) : (
+                                                    <span className={styles.noHelper}><FaUnlink /> Nenhum</span>
+                                                )}
                                             </td>
                                             <td>
-                                                <span className={`${styles.statusBadge} ${setting.isActive ? styles.active : styles.inactive}`}>
-                                                    {setting.isActive ? 'Ativo' : 'Inativo'}
-                                                </span>
+                                                <div className={styles.actions}>
+                                                    <button className={`${styles.actionButton} ${styles.edit}`} onClick={() => handleOpenModal(setting)}>
+                                                        <FaEdit />
+                                                    </button>
+                                                    <button className={`${styles.actionButton} ${styles.delete}`} onClick={() => handleDelete(setting.type)}>
+                                                        <FaTrash />
+                                                    </button>
+                                                </div>
                                             </td>
-                                            <td className={styles.actionsCell}>
-                                                <motion.button className={styles.actionButton} onClick={() => handleEdit(setting)} whileHover={{ scale: 1.1 }} title="Editar">
-                                                    <FaEdit />
-                                                </motion.button>
-                                                <motion.button className={`${styles.actionButton} ${styles.deleteButton}`} onClick={() => handleDelete(setting.type)} whileHover={{ scale: 1.1 }} title="Deletar">
-                                                    <FaTrash />
-                                                </motion.button>
-                                            </td>
-                                        </motion.tr>
+                                        </tr>
                                     ))}
-                                </AnimatePresence>
-                            </motion.tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                )}
-            </div>
+                ))
+            )}
 
-            <AISettingFormModal
-                show={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onSave={handleSave}
-                settingData={currentSetting}
-            />
-        </main>
+            {isModalOpen && (
+                 <TemplateFormModal
+                    isOpen={isModalOpen}
+                    onClose={handleCloseModal}
+                    onSuccess={() => {
+                        fetchSettings();
+                        handleCloseModal();
+                    }}
+                    existingTemplate={selectedTemplate}
+                    allTemplates={settings}
+                />
+            )}
+        </motion.div>
     );
-}
+};
+
+export default AiSettingsPage;

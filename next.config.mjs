@@ -9,6 +9,13 @@ const nextConfig = {
         port: '',
         pathname: '/uploads/**', // Permite todas as imagens da pasta uploads
       },
+           {
+        protocol: 'https',
+        hostname: 'cdn.leonardo.ai',
+        port: '',
+        // O 'pathname' com '**' permite qualquer caminho de imagem nesse domínio.
+        pathname: '/**', 
+      }
     ],
   },
 };
