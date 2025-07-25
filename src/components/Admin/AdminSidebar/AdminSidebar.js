@@ -19,7 +19,8 @@ import {
   FaCommentDots,
   FaPaintBrush,
   FaChevronDown,
-  FaUsersCog, // Ícone melhorado para as configurações do usuário
+  FaTools,
+  FaRulerCombined // Ícone para Formatos de Impressão
 } from 'react-icons/fa';
 
 // Links principais da navegação
@@ -31,11 +32,12 @@ const mainLinks = [
 ];
 
 // Links do submenu de Configurações de Geração
-const generationSettingsLinks = [
+const settingsLinks = [
   { href: '/admin/gpt-auxiliaries', icon: <FaCommentDots />, label: 'GPT Auxiliares' },
   { href: '/admin/generation-templates', icon: <FaPaintBrush />, label: 'Templates de Geração' },
-  // LINK RESTAURADO AQUI
-  { href: '/admin/user-generation-settings', icon: <FaUsersCog />, label: 'Padrões dos Usuários' },
+  { href: '/admin/user-generation-settings', icon: <FaTools />, label: 'Padrões para Usuários' },
+  // CORREÇÃO: Link para Formatos de Impressão adicionado de volta
+  { href: '/admin/print-formats', icon: <FaRulerCombined />, label: 'Formatos de Impressão' },
 ];
 
 // Links para o submenu Leonardo.AI
@@ -49,7 +51,7 @@ const AdminSidebar = () => {
   const pathname = usePathname();
   const isParentActive = (links) => links.some(link => pathname.startsWith(link.href));
 
-  const [isGenerationSettingsOpen, setIsGenerationSettingsOpen] = useState(isParentActive(generationSettingsLinks));
+  const [isSettingsOpen, setIsSettingsOpen] = useState(isParentActive(settingsLinks));
   const [isLeonardoOpen, setIsLeonardoOpen] = useState(isParentActive(leonardoLinks));
 
   return (
@@ -81,22 +83,22 @@ const AdminSidebar = () => {
           {/* Menu de Configurações de Geração */}
           <li>
             <div
-              className={`${styles.navLink} ${styles.dropdownToggle} ${isParentActive(generationSettingsLinks) ? styles.parentActive : ''}`}
-              onClick={() => setIsGenerationSettingsOpen(!isGenerationSettingsOpen)}
+              className={`${styles.navLink} ${styles.dropdownToggle} ${isParentActive(settingsLinks) ? styles.parentActive : ''}`}
+              onClick={() => setIsSettingsOpen(!isSettingsOpen)}
             >
               <span className={styles.icon}><FaCogs /></span>
               <span className={styles.label}>Config. de Geração</span>
-              <FaChevronDown className={`${styles.chevron} ${isGenerationSettingsOpen ? styles.open : ''}`} />
+              <FaChevronDown className={`${styles.chevron} ${isSettingsOpen ? styles.open : ''}`} />
             </div>
             <AnimatePresence>
-              {isGenerationSettingsOpen && (
+              {isSettingsOpen && (
                 <motion.ul
                   className={styles.submenu}
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                 >
-                  {generationSettingsLinks.map((link) => (
+                  {settingsLinks.map((link) => (
                     <li key={link.href}>
                       <Link href={link.href} passHref>
                         <div className={`${styles.navLink} ${styles.submenuLink} ${pathname.startsWith(link.href) ? styles.active : ''}`}>

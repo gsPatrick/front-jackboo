@@ -69,12 +69,10 @@
     position: relative;
 }
 
-/* NOVO: Estilo para destacar o menu pai quando um filho está ativo */
 .parentActive {
     color: var(--color-text-dark-blue);
     background-color: #f8f9fa;
 }
-/* FIM DO NOVO ESTILO */
 
 .chevron {
     margin-left: auto;
@@ -94,7 +92,7 @@
 }
 
 .submenuLink {
-    padding-left: 3.5rem; /* Indentação para itens do submenu */
+    padding-left: 3.5rem;
     font-size: 0.95rem;
     padding-top: 0.7rem;
     padding-bottom: 0.7rem;
@@ -109,7 +107,7 @@
     font-family: var(--font-mali);
 }
 
-/* Responsividade para telas menores */
+/* Responsividade */
 @media (max-width: 768px) {
     .sidebar {
         width: 100%;
@@ -121,17 +119,13 @@
         padding: 0 1rem;
         justify-content: space-between;
     }
-
     .logoContainer {
         border-bottom: none;
         padding: 0.5rem 0;
     }
-
     .nav {
-        padding: 0;
-        display: none; /* Em telas muito pequenas, o menu pode ser ocultado por um botão de hambúrguer (implementação futura) */
+        display: none;
     }
-    
     .footer {
         display: none;
     }
