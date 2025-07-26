@@ -1,117 +1,148 @@
 /* src/app/(admin)/admin/user-generation-settings/page.module.css */
-.title {
-    font-family: var(--font-mali);
-    font-size: 2.2rem;
-    font-weight: 700;
-    color: var(--color-text-dark-blue);
-}
 
-.subtitle {
+/* --- Container e Estados Globais --- */
+.container {
+    padding: 2rem;
     font-family: var(--font-mali);
-    font-size: 1.1rem;
-    color: #6c757d;
-    margin-top: 0.5rem;
-    margin-bottom: 2.5rem;
+    background-color: #f8f9fa; /* Um fundo suave para destacar os cards */
+    min-height: 100vh;
 }
 
 .loadingContainer {
-    font-family: var(--font-mali);
-    font-size: 1.2rem;
-    color: #6c757d;
+    font-size: 1.5rem;
     text-align: center;
-    padding: 3rem;
+    padding: 4rem;
+    color: #6c757d;
 }
 
+/* --- Cabeçalho da Página --- */
+.title {
+    font-weight: 700;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    color: var(--color-text-dark-blue);
+    margin: 0;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-top: 1rem;
+    margin-bottom: 2.5rem;
+    max-width: 700px;
+}
+
+/* --- Grid Responsivo para os Cards --- */
 .settingsGrid {
     display: grid;
-    grid-template-columns: 1fr;
+    /* Colunas automáticas: mínimo de 360px de largura, máximo de 1fr (espaço igual) */
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
     gap: 2rem;
 }
 
-@media (min-width: 1200px) {
-    .settingsGrid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
+/* --- Estilo Principal do Card --- */
 .card {
-    background: #fff;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    padding: 2rem;
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+    border: 1px solid #eef2f7;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Essencial para o layout interno */
+    padding-bottom: 1.5rem; /* Espaço no fundo do card */
 }
 
+/* --- Cabeçalho do Card --- */
 .cardHeader {
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin-bottom: 2rem;
+    padding: 1.5rem;
     border-bottom: 1px solid #eef2f7;
-    padding-bottom: 1rem;
+    color: var(--color-text-dark-blue);
 }
 
-.cardIcon {
-    font-size: 2rem;
+.cardHeader svg { /* Estiliza o ícone */
+    font-size: 1.8rem;
     color: var(--color-jackboo-primary-orange);
 }
 
 .cardTitle {
-    font-family: var(--font-mali);
-    font-size: 1.5rem;
     font-weight: 700;
-    color: var(--color-text-dark-blue);
+    font-size: 1.4rem;
+    margin: 0;
 }
 
+/* --- Grupo de Formulário (Label + Input) --- */
 .formGroup {
-    margin-bottom: 1.5rem;
-    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.5rem 1.5rem 0 1.5rem; /* Espaçamento interno */
 }
 
 .formGroup label {
-    font-family: var(--font-mali);
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    display: block;
-    color: #34495e;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #495057;
 }
 
-.formGroup select {
+.formGroup select, .formGroup textarea {
     width: 100%;
-    padding: 0.9rem;
-    border: 1px solid #ccc;
+    padding: 0.8rem 1rem;
     border-radius: 8px;
+    border: 1px solid #ced4da;
     font-family: var(--font-mali);
     font-size: 1rem;
-    background-color: #f8f9fa;
-    cursor: pointer;
+    background-color: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+.formGroup select:focus, .formGroup textarea:focus {
+    outline: none;
+    border-color: var(--color-jackboo-primary-orange);
+    box-shadow: 0 0 0 3px var(--color-jackboo-primary-orange-light);
+}
+
+.formGroup textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* --- Botão de Salvar --- */
 .saveButton {
-    width: 100%;
-    background-color: var(--color-jackboo-blue);
-    color: white;
-    border: none;
-    padding: 0.9rem;
-    border-radius: 8px;
     font-family: var(--font-mali);
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 1.1rem;
+    color: white;
+    background: var(--color-jackboo-primary-orange);
+    padding: 1rem;
+    border: none;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.8rem;
-    margin-top: auto; /* Empurra o botão para o fundo do card */
+    gap: 0.75rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    
+    /* A MÁGICA: Empurra o botão para o fundo do card flexível */
+    margin-top: auto; 
+    /* Margens laterais para alinhar com o padding dos form-groups */
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+    /* Margem no topo para separar do último elemento */
+    margin-top: 2rem;
 }
 
 .saveButton:hover:not(:disabled) {
-    background-color: var(--color-text-dark-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3);
 }
 
 .saveButton:disabled {
-    background-color: #a5b4c8;
+    background-color: #ccc;
     cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
 }
