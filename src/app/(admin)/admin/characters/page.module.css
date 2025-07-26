@@ -1,0 +1,23 @@
+/* src/app/(admin)/admin/characters/page.module.css */
+.header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; }
+.title { font-family: var(--font-mali); font-size: 2.2rem; font-weight: 700; color: var(--color-text-dark-blue); }
+.subtitle { font-family: var(--font-mali); font-size: 1.1rem; color: #6c757d; margin-top: 0.5rem; }
+
+.buttonGroup { display: flex; gap: 1rem; }
+.addButton { background-color: var(--color-jackboo-primary-orange); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 50px; font-family: var(--font-mali); font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.5rem; }
+.addButton:hover { background-color: #e07b00; }
+.secondaryButton { background-color: #eef2f7; color: var(--color-text-dark-blue); border: none; padding: 0.8rem 1.5rem; border-radius: 50px; font-family: var(--font-mali); font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.2s; }
+.secondaryButton:hover { background-color: #dfe6ee; }
+
+.loading, .emptyState { text-align: center; padding: 3rem; font-family: var(--font-mali); font-size: 1.2rem; color: #6c757d; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
+.card { background: #fff; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); padding: 1.5rem; text-align: center; display: flex; flex-direction: column; }
+.imageWrapper { margin-bottom: 1rem; }
+.avatar { border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); object-fit: cover; }
+.name { font-family: var(--font-mali); font-size: 1.3rem; font-weight: 700; color: var(--color-text-dark-blue); margin-bottom: 0.5rem; }
+.description { color: #6c757d; font-size: 0.95rem; flex-grow: 1; margin-bottom: 1.5rem; }
+.actions { display: flex; justify-content: center; gap: 1rem; }
+.actionButton { background: none; border: none; cursor: pointer; font-size: 1.1rem; color: #adb5bd; transition: color 0.2s; }
+.actionButton:hover { color: var(--color-jackboo-blue); }
+.deleteButton:hover { color: #e53935; }

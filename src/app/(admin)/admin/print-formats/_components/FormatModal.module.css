@@ -1,0 +1,99 @@
+/* src/app/(admin)/admin/print-formats/_components/FormatModal.module.css */
+.modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 2.5rem;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    font-family: var(--font-mali);
+    outline: none;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+}
+
+.modalTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text-dark-blue);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.formGroup {
+    margin-bottom: 1.5rem;
+}
+
+.formGroup label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #34495e;
+}
+
+.formGroup input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    border-top: 1px solid #eef2f7;
+    padding-top: 1.5rem;
+}
+
+.confirmButton, .cancelButton {
+    padding: 0.8rem 1.5rem;
+    font-weight: 700;
+    border-radius: 50px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s;
+}
+
+.confirmButton {
+    background-color: var(--color-jackboo-primary-orange);
+    color: white;
+}
+
+.confirmButton:hover:not(:disabled) {
+    background-color: #e07b00;
+}
+
+.confirmButton:disabled {
+    background-color: #ffcda1;
+    cursor: not-allowed;
+}
+
+.cancelButton {
+    background-color: #f1f1f1;
+}
+
+.cancelButton:hover {
+    background-color: #e0e0e0;
+}

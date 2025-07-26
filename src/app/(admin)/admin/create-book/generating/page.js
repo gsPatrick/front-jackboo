@@ -1,64 +1,60 @@
+// src/app/(admin)/admin/create-book/generating/page.js
 'use client';
 
-import React, { useEffect, useState, Suspense, useRef } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import styles from './page.module.css';
-import { adminBookGeneratorService } from '@/services/api';
+import { adminBooksService } from '@/services/api';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const GeneratingContent = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const bookId = searchParams.get('bookId');
 
     const [status, setStatus] = useState('Iniciando a magia...');
     const [error, setError] = useState(null);
-    const hasStartedGeneration = useRef(false); // Trava para evitar execução dupla
 
     useEffect(() => {
-        // Só executa se a geração AINDA NÃO tiver começado
-        if (!hasStartedGeneration.current) {
-            hasStartedGeneration.current = true; // Marca que a geração começou
-
-            const generateBook = async () => {
-                // Extrai todos os parâmetros da URL
-                const bookType = searchParams.get('bookType');
-                const generationData = {
-                    title: searchParams.get('title'),
-                    characterId: parseInt(searchParams.get('characterId'), 10),
-                    printFormatId: parseInt(searchParams.get('printFormatId'), 10),
-                    pageCount: parseInt(searchParams.get('pageCount'), 10),
-                    theme: searchParams.get('theme'),
-                    location: searchParams.get('location'),
-                    summary: searchParams.get('summary'),
-                };
-
-                if (!bookType || !generationData.title) {
-                    setError('Dados insuficientes para iniciar a geração. Por favor, tente novamente.');
-                    return;
-                }
-                
-                try {
-                    setStatus('Construindo a estrutura do seu livro...');
-                    const book = await adminBookGeneratorService.generateBookPreview(bookType, generationData);
-                    
-                    setStatus('Livro gerado com sucesso! Redirecionando para o preview...');
-
-                    setTimeout(() => {
-                        router.push(`/admin/create-book/preview?bookId=${book.id}`);
-                    }, 2000);
-
-                } catch (err) {
-                    console.error("Erro fatal durante a geração do livro:", err);
-                    setError(`Ocorreu um erro: ${err.message}. Você será redirecionado em breve.`);
-                    setTimeout(() => {
-                        router.push('/admin/create-book');
-                    }, 5000);
-                }
-            };
-
-            generateBook();
+        if (!bookId) {
+            setError('ID do livro não encontrado. Redirecionando...');
+            setTimeout(() => router.push('/admin/create-book'), 3000);
+            return;
         }
-    }, [searchParams, router]); // Adiciona dependências para o linter do React
+
+        const intervalId = setInterval(async () => {
+            try {
+                const bookData = await adminBooksService.getOfficialBookById(bookId);
+                const pagesGenerated = bookData.variations?.[0]?.pages?.length || 0;
+                const totalPages = bookData.variations?.[0]?.pageCount || 0;
+
+                setStatus(`Criando as páginas... (${pagesGenerated}/${totalPages})`);
+
+                if (bookData.status === 'privado') {
+                    clearInterval(intervalId);
+                    toast.success('Livro gerado com sucesso!');
+                    setStatus('Tudo pronto! Redirecionando para o preview...');
+                    setTimeout(() => {
+                        router.push(`/admin/books/view/${bookId}`);
+                    }, 2000);
+                } else if (bookData.status === 'falha_geracao') {
+                    clearInterval(intervalId);
+                    setError('Ocorreu um erro durante a geração do livro.');
+                    toast.error('A geração do livro falhou. Verifique os logs do servidor.');
+                }
+            } catch (err) {
+                clearInterval(intervalId);
+                setError('Não foi possível verificar o status do livro.');
+                console.error("Erro no polling:", err);
+            }
+        }, 10000); // Verifica a cada 10 segundos
+
+        // Limpeza ao desmontar o componente
+        return () => clearInterval(intervalId);
+
+    }, [bookId, router]);
 
     return (
         <motion.div
@@ -66,6 +62,7 @@ const GeneratingContent = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
         >
+            <ToastContainer position="bottom-right" theme="colored" />
             <div className={styles.animationContainer}>
                 <div className={styles.magicWand}>✨</div>
                 <div className={styles.sparkles}></div>
@@ -80,7 +77,7 @@ const GeneratingContent = () => {
                             className={styles.progressFill}
                             initial={{ width: 0 }}
                             animate={{ width: '100%' }}
-                            transition={{ duration: 25, ease: "linear", repeat: Infinity }} // Simula progresso contínuo
+                            transition={{ duration: 25, ease: "linear", repeat: Infinity }}
                         ></motion.div>
                     </div>
                 </>
@@ -94,7 +91,6 @@ const GeneratingContent = () => {
     );
 };
 
-// Componente wrapper para usar Suspense, recomendado pelo Next.js para useSearchParams
 export default function GeneratingPage() {
     return (
         <Suspense fallback={<div>Carregando...</div>}>

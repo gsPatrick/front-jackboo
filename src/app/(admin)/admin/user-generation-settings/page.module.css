@@ -1,0 +1,117 @@
+/* src/app/(admin)/admin/user-generation-settings/page.module.css */
+.title {
+    font-family: var(--font-mali);
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--color-text-dark-blue);
+}
+
+.subtitle {
+    font-family: var(--font-mali);
+    font-size: 1.1rem;
+    color: #6c757d;
+    margin-top: 0.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.loadingContainer {
+    font-family: var(--font-mali);
+    font-size: 1.2rem;
+    color: #6c757d;
+    text-align: center;
+    padding: 3rem;
+}
+
+.settingsGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 1200px) {
+    .settingsGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.card {
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #eef2f7;
+    padding-bottom: 1rem;
+}
+
+.cardIcon {
+    font-size: 2rem;
+    color: var(--color-jackboo-primary-orange);
+}
+
+.cardTitle {
+    font-family: var(--font-mali);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text-dark-blue);
+}
+
+.formGroup {
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+}
+
+.formGroup label {
+    font-family: var(--font-mali);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: block;
+    color: #34495e;
+}
+
+.formGroup select {
+    width: 100%;
+    padding: 0.9rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-family: var(--font-mali);
+    font-size: 1rem;
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+.saveButton {
+    width: 100%;
+    background-color: var(--color-jackboo-blue);
+    color: white;
+    border: none;
+    padding: 0.9rem;
+    border-radius: 8px;
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-top: auto; /* Empurra o botão para o fundo do card */
+}
+
+.saveButton:hover:not(:disabled) {
+    background-color: var(--color-text-dark-blue);
+}
+
+.saveButton:disabled {
+    background-color: #a5b4c8;
+    cursor: not-allowed;
+}

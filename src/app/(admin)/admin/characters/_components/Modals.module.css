@@ -1,4 +1,4 @@
-/* /app/(admin)/admin/characters/_components/Modals.module.css */
+/* src/app/(admin)/admin/characters/_components/Modals.module.css */
 .modal {
     position: absolute;
     top: 50%;
@@ -7,119 +7,34 @@
     background: #fff;
     padding: 2.5rem;
     border-radius: 15px;
-    outline: none;
     width: 90%;
-    max-width: 500px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    max-width: 550px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
     font-family: var(--font-mali);
+    outline: none;
 }
+
 .overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.7);
     z-index: 1000;
 }
-.modalTitle {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--color-text-dark-blue);
-    margin-bottom: 2rem;
-    text-align: center;
-}
-.form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-.formGroup label {
-    display: block;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: #34495e;
-}
-.formGroup input[type="text"],
-.formGroup select {
-    width: 100%;
-    padding: 0.8rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 1rem;
-    box-sizing: border-box;
-}
 
-/* NOVO: Estilos para o input de arquivo customizado */
-.fileInputLabel {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    width: 100%;
-    padding: 1rem;
-    border: 2px dashed #ccc;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: #6c757d;
-}
-.fileInputLabel:hover {
-    border-color: var(--color-jackboo-primary-orange);
-    color: var(--color-jackboo-primary-orange);
-}
-.fileInputLabel img {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-.fileInputLabel svg {
-    font-size: 3rem;
-    color: #ccc;
-}
-/* FIM DOS NOVOS ESTILOS */
+.modalTitle { font-size: 1.5rem; font-weight: 700; color: var(--color-text-dark-blue); margin-bottom: 2rem; text-align: center; }
+.formGroup { margin-bottom: 1.5rem; }
+.formGroup label { display: block; font-weight: 700; margin-bottom: 0.5rem; color: #34495e; }
+.formGroup input, .formGroup textarea, .formGroup select { width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
+.preview { text-align: center; margin-bottom: 1rem; }
+.preview img { border-radius: 8px; }
 
-.helperText {
-    font-size: 0.85rem;
-    color: #6c757d;
-    margin-top: 0.3rem;
-    display: block;
-}
-.modalActions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 2rem;
-}
-.confirmButton, .cancelButton {
-    padding: 0.8rem 1.5rem;
-    font-family: inherit;
-    font-weight: 700;
-    border-radius: 50px;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-.confirmButton {
-    background-color: var(--color-jackboo-primary-orange);
-    color: white;
-}
-.confirmButton:disabled {
-    background-color: #ffcda1;
-    cursor: not-allowed;
-}
-.cancelButton {
-    background-color: #f1f1f1;
-    color: #333;
-}
-.spinner {
-    animation: spin 1s linear infinite;
-}
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
+.modalActions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem; }
+.confirmButton, .cancelButton { padding: 0.8rem 1.5rem; font-weight: 700; border-radius: 50px; cursor: pointer; border: none; }
+.confirmButton { background-color: var(--color-jackboo-primary-orange); color: white; }
+.confirmButton:hover:not(:disabled) { background-color: #e07b00; }
+.confirmButton:disabled { background-color: #ffcda1; cursor: not-allowed; }
+.cancelButton { background-color: #f1f1f1; }
+.cancelButton:hover { background-color: #e0e0e0; }

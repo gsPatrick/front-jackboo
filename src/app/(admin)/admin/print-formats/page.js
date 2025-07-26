@@ -1,209 +1,118 @@
+// src/app/(admin)/admin/print-formats/page.js
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import styles from './page.module.css';
-import { FaPlus, FaEdit, FaTrash, FaTimes, FaRulerCombined } from 'react-icons/fa';
+import React, { useState, useEffect, useCallback } from 'react';
+import { motion } from 'framer-motion';
+import { FaPlus, FaTrash, FaPencilAlt, FaRulerCombined } from 'react-icons/fa';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import { adminTaxonomiesService } from '@/services/api';
+import styles from './page.module.css';
+import FormatModal from './_components/FormatModal';
 
-// --- Componente Modal para Criar/Editar ---
-const PrintFormatModal = ({ format, onClose, onSave }) => {
-    const [formData, setFormData] = useState({
-        name: format ? format.name : '',
-        coverWidth: format ? format.coverWidth : '',
-        coverHeight: format ? format.coverHeight : '',
-        pageWidth: format ? format.pageWidth : '',
-        pageHeight: format ? format.pageHeight : '',
-        margin: format ? format.margin : '1.5',
-        isActive: format ? format.isActive : true,
-    });
-    const [error, setError] = useState('');
-
-    const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value,
-        }));
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError('');
-        // Validação simples
-        if (!formData.name || !formData.coverWidth || !formData.coverHeight || !formData.pageWidth || !formData.pageHeight || !formData.margin) {
-            setError('Todos os campos são obrigatórios.');
-            return;
-        }
-        onSave(formData, format ? format.id : null);
-    };
-
-    return (
-        <motion.div className={styles.modalBackdrop} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <motion.div className={styles.modalContent} initial={{ y: -50 }} animate={{ y: 0 }} exit={{ y: -50 }}>
-                <button onClick={onClose} className={styles.closeButton}><FaTimes /></button>
-                <h2>{format ? 'Editar' : 'Novo'} Formato de Impressão</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className={styles.formGroup}>
-                        <label>Nome do Formato</label>
-                        <input name="name" type="text" value={formData.name} onChange={handleChange} placeholder="Ex: Capa Dura A4" required />
-                    </div>
-                    <div className={styles.grid}>
-                        <div className={styles.formGroup}>
-                            <label>Largura da Capa (cm)</label>
-                            <input name="coverWidth" type="number" step="0.1" value={formData.coverWidth} onChange={handleChange} required />
-                        </div>
-                        <div className={styles.formGroup}>
-                            <label>Altura da Capa (cm)</label>
-                            <input name="coverHeight" type="number" step="0.1" value={formData.coverHeight} onChange={handleChange} required />
-                        </div>
-                    </div>
-                    <div className={styles.grid}>
-                        <div className={styles.formGroup}>
-                            <label>Largura da Página (cm)</label>
-                            <input name="pageWidth" type="number" step="0.1" value={formData.pageWidth} onChange={handleChange} required />
-                        </div>
-                        <div className={styles.formGroup}>
-                            <label>Altura da Página (cm)</label>
-                            <input name="pageHeight" type="number" step="0.1" value={formData.pageHeight} onChange={handleChange} required />
-                        </div>
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label>Margem (cm)</label>
-                        <input name="margin" type="number" step="0.1" value={formData.margin} onChange={handleChange} required />
-                    </div>
-                    <div className={styles.checkboxGroup}>
-                        <input name="isActive" type="checkbox" checked={formData.isActive} onChange={handleChange} id="isActiveCheckbox" />
-                        <label htmlFor="isActiveCheckbox">Ativo (visível para criação de livros)</label>
-                    </div>
-
-                    {error && <p className={styles.errorMessage}>{error}</p>}
-                    <button type="submit" className={styles.saveButton}>{format ? 'Salvar Alterações' : 'Criar Formato'}</button>
-                </form>
-            </motion.div>
-        </motion.div>
-    );
-};
-
-
-// --- Componente Principal da Página ---
-export default function ManagePrintFormatsPage() {
+export default function PrintFormatsPage() {
     const [formats, setFormats] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingFormat, setEditingFormat] = useState(null);
 
-    const fetchFormats = async () => {
+    const fetchFormats = useCallback(async () => {
         try {
             setIsLoading(true);
             const data = await adminTaxonomiesService.listPrintFormats();
-            setFormats(data);
-        } catch (err) {
-            setError(err.message);
+            setFormats(data || []);
+        } catch (error) {
+            toast.error(`Erro ao buscar formatos: ${error.message}`);
+            setFormats([]);
         } finally {
             setIsLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchFormats();
-    }, []);
-
+    }, [fetchFormats]);
+    
     const handleOpenModal = (format = null) => {
         setEditingFormat(format);
         setIsModalOpen(true);
     };
 
     const handleCloseModal = () => {
-        setIsModalOpen(false);
         setEditingFormat(null);
+        setIsModalOpen(false);
     };
 
-    const handleSaveFormat = async (formData, formatId) => {
-        try {
-            if (formatId) {
-                await adminTaxonomiesService.updatePrintFormat(formatId, formData);
-            } else {
-                await adminTaxonomiesService.createPrintFormat(formData);
-            }
-            fetchFormats();
-            handleCloseModal();
-        } catch (err) {
-            alert(`Erro ao salvar formato: ${err.message}`);
-        }
-    };
-    
-    const handleDeleteFormat = async (formatId) => {
-        if (window.confirm('Tem certeza que deseja deletar este formato? Esta ação só é possível se nenhum livro o estiver utilizando.')) {
+    const handleDelete = async (id) => {
+        if(window.confirm("Tem certeza que deseja deletar este formato? Esta ação não pode ser desfeita.")) {
             try {
-                await adminTaxonomiesService.deletePrintFormat(formatId);
-                fetchFormats();
-            } catch (err) {
-                alert(`Erro ao deletar formato: ${err.message}`);
+                await adminTaxonomiesService.deletePrintFormat(id);
+                toast.success("Formato deletado com sucesso!");
+                fetchFormats(); // Atualiza a lista
+            } catch (error) {
+                toast.error(`Falha ao deletar: ${error.message}`);
             }
         }
     };
-
-    if (isLoading) return <p>Carregando formatos...</p>;
-    if (error) return <p className={styles.errorMessage}>Erro: {error}</p>;
 
     return (
-        <div className={styles.container}>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+            <ToastContainer position="bottom-right" theme="colored" />
             <div className={styles.header}>
-                <h1>Gerenciar Formatos de Impressão</h1>
-                <button className={styles.addButton} onClick={() => handleOpenModal()}>
-                    <FaPlus /> Adicionar Formato
+                <div>
+                    <h1 className={styles.title}>Formatos de Impressão</h1>
+                    <p className={styles.subtitle}>Gerencie as dimensões e especificações dos livros físicos.</p>
+                </div>
+                <button className={styles.addButton} onClick={() => handleOpenModal(null)}>
+                    <FaPlus /> Novo Formato
                 </button>
             </div>
 
-            <table className={styles.table}>
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Dimensões da Capa</th>
-                        <th>Dimensões da Página</th>
-                        <th>Margem</th>
-                        <th>Status</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {formats.length === 0 ? (
+            <div className={styles.tableContainer}>
+                <table className={styles.table}>
+                    <thead>
                         <tr>
-                            <td colSpan="6">Nenhum formato encontrado. Clique em "Adicionar Formato" para começar.</td>
+                            <th>Nome do Formato</th>
+                            <th>Tamanho da Página (cm)</th>
+                            <th>Tamanho da Capa (cm)</th>
+                            <th>Ações</th>
                         </tr>
-                    ) : (
-                        formats.map(format => (
-                            <tr key={format.id}>
-                                <td>{format.name}</td>
-                                <td>{format.coverWidth}cm x {format.coverHeight}cm</td>
-                                <td>{format.pageWidth}cm x {format.pageHeight}cm</td>
-                                <td>{format.margin}cm</td>
-                                <td>
-                                    <span className={format.isActive ? styles.statusActive : styles.statusInactive}>
-                                        {format.isActive ? 'Ativo' : 'Inativo'}
-                                    </span>
-                                </td>
-                                <td className={styles.actionsCell}>
-                                    <button onClick={() => handleOpenModal(format)}><FaEdit /></button>
-                                    <button onClick={() => handleDeleteFormat(format.id)} className={styles.deleteButton}><FaTrash /></button>
-                                </td>
-                            </tr>
-                        ))
-                    )}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {isLoading ? (
+                            <tr><td colSpan="4" className={styles.loadingText}>Carregando formatos...</td></tr>
+                        ) : formats.length === 0 ? (
+                             <tr><td colSpan="4" className={styles.loadingText}>Nenhum formato encontrado.</td></tr>
+                        ) : (
+                            formats.map(format => (
+                                <tr key={format.id}>
+                                    <td className={styles.nameCell}><FaRulerCombined /> {format.name}</td>
+                                    <td>{format.pageWidth} x {format.pageHeight}</td>
+                                    <td>{format.coverWidth} x {format.coverHeight}</td>
+                                    <td>
+                                        <div className={styles.actions}>
+                                            <button className={styles.actionButton} title="Editar" onClick={() => handleOpenModal(format)}>
+                                                <FaPencilAlt />
+                                            </button>
+                                            <button onClick={() => handleDelete(format.id)} className={`${styles.actionButton} ${styles.deleteButton}`} title="Deletar">
+                                                <FaTrash />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
+            </div>
 
-            <AnimatePresence>
-                {isModalOpen && (
-                    <PrintFormatModal
-                        format={editingFormat}
-                        onClose={handleCloseModal}
-                        onSave={handleSaveFormat}
-                    />
-                )}
-            </AnimatePresence>
-        </div>
+            <FormatModal
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                onSuccess={fetchFormats}
+                formatData={editingFormat}
+            />
+        </motion.div>
     );
 }

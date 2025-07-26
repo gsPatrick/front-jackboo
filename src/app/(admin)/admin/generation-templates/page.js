@@ -1,8 +1,10 @@
+// /app/(admin)/admin/generation-templates/page.js
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { adminLeonardoService, adminAISettingsService } from '@/services/api';
+// CORREÇÃO: Apenas um serviço é necessário agora
+import { adminLeonardoService, adminTaxonomiesService } from '@/services/api'; 
 import styles from './GenerationTemplates.module.css';
 import { FaPaintBrush, FaLink, FaUnlink, FaCubes } from 'react-icons/fa';
 import { toast, ToastContainer } from 'react-toastify';
@@ -16,15 +18,16 @@ const GenerationTemplatesPage = () => {
     const [selectedElement, setSelectedElement] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    // Agora esta função busca todos os dados necessários de uma vez
     const fetchData = useCallback(async () => {
         setIsLoading(true);
         try {
             const [elementsData, gptData] = await Promise.all([
                 adminLeonardoService.listElements(),
-                adminAISettingsService.listSettings()
+                adminTaxonomiesService.listAiTemplates() 
             ]);
             setElements(elementsData.filter(el => el.status === 'COMPLETE'));
-            setGptAuxiliaries(gptData);
+            setGptAuxiliaries(gptData); // gptData agora contém 'defaultElementId'
         } catch (error) {
             toast.error(`Erro ao carregar dados: ${error.message}`);
         } finally {
@@ -41,7 +44,7 @@ const GenerationTemplatesPage = () => {
         setIsModalOpen(true);
     };
     
-    // Encontra o GPT Auxiliar que está associado a um Element
+    // Esta função agora funciona corretamente com os dados recebidos
     const findAssociatedGpt = (elementId) => {
         return gptAuxiliaries.find(gpt => gpt.defaultElementId === elementId);
     };

@@ -1,4 +1,3 @@
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -7,15 +6,20 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'geral-jackboo.r954jc.easypanel.host',
         port: '',
-        pathname: '/uploads/**', // Permite todas as imagens da pasta uploads
+        pathname: '/uploads/**', // Permite imagens da produção
       },
-           {
+      {
         protocol: 'https',
         hostname: 'cdn.leonardo.ai',
         port: '',
-        // O 'pathname' com '**' permite qualquer caminho de imagem nesse domínio.
-        pathname: '/**', 
-      }
+        pathname: '/**', // Permite imagens direto do Leonardo
+      },
+      // --- LINHA ADICIONADA PARA DESENVOLVIMENTO LOCAL ---
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        // A porta é deixada em branco para permitir qualquer porta (ex: 3333, 8000)
+      },
     ],
   },
 };

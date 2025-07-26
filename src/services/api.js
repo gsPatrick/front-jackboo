@@ -74,7 +74,7 @@ export const contentService = {
   getMyCharacters: () => apiRequest('/content/characters', { method: 'GET' }),
   deleteCharacter: (id) => apiRequest(`/content/characters/${id}`, { method: 'DELETE' }),
   updateCharacterName: (id, name) => apiRequest(`/content/characters/${id}/name`, { method: 'PUT', body: { name } }),
-  createColoringBook: ({ characterId }) => apiRequest('/content/books/create-coloring', { method: 'POST', body: { characterId } }),
+  createColoringBook: ({ characterIds, theme }) => apiRequest('/content/books/create-coloring', { method: 'POST', body: { characterIds, theme } }),
   createStoryBook: (bookData) => apiRequest('/content/books/create-story', { method: 'POST', body: bookData }),
   getMyBooks: () => apiRequest('/content/books', { method: 'GET' }),
   getBookStatus: (bookId) => apiRequest(`/content/books/${bookId}/status`, { method: 'GET' }),
@@ -90,6 +90,7 @@ export const adminLeonardoService = {
   listElements: () => apiRequest('/admin/leonardo/elements', { method: 'GET' }),
   trainElement: (trainingData) => apiRequest('/admin/leonardo/elements/train', { method: 'POST', body: trainingData }),
   getElementDetails: (localElementId) => apiRequest(`/admin/leonardo/elements/${localElementId}`, { method: 'GET' }),
+  updateElement: (localElementId, updateData) => apiRequest(`/admin/leonardo/elements/${localElementId}`, { method: 'PUT', body: updateData }),
   deleteElement: (localElementId) => apiRequest(`/admin/leonardo/elements/${localElementId}`, { method: 'DELETE' }),
 };
 
@@ -107,15 +108,17 @@ export const adminAssetsService = {
 
 export const adminCharactersService = {
     listCharacters: () => apiRequest('/admin/characters', { method: 'GET' }),
-    // CORREÇÃO: Agora envia os dados dos templates no FormData
-    createOfficialCharacter: (formData) => apiRequest('/admin/characters', { method: 'POST', body: formData }),
+    
+    // Rota para geração com IA
+    createOfficialCharacter: (formData) => apiRequest('/admin/characters/generate', { method: 'POST', body: formData }),
+    
+    // ✅ CORREÇÃO: Esta é a função para upload direto. Ela está correta,
+    // mas a confirmamos para garantir a consistência.
     createOfficialCharacterByUpload: (formData) => apiRequest('/admin/characters/upload', { method: 'POST', body: formData }),
-    // ...
+    
     deleteOfficialCharacter: (id) => apiRequest(`/admin/characters/${id}`, { method: 'DELETE' }),
 };
-
 export const adminTaxonomiesService = {
-  // CORREÇÃO: Padronizando os nomes
   listAiTemplates: () => apiRequest('/admin/taxonomies/ai-settings', { method: 'GET' }),
   listCategories: () => apiRequest('/admin/taxonomies/categories', { method: 'GET' }),
   listAgeRatings: () => apiRequest('/admin/taxonomies/age-ratings', { method: 'GET' }),
@@ -132,14 +135,17 @@ export const adminBookGeneratorService = {
   finalizeBook: (bookId) => apiRequest(`/admin/generator/books/${bookId}/finalize`, { method: 'POST' }),
 };
 
-export const adminBooksService = {
-    listAllBooks: (params = {}) => {
-        const query = new URLSearchParams(params).toString();
-        return apiRequest(`/admin/books${query ? `?${query}` : ''}`, { method: 'GET' });
-    },
-    deleteOfficialBook: (id) => apiRequest(`/admin/books/${id}`, { method: 'DELETE' }),
+export const adminUsersService = {
+  listUsers: () => apiRequest('/admin/users', { method: 'GET' }),
 };
 
+export const adminBooksService = {
+    listAllBooks: () => apiRequest('/admin/books', { method: 'GET' }),
+    getOfficialBookById: (id) => apiRequest(`/admin/books/${id}`, { method: 'GET' }),
+    deleteOfficialBook: (id) => apiRequest(`/admin/books/${id}`, { method: 'DELETE' }),
+        updateOfficialBookStatus: (id, status) => apiRequest(`/admin/books/${id}/status`, { method: 'PUT', body: { status } }),
+
+};
 export const adminAIHelperService = {
   generateText: (prompt) => apiRequest('/admin/ai-helper/generate-text', { method: 'POST', body: { prompt } }),
 };

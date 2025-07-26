@@ -1,10 +1,10 @@
 // /app/(admin)/admin/characters/_components/GenerateCharacterModal.js
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Modal from 'react-modal';
 import Image from 'next/image';
-import { adminCharactersService, adminTaxonomiesService } from '@/services/api';
+import { adminCharactersService, adminLeonardoService, adminTaxonomiesService } from '@/services/api';
 import { toast } from 'react-toastify';
 import styles from './Modals.module.css';
 import { FaMagic, FaSpinner, FaImage } from 'react-icons/fa';
@@ -14,22 +14,29 @@ Modal.setAppElement('body');
 const GenerateCharacterModal = ({ isOpen, onClose, onSuccess }) => {
     const [file, setFile] = useState(null);
     const [preview, setPreview] = useState(null);
-    const [templates, setTemplates] = useState([]);
-    const [selectedTemplateId, setSelectedTemplateId] = useState(''); // State para o ID do template
+    const [elements, setElements] = useState([]);
+    const [gptAuxiliaries, setGptAuxiliaries] = useState([]);
+    const [selectedElement, setSelectedElement] = useState('');
+    const [selectedGpt, setSelectedGpt] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
-            const fetchTemplates = async () => {
+            const fetchData = async () => {
                 try {
-                    const data = await adminTaxonomiesService.listAiTemplates();
-                    // Filtra para mostrar apenas templates ADMIN focados em geração de personagem
-                    setTemplates(data.filter(t => t.type && t.type === 'ADMIN_character_drawing') || []);
+                    const [elementsData, gptData] = await Promise.all([
+                        adminLeonardoService.listElements(),
+                        adminTaxonomiesService.listAiTemplates()
+                    ]);
+                    // Filtra para mostrar apenas Elements completos que são focados em Personagem
+                    setElements(elementsData.filter(el => el.status === 'COMPLETE' && el.lora_focus === 'Character') || []);
+                    // CORREÇÃO: Mostra todos os GPTs, pois o admin pode nomeá-los como quiser
+                    setGptAuxiliaries(gptData || []);
                 } catch (error) {
-                    toast.error("Erro ao buscar templates de IA para personagens.");
+                    toast.error("Erro ao buscar dados para geração.");
                 }
             };
-            fetchTemplates();
+            fetchData();
         }
     }, [isOpen]);
 
@@ -48,25 +55,26 @@ const GenerateCharacterModal = ({ isOpen, onClose, onSuccess }) => {
     const handleClose = () => {
         setFile(null);
         setPreview(null);
-        setSelectedTemplateId('');
+        setSelectedElement('');
+        setSelectedGpt('');
         onClose();
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!file || !selectedTemplateId) {
-            toast.warn('O desenho e um template de geração são obrigatórios.');
+        if (!file || !selectedElement || !selectedGpt) {
+            toast.warn('Todos os campos são obrigatórios.');
             return;
         }
         setIsSubmitting(true);
         const formData = new FormData();
         formData.append('drawing', file);
-        formData.append('aiTemplateId', selectedTemplateId); // Envia o ID do Template de IA
+        formData.append('elementId', selectedElement);
+        formData.append('descriptionTemplateType', selectedGpt);
+        formData.append('drawingTemplateType', selectedGpt);
 
         try {
-            // Este serviço no backend precisa ser ajustado para receber aiTemplateId
             await adminCharactersService.createOfficialCharacter(formData);
-
             toast.success('Geração iniciada! O personagem aparecerá na lista em breve.');
             handleClose();
             onSuccess();
@@ -96,12 +104,18 @@ const GenerateCharacterModal = ({ isOpen, onClose, onSuccess }) => {
                     </label>
                  </div>
                  <div className={styles.formGroup}>
-                    <label htmlFor="templateSelect">Template de Geração (Roteiro + Estilo)</label>
-                    <select id="templateSelect" value={selectedTemplateId} onChange={(e) => setSelectedTemplateId(e.target.value)} required>
-                        <option value="" disabled>Selecione um template...</option>
-                        {templates.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                    <label htmlFor="elementSelect">Modelo de Estilo (Artista)</label>
+                    <select id="elementSelect" value={selectedElement} onChange={(e) => setSelectedElement(e.target.value)} required>
+                        <option value="" disabled>Selecione um Artista...</option>
+                        {elements.map(el => <option key={el.id} value={el.leonardoElementId}>{el.name}</option>)}
                     </select>
-                    <small className={styles.helperText}>Cada template já possui um estilo (Element) associado.</small>
+                 </div>
+                 <div className={styles.formGroup}>
+                    <label htmlFor="gptSelect">GPT Auxiliar (Roteirista)</label>
+                    <select id="gptSelect" value={selectedGpt} onChange={(e) => setSelectedGpt(e.target.value)} required>
+                        <option value="" disabled>Selecione um Roteirista...</option>
+                        {gptAuxiliaries.map(g => <option key={g.id} value={g.type}>{g.name}</option>)}
+                    </select>
                  </div>
                 <div className={styles.modalActions}>
                     <button type="button" className={styles.cancelButton} onClick={handleClose}>Cancelar</button>

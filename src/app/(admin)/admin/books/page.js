@@ -1,43 +1,40 @@
-// /app/(admin)/admin/books/page.js
-'use client'; // <--- CORREÇÃO AQUI
+// src/app/(admin)/admin/books/page.js
+'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
-import Link from 'next/link';
-import { adminBookGeneratorService, adminBooksService } from '@/services/api';
-import styles from './Books.module.css';
-import { FaEye, FaSync, FaExclamationTriangle, FaCheckCircle, FaSpinner } from 'react-icons/fa';
-import { toast, ToastContainer } from 'react-toastify';
+import { useRouter } from 'next/navigation'; // Importa o hook de roteamento
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+import { FaEye, FaTrash, FaToggleOn, FaToggleOff } from 'react-icons/fa'; // Importa os ícones necessários
 
-const StatusBadge = ({ status }) => {
-    const statusMap = {
-        gerando: { text: 'Gerando', icon: <FaSpinner className={styles.spinner} />, className: 'generating' },
-        privado: { text: 'Pronto (Privado)', icon: <FaCheckCircle />, className: 'success' },
-        publicado: { text: 'Publicado', icon: <FaCheckCircle />, className: 'published' },
-        falha_geracao: { text: 'Falha na Geração', icon: <FaExclamationTriangle />, className: 'failed' },
-    };
-    const currentStatus = statusMap[status] || { text: status, className: 'default' };
-    return (
-        <span className={`${styles.statusBadge} ${styles[currentStatus.className]}`}>
-            {currentStatus.icon} {currentStatus.text}
-        </span>
-    );
-};
+import { adminBooksService } from '@/services/api';
+import styles from './page.module.css'; // Usaremos um CSS dedicado para esta página
 
-const BooksListPage = () => {
+const API_BASE_URL = 'https://geral-jackboo.r954jc.easypanel.host';
+
+export default function OfficialBooksPage() {
     const [books, setBooks] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const router = useRouter(); // Inicializa o router
 
     const fetchBooks = useCallback(async () => {
         setIsLoading(true);
         try {
-            // Usando o serviço genérico que busca todos os livros
-            const data = await adminBooksService.listAllBooks();
-            // Supondo que a API retorne um objeto { books: [...] } ou similar
-            setBooks(data.books || data || []);
+            const response = await adminBooksService.listAllBooks();
+            // ✅ CORREÇÃO: Garante que todos os dados necessários (incluindo status) estão formatados
+            const formattedBooks = (response.books || []).map(book => ({
+                id: book.id,
+                title: book.title,
+                imageUrl: `${API_BASE_URL}${book.variations?.[0]?.coverUrl || '/images/placeholder-cover.png'}`,
+                type: book.variations?.[0]?.type === 'colorir' ? 'Colorir' : 'História',
+                status: book.status,
+            }));
+            setBooks(formattedBooks);
         } catch (error) {
             toast.error(`Erro ao buscar livros: ${error.message}`);
+            setBooks([]);
         } finally {
             setIsLoading(false);
         }
@@ -47,63 +44,71 @@ const BooksListPage = () => {
         fetchBooks();
     }, [fetchBooks]);
 
+    const handleBookDelete = async (bookId) => {
+        if (window.confirm("Tem certeza que deseja deletar este livro oficial?")) {
+            try {
+                await adminBooksService.deleteOfficialBook(bookId);
+                toast.success("Livro deletado com sucesso!");
+                fetchBooks();
+            } catch (error) {
+                toast.error(`Falha ao deletar: ${error.message}`);
+            }
+        }
+    };
+
+    // ✅ NOVA FUNÇÃO: Lida com a mudança de status diretamente da listagem
+    const handleStatusChange = async (bookId, newStatus) => {
+        try {
+            await adminBooksService.updateOfficialBookStatus(bookId, newStatus);
+            toast.success(`Livro atualizado para "${newStatus}"!`);
+            fetchBooks();
+        } catch (error) {
+            toast.error(`Falha ao atualizar status: ${error.message}`);
+        }
+    };
+
+    if (isLoading) {
+        return <div className={styles.loading}>Carregando livros oficiais...</div>;
+    }
+
     return (
-        <motion.div
-            className={styles.container}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <ToastContainer position="bottom-right" theme="colored" />
             <div className={styles.header}>
-                <h1 className={styles.title}>Gerenciar Livros Oficiais</h1>
-                <button className={styles.refreshButton} onClick={fetchBooks} disabled={isLoading}>
-                    <FaSync className={isLoading ? styles.spinner : ''} />
-                    Atualizar Lista
-                </button>
+                <h1 className={styles.title}>Livros Oficiais JackBoo</h1>
+                <p className={styles.subtitle}>Gerencie os livros principais da plataforma, criados por você.</p>
             </div>
-            <p className={styles.subtitle}>
-                Visualize todos os livros do catálogo, acompanhe o status da geração e gerencie cada um deles.
-            </p>
 
-            <div className={styles.tableContainer}>
-                <table className={styles.table}>
-                    <thead>
-                        <tr>
-                            <th>Título</th>
-                            <th>Status</th>
-                            <th>Tipo</th>
-                            <th>Data de Criação</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {isLoading ? (
-                            <tr><td colSpan="5" style={{ textAlign: 'center' }}>Carregando livros...</td></tr>
-                        ) : books.length === 0 ? (
-                            <tr><td colSpan="5" style={{ textAlign: 'center' }}>Nenhum livro encontrado.</td></tr>
-                        ) : (
-                            books.map(book => (
-                                <tr key={book.id}>
-                                    <td className={styles.strong}>{book.title}</td>
-                                    <td><StatusBadge status={book.status} /></td>
-                                    <td>{book.variations?.[0]?.type || 'N/A'}</td>
-                                    <td>{new Date(book.createdAt).toLocaleDateString('pt-BR')}</td>
-                                    <td>
-                                        <Link href={`/admin/books/${book.id}`} passHref>
-                                           <div className={styles.actionButton}>
-                                                <FaEye /> Detalhes
-                                           </div>
-                                        </Link>
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
+            {books.length > 0 ? (
+                <div className={styles.grid}>
+                    {books.map(book => (
+                        <div key={book.id} className={styles.card}>
+                            <div className={styles.imageWrapper}>
+                                <Image src={book.imageUrl} alt={book.title} layout="fill" className={styles.image} unoptimized />
+                            </div>
+                            <div className={styles.content}>
+                                <span className={styles.type}>{book.type}</span>
+                                <h3 className={styles.bookTitle}>{book.title}</h3>
+                                
+                                {/* ✅ CORREÇÃO: Botões de ação adicionados */}
+                                <div className={styles.actions}>
+                                    <button onClick={() => router.push(`/admin/books/view/${book.id}`)} className={styles.actionButton} title="Visualizar Páginas">
+                                        <FaEye />
+                                    </button>
+                                    <button onClick={() => handleStatusChange(book.id, book.status === 'publicado' ? 'privado' : 'publicado')} className={`${styles.actionButton} ${book.status === 'publicado' ? styles.statusPublic : styles.statusPrivate}`} title={`Tornar ${book.status === 'publicado' ? 'Privado' : 'Público'}`}>
+                                        {book.status === 'publicado' ? <FaToggleOn /> : <FaToggleOff />}
+                                    </button>
+                                    <button onClick={() => handleBookDelete(book.id)} className={`${styles.actionButton} ${styles.deleteButton}`} title="Deletar Livro">
+                                        <FaTrash />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <div className={styles.emptyState}>Nenhum livro encontrado.</div>
+            )}
         </motion.div>
     );
-};
-
-export default BooksListPage;
+}

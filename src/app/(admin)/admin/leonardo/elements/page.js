@@ -3,13 +3,15 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { FaPlus, FaTrash, FaSync, FaBrain } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaSync, FaEdit } from 'react-icons/fa';
 import { adminLeonardoService } from '@/services/api';
 import styles from './Elements.module.css';
 import TrainElementModal from './_components/TrainElementModal';
+import EditElementModal from './_components/EditElementModal';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// ✅ CORREÇÃO: Componente movido para fora do componente principal para evitar problemas de escopo.
 const StatusBadge = ({ status }) => {
     const statusMap = {
         PENDING: { text: 'Pendente', className: 'pending' },
@@ -30,10 +32,11 @@ const ElementsPage = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isPolling, setIsPolling] = useState(false);
     const [isTrainModalOpen, setIsTrainModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [selectedElement, setSelectedElement] = useState(null);
 
     const fetchElements = useCallback(async () => {
         try {
-            setIsLoading(true);
             const data = await adminLeonardoService.listElements();
             setElements(data);
         } catch (error) {
@@ -52,31 +55,30 @@ const ElementsPage = () => {
     }, []);
 
     useEffect(() => {
+        setIsLoading(true);
         fetchElements();
     }, [fetchElements]);
 
     useEffect(() => {
         const pendingElements = elements.filter(el => ['PENDING', 'TRAINING'].includes(el.status));
-        if (pendingElements.length > 0) {
+        if (pendingElements.length > 0 && !isPolling) {
             setIsPolling(true);
             const intervalId = setInterval(async () => {
                 console.log("Executando polling para elements pendentes...");
-                await Promise.all(pendingElements.map(el => pollElementStatus(el.id)));
-                // Após o polling, buscamos a lista inteira para atualizar a UI
                 const updatedData = await adminLeonardoService.listElements();
                 setElements(updatedData);
-                // Se não houver mais elements pendentes, limpa o intervalo
                 if (!updatedData.some(el => ['PENDING', 'TRAINING'].includes(el.status))) {
                     setIsPolling(false);
                     clearInterval(intervalId);
+                    toast.info("Todos os treinamentos foram concluídos!");
                 }
-            }, 15000); // Polling a cada 15 segundos
+            }, 15000);
 
             return () => clearInterval(intervalId);
-        } else {
+        } else if (pendingElements.length === 0) {
             setIsPolling(false);
         }
-    }, [elements, pollElementStatus]);
+    }, [elements, isPolling]);
 
     const handleDelete = async (elementId) => {
         if (window.confirm('Tem certeza que deseja deletar este Element? Esta ação também o removerá do Leonardo.AI.')) {
@@ -88,6 +90,11 @@ const ElementsPage = () => {
                 toast.error(`Falha ao deletar Element: ${error.message}`);
             }
         }
+    };
+
+    const handleOpenEditModal = (element) => {
+        setSelectedElement(element);
+        setIsEditModalOpen(true);
     };
 
     return (
@@ -122,7 +129,7 @@ const ElementsPage = () => {
                             <th>Nome do Modelo</th>
                             <th>Status</th>
                             <th>Dataset de Origem</th>
-                            <th>Descrição</th>
+                            <th>Prompt Base</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -137,15 +144,25 @@ const ElementsPage = () => {
                                     <td>{el.name}</td>
                                     <td><StatusBadge status={el.status} /></td>
                                     <td>{el.sourceDataset?.name || 'N/A'}</td>
-                                    <td>{el.description || '-'}</td>
+                                    <td className={styles.promptCell}>{el.basePromptText || '-'}</td>
                                     <td>
-                                        <button 
-                                            className={`${styles.actionButton} ${styles.delete}`}
-                                            onClick={() => handleDelete(el.id)}
-                                            disabled={el.status === 'TRAINING'}
-                                        >
-                                            <FaTrash />
-                                        </button>
+                                        <div className={styles.actions}>
+                                            <button 
+                                                className={`${styles.actionButton} ${styles.edit}`}
+                                                onClick={() => handleOpenEditModal(el)}
+                                                title="Editar Prompt e Detalhes"
+                                            >
+                                                <FaEdit />
+                                            </button>
+                                            <button 
+                                                className={`${styles.actionButton} ${styles.delete}`}
+                                                onClick={() => handleDelete(el.id)}
+                                                disabled={el.status === 'TRAINING'}
+                                                title="Deletar Element"
+                                            >
+                                                <FaTrash />
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))
@@ -162,6 +179,18 @@ const ElementsPage = () => {
                     setIsTrainModalOpen(false);
                 }}
             />
+            
+            {selectedElement && (
+                <EditElementModal
+                    isOpen={isEditModalOpen}
+                    onClose={() => setIsEditModalOpen(false)}
+                    onSuccess={() => {
+                        fetchElements();
+                        setIsEditModalOpen(false);
+                    }}
+                    elementData={selectedElement}
+                />
+            )}
         </motion.div>
     );
 };

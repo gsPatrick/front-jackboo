@@ -290,7 +290,11 @@ const CharacterCreator = ({ onCreationComplete }) => {
     
     setIsBookCreating(true); 
     try {
-      const result = await contentService.createColoringBook({ characterId: createdCharacterId });
+      // ✅ CORREÇÃO: Passa os dados no formato esperado pelo backend: characterIds (array) e um theme.
+      const result = await contentService.createColoringBook({ 
+        characterIds: [createdCharacterId], 
+        theme: `As Aventuras de ${characterName || 'Meu Amigo'}` 
+      });
       setGeneratedBookData(result.book); 
       setIsBookGenerating(true); // Ativa o estado de geração do livro, que agora terá uma tela dedicada
       

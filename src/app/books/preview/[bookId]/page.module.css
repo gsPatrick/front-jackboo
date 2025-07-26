@@ -1,0 +1,121 @@
+/* src/app/books/preview/[bookId]/page.module.css */
+.container {
+    padding: 2rem;
+    font-family: var(--font-mali);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.statusHeader {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+.statusHeader.generating { background-color: #e3f2fd; color: #1e88e5; }
+.statusHeader.completed { background-color: #e8f5e9; color: #388e3c; }
+.statusHeader.failed { background-color: #ffebee; color: #c62828; }
+.statusHeader .icon { font-size: 1.5rem; flex-shrink: 0; }
+.statusHeader.generating .icon { animation: spin 2s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.bookTitle {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-text-dark-blue);
+    margin-bottom: 2.5rem;
+}
+
+.previewArea {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem; /* Aumentado o espaço */
+}
+
+.pageWrapper {
+    position: relative;
+    background: #fff;
+    padding: 1rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border: 1px solid #eef2f7;
+}
+
+.pageImage {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.pageNumber {
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--color-text-dark-blue);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.pageType {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    background-color: rgba(0,0,0,0.6);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.placeholder {
+    padding: 5rem;
+    border: 2px dashed #e0e0e0;
+    border-radius: 15px;
+    color: #a0a0a0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+}
+.placeholderIcon {
+    font-size: 2rem;
+    animation: spin 2s linear infinite;
+}
+
+.actions {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.actionButton {
+    background-color: var(--color-jackboo-primary-orange);
+    color: white;
+    border: none;
+    padding: 1rem 2.5rem;
+    border-radius: 50px;
+    font-family: var(--font-mali);
+    font-weight: 700;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+}
+.actionButton:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255,140,0,0.3); }
