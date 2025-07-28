@@ -3,7 +3,7 @@
 .main {
   padding: 4rem 2rem;
   background-color: var(--color-jackboo-beige-ultra-light);
-  min-height: calc(100vh - 80px); /* Ocupa a altura da tela menos o cabeçalho */
+  min-height: calc(100vh - 80px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -11,51 +11,37 @@
 
 .container {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Duas colunas: Hero e Formulário */
-  gap: 3rem;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 4rem;
   align-items: center;
   max-width: 1000px;
   width: 100%;
 }
 
-/* --- SEÇÃO DO HERO COM JACKBOO --- */
-.hero {
+/* --- SEÇÃO DE BOAS-VINDAS --- */
+.welcomeSection {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 1.5rem;
 }
 
-.heroImageWrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.welcomeLogo {
+  margin-bottom: 1rem;
 }
 
-.heroImage {
-  max-width: 100%;
-  height: auto;
-  object-fit: contain;
-}
-
-.heroText {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.heroTitle {
+.welcomeTitle {
   font-family: var(--font-luckiest-guy);
-  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-size: clamp(2.2rem, 4vw, 2.8rem);
   color: var(--color-text-dark-blue);
+  line-height: 1.2;
 }
 
-.heroSubtitle {
+.welcomeText {
   font-family: var(--font-mali);
   font-size: 1.2rem;
   color: var(--color-text-dark-blue);
   opacity: 0.8;
+  line-height: 1.6;
 }
 
 /* --- SEÇÃO DO FORMULÁRIO --- */
@@ -63,10 +49,8 @@
   background-color: white;
   border-radius: 30px;
   padding: 3rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid #fff;
 }
 
 .formTitle {
@@ -74,10 +58,15 @@
   font-size: 2.5rem;
   color: var(--color-text-dark-blue);
   margin-bottom: 2rem;
+  text-align: center;
 }
 
 .errorMessage {
   color: var(--color-text-red-heart);
+  background-color: #fff0f0;
+  border: 1px solid #ffdddd;
+  padding: 0.8rem;
+  border-radius: 8px;
   font-family: var(--font-mali);
   font-weight: 700;
   margin-bottom: 1.5rem;
@@ -88,7 +77,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 1.2rem; /* Ajustado o gap entre os campos */
+  gap: 1.2rem;
 }
 
 .formGroup {
@@ -109,18 +98,21 @@
 
 .formGroup input {
   padding: 1rem;
-  border: 2px solid var(--color-jackboo-light-orange);
-  background-color: white;
+  border: 2px solid #eef2f7;
+  background-color: #f8f9fa;
   border-radius: 50px;
   font-family: var(--font-mali);
   font-size: 1rem;
   transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .formGroup input:focus {
   outline: none;
   border-color: var(--color-jackboo-primary-orange);
-  box-shadow: 0 0 8px rgba(255, 140, 0, 0.2);
+  background-color: white;
+  box-shadow: 0 0 10px rgba(255, 140, 0, 0.15);
 }
 
 .submitButton {
@@ -137,8 +129,15 @@
   transition: all 0.2s ease;
 }
 
-.submitButton:hover {
+.submitButton:hover:not(:disabled) {
   background-color: #e07b00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.submitButton:disabled {
+    background-color: #ffcda1;
+    cursor: not-allowed;
 }
 
 .loginPrompt {
@@ -146,6 +145,7 @@
   font-family: var(--font-mali);
   font-size: 1.1rem;
   color: var(--color-text-dark-blue);
+  text-align: center;
 }
 
 .loginLink {
@@ -154,8 +154,31 @@
   text-decoration: none;
 }
 
+/* --- ESTILOS PARA O "OLHINHO" DA SENHA --- */
+.passwordInputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.passwordInputWrapper input {
+    padding-right: 3rem;
+}
+
+.passwordToggleIcon {
+    position: absolute;
+    right: 1rem;
+    cursor: pointer;
+    color: #999;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
 /* --- RESPONSIVIDADE --- */
-@media (max-width: 768px) {
+@media (max-width: 850px) {
   .main {
     padding: 3rem 1rem;
   }
@@ -164,30 +187,14 @@
     gap: 3rem;
     max-width: 450px;
   }
-  .hero {
-    margin-bottom: 2rem;
+  .welcomeSection {
+    text-align: center;
+    order: -1; /* Coloca a seção de boas-vindas primeiro no mobile */
   }
-  .heroTitle {
-    font-size: 2.5rem;
-  }
-  .heroSubtitle {
-    font-size: 1.1rem;
+  .welcomeLogo {
+    margin: 0 auto 1rem auto;
   }
   .formContainer {
     padding: 2.5rem 1.5rem;
-  }
-  .formTitle {
-    font-size: 2.2rem;
-  }
-  .formGroup label {
-      font-size: 1rem; /* Ajuste de tamanho para labels */
-  }
-  .formGroup input {
-      font-size: 0.9rem;
-      padding: 0.8rem 1rem;
-  }
-  .submitButton {
-    font-size: 1.2rem;
-    padding: 0.8rem 2rem;
   }
 }

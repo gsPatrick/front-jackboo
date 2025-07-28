@@ -2,8 +2,7 @@
 'use client';
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // Importar o router
-// NOVO: Importa a função que definimos no api.js
+import { useRouter } from 'next/navigation';
 import { setOnUnauthorizedCallback } from '@/services/api';
 
 const AuthContext = createContext(null);
@@ -12,11 +11,10 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter(); // Inicializa o router
+  const router = useRouter();
 
-  // Função para sair (logout)
+  // Função para sair (logout), agora sem o alert
   const logout = () => {
-    console.log("Executando logout do contexto...");
     setUser(null);
     setToken(null);
     if (typeof window !== 'undefined') {
@@ -25,12 +23,12 @@ export const AuthProvider = ({ children }) => {
     }
     // Redireciona para a página de login após o logout
     router.push('/login');
-    alert("Sua sessão expirou. Por favor, faça login novamente.");
+    // REMOVIDO: O alert foi removido para evitar pop-ups indesejados.
+    // A notificação de sessão expirada deve ser mais sutil, se necessária.
   };
 
-  // Efeito para carregar o estado e configurar o callback de logout
   useEffect(() => {
-    // Registra a função de logout para ser chamada pelo apiRequest em caso de 401
+    // Registra a função de logout para ser chamada pelo api.js APENAS em caso de erro 401
     setOnUnauthorizedCallback(() => logout());
 
     const loadAuthState = () => {
@@ -43,9 +41,13 @@ export const AuthProvider = ({ children }) => {
           setUser(parsedUser);
           setToken(storedToken);
         }
+        // CORREÇÃO: O else que chamava logout() foi removido.
+        // Se não houver token/usuário, o estado simplesmente permanece nulo,
+        // o que é o comportamento esperado para um usuário deslogado.
+        // Chamar logout() aqui causava o redirecionamento e a mensagem de erro.
       } catch (error) {
-        console.error("Erro ao carregar estado de autenticação:", error);
-        // Se houver erro, desloga para garantir um estado limpo
+        console.error("Erro ao carregar estado de autenticação, limpando estado:", error);
+        // Em caso de erro (ex: JSON malformado), aí sim forçamos o logout.
         logout();
       } finally {
         setIsLoading(false);
@@ -53,13 +55,12 @@ export const AuthProvider = ({ children }) => {
     };
     loadAuthState();
 
-    // Limpeza: desregistra o callback ao desmontar (boa prática)
+    // Limpeza (boa prática)
     return () => {
       setOnUnauthorizedCallback(() => {});
     };
-  }, []); // O array vazio garante que isso rode apenas uma vez
+  }, []); // O array vazio garante que isso rode apenas na montagem do componente
 
-  // Função para atualizar o estado após login/cadastro
   const login = (userData, authToken) => {
     setUser(userData);
     setToken(authToken);
@@ -69,34 +70,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Função para atualizar o perfil
-  const updateUserProfile = (newUserData) => {
-      setUser(prevUser => {
-          const updatedUser = { ...prevUser, ...newUserData };
-          if (typeof window !== 'undefined') {
-              localStorage.setItem('user', JSON.stringify(updatedUser));
-          }
-          return updatedUser;
-      });
-  };
-
   const value = {
     user,
     token,
     login,
     logout,
-    updateUserProfile,
     isLoading,
   };
 
   return (
     <AuthContext.Provider value={value}>
-      {!isLoading && children}
+      {children}
     </AuthContext.Provider>
   );
 };
 
-// Hook para usar o contexto facilmente
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
