@@ -1,4 +1,4 @@
-// src/app/(admin)/admin/create-book/page.js
+// /app/(admin)/admin/create-book/page.js
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -18,7 +18,6 @@ import {
 } from '@/services/api';
 import styles from './page.module.css';
 
-// ✅ CORREÇÃO: Adicionando a URL base para construir os links das imagens.
 const API_BASE_URL = 'https://geral-jackboo.r954jc.easypanel.host';
 
 export default function CreateOfficialBookPage() {
@@ -57,7 +56,6 @@ export default function CreateOfficialBookPage() {
             setAllPrintFormats(printFormatsData || []);
 
             const settingsMap = {};
-            // Ajuste para usar 'purpose' como chave
             (settingsData || []).forEach(s => { settingsMap[s.purpose] = s; });
             setDefaultSettings(settingsMap);
 
@@ -77,7 +75,6 @@ export default function CreateOfficialBookPage() {
             const settingType = bookType === 'historia' ? 'USER_STORY_BOOK_GENERATION' : 'USER_COLORING_BOOK_GENERATION';
             const defaults = defaultSettings[settingType];
             if (defaults) {
-                // Usa o ID do nosso banco (chave primária), não o do Leonardo
                 setElementId(defaults.defaultElementId || '');
                 setCoverElementId(defaults.coverElementId || '');
             } else {
@@ -159,7 +156,6 @@ export default function CreateOfficialBookPage() {
                         <div className={styles.characterGrid}>
                             {allCharacters.map(char => (
                                 <div key={char.id} className={`${styles.characterCard} ${selectedCharacters.includes(char.id) ? styles.selected : ''}`} onClick={() => handleCharacterToggle(char.id)}>
-                                    {/* ✅ CORREÇÃO: URL da imagem construída corretamente */}
                                     <Image
                                         src={`${API_BASE_URL}${char.generatedCharacterUrl || char.originalDrawingUrl}`}
                                         alt={char.name}
@@ -215,17 +211,18 @@ export default function CreateOfficialBookPage() {
                     <div className={styles.formGrid}>
                         <div className={styles.formGroup}>
                             <label htmlFor="elementId">Estilo do Miolo</label>
-                            {/* No dropdown, usamos o ID do nosso banco (chave primária) */}
+                            {/* ✅ CORREÇÃO AQUI: o 'value' agora é o leonardoElementId */}
                             <select id="elementId" value={elementId} onChange={e => setElementId(e.target.value)} required>
                                 <option value="" disabled>Selecione um estilo...</option>
-                                {allElements.filter(el => el.status === 'COMPLETE').map(el => <option key={el.id} value={el.id}>{el.name}</option>)}
+                                {allElements.filter(el => el.status === 'COMPLETE').map(el => <option key={el.id} value={el.leonardoElementId}>{el.name}</option>)}
                             </select>
                         </div>
                         <div className={styles.formGroup}>
                             <label htmlFor="coverElementId">Estilo da Capa e Contracapa</label>
+                             {/* ✅ CORREÇÃO AQUI: o 'value' agora é o leonardoElementId */}
                             <select id="coverElementId" value={coverElementId} onChange={e => setCoverElementId(e.target.value)} required>
                                 <option value="" disabled>Selecione um estilo...</option>
-                                {allElements.filter(el => el.status === 'COMPLETE').map(el => <option key={el.id} value={el.id}>{el.name}</option>)}
+                                {allElements.filter(el => el.status === 'COMPLETE').map(el => <option key={el.id} value={el.leonardoElementId}>{el.name}</option>)}
                             </select>
                         </div>
                     </div>

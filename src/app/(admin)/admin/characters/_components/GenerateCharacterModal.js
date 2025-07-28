@@ -1,7 +1,7 @@
 // /app/(admin)/admin/characters/_components/GenerateCharacterModal.js
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import Image from 'next/image';
 import { adminCharactersService, adminLeonardoService, adminTaxonomiesService } from '@/services/api';
@@ -28,10 +28,8 @@ const GenerateCharacterModal = ({ isOpen, onClose, onSuccess }) => {
                         adminLeonardoService.listElements(),
                         adminTaxonomiesService.listAiTemplates()
                     ]);
-                    // Filtra para mostrar apenas Elements completos que são focados em Personagem
                     setElements(elementsData.filter(el => el.status === 'COMPLETE' && el.lora_focus === 'Character') || []);
-                    // CORREÇÃO: Mostra todos os GPTs, pois o admin pode nomeá-los como quiser
-                    setGptAuxiliaries(gptData || []);
+                    setGptAuxiliaries(gptData.filter(g => g.type && g.type.includes('character')) || []);
                 } catch (error) {
                     toast.error("Erro ao buscar dados para geração.");
                 }
@@ -45,9 +43,7 @@ const GenerateCharacterModal = ({ isOpen, onClose, onSuccess }) => {
         if (selectedFile) {
             setFile(selectedFile);
             const reader = new FileReader();
-            reader.onloadend = () => {
-                setPreview(reader.result);
-            };
+            reader.onloadend = () => { setPreview(reader.result); };
             reader.readAsDataURL(selectedFile);
         }
     };
@@ -86,17 +82,11 @@ const GenerateCharacterModal = ({ isOpen, onClose, onSuccess }) => {
     };
     
     return (
-        <Modal
-            isOpen={isOpen}
-            onRequestClose={handleClose}
-            className={styles.modal}
-            overlayClassName={styles.overlay}
-            contentLabel="Gerar Personagem com IA"
-        >
+        <Modal isOpen={isOpen} onRequestClose={handleClose} className={styles.modal} overlayClassName={styles.overlay}>
             <h2 className={styles.modalTitle}>Gerar Personagem com IA</h2>
             <form onSubmit={handleSubmit} className={styles.form}>
                  <div className={styles.formGroup}>
-                    <label htmlFor="drawingFile">Arquivo do Desenho Base</label>
+                    <label>Arquivo do Desenho Base</label>
                     <input id="drawingFile" type="file" onChange={handleFileChange} accept="image/*" required style={{ display: 'none' }}/>
                      <label htmlFor="drawingFile" className={styles.fileInputLabel}>
                         {preview ? <Image src={preview} alt="Pré-visualização" width={100} height={100} /> : <FaImage />}
@@ -107,6 +97,7 @@ const GenerateCharacterModal = ({ isOpen, onClose, onSuccess }) => {
                     <label htmlFor="elementSelect">Modelo de Estilo (Artista)</label>
                     <select id="elementSelect" value={selectedElement} onChange={(e) => setSelectedElement(e.target.value)} required>
                         <option value="" disabled>Selecione um Artista...</option>
+                        {/* CORREÇÃO AQUI: O 'value' agora é o ID do Leonardo, não o nosso ID interno */}
                         {elements.map(el => <option key={el.id} value={el.leonardoElementId}>{el.name}</option>)}
                     </select>
                  </div>
