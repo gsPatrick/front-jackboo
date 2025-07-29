@@ -3,6 +3,13 @@
 .image { border-radius: 15px; }
 .details { display: flex; flex-direction: column; gap: 0.25rem; }
 .name { font-family: var(--font-mali); font-weight: 700; font-size: 1.2rem; color: var(--color-text-dark-blue); }
+.variationName { /* NOVO */
+    font-family: var(--font-mali);
+    font-size: 0.9rem;
+    color: var(--color-text-dark-blue);
+    opacity: 0.6;
+    margin-top: -0.2rem; /* Ajuste para ficar mais próximo do nome */
+}
 .price { font-family: var(--font-mali); font-size: 1rem; color: var(--color-text-dark-blue); opacity: 0.7; }
 .quantityControl { display: flex; align-items: center; gap: 1rem; }
 .quantityControl button { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ddd; background: white; cursor: pointer; display:flex; align-items:center; justify-content:center; }

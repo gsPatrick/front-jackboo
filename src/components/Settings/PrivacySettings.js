@@ -1,33 +1,65 @@
 // src/components/Settings/PrivacySettings.js
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Adicionado useEffect
 import { motion } from 'framer-motion';
 import styles from './PrivacySettings.module.css';
-import { FaEnvelope, FaPhone, FaLock, FaSave, FaUserCircle } from 'react-icons/fa'; // Adicionado FaUserCircle para o nome completo
-
-// Mock Data: Dados de Privacidade do Usuário (Adicionado fullName)
-const mockUserPrivacy = {
-    fullName: 'Arthur Silva', // Nome completo (usado em privacidade)
-    email: 'artista.jackboo@email.com',
-    phone: '(99) 99999-9999',
-    // Password is not displayed, only a change option
-};
+import { FaEnvelope, FaPhone, FaLock, FaSave, FaUserCircle, FaSpinner } from 'react-icons/fa'; // Adicionado FaSpinner para loading
+import { useAuth } from '@/contexts/AuthContext'; // Importar useAuth
+import { authService } from '@/services/api'; // Importar authService
 
 const PrivacySettings = () => {
-    const [userFullName, setUserFullName] = useState(mockUserPrivacy.fullName);
-    const [userEmail, setUserEmail] = useState(mockUserPrivacy.email);
-    const [userPhone, setUserPhone] = useState(mockUserPrivacy.phone);
-    // State for password change could be here (e.g., isPasswordModalOpen)
+    const { user: loggedInUser, updateUserProfile: updateAuthUserProfile } = useAuth();
 
-    const handleSave = () => {
-        // TODO: Implementar lógica para salvar Nome Completo, Email, Telefone no backend/estado global
-        console.log("Dados de privacidade salvos:", { fullName: userFullName, email: userEmail, phone: userPhone });
-        alert("Configurações de privacidade salvas!");
+    const [userFullName, setUserFullName] = useState(loggedInUser?.fullName || '');
+    const [userEmail, setUserEmail] = useState(loggedInUser?.email || '');
+    const [userPhone, setUserPhone] = useState(loggedInUser?.phone || '');
+    
+    const [isSaving, setIsSaving] = useState(false);
+    const [hasChanges, setHasChanges] = useState(false); // Para controlar o estado do botão "Salvar"
+
+    // Sincroniza dados do contexto com o estado local
+    useEffect(() => {
+        setUserFullName(loggedInUser?.fullName || '');
+        setUserEmail(loggedInUser?.email || '');
+        setUserPhone(loggedInUser?.phone || '');
+    }, [loggedInUser]);
+
+    // Verifica se houve mudanças para habilitar o botão Salvar
+    useEffect(() => {
+        const changed = 
+            userFullName !== (loggedInUser?.fullName || '') ||
+            userEmail !== (loggedInUser?.email || '') ||
+            userPhone !== (loggedInUser?.phone || '');
+        setHasChanges(changed);
+    }, [userFullName, userEmail, userPhone, loggedInUser]);
+
+
+    const handleSave = async () => {
+        if (!hasChanges) {
+            alert("Nenhuma alteração para salvar.");
+            return;
+        }
+
+        setIsSaving(true);
+        try {
+            const updates = {
+                fullName: userFullName,
+                email: userEmail,
+                phone: userPhone,
+            };
+            const updatedProfile = await authService.updateUserProfile(updates);
+            updateAuthUserProfile(updatedProfile); // Atualiza o contexto global
+            alert("Configurações de privacidade salvas!");
+        } catch (error) {
+            console.error("Erro ao salvar dados de privacidade:", error);
+            alert(error.message || "Erro ao salvar configurações de privacidade. Tente novamente.");
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     const handleChangePassword = () => {
-        // TODO: Implementar lógica para abrir modal de mudança de senha
         alert("Funcionalidade de mudar senha ainda não implementada :)");
         console.log("Clicou em Mudar Senha");
     };
@@ -41,8 +73,7 @@ const PrivacySettings = () => {
         >
             <h2 className={styles.sectionTitle}>Privacidade e Segurança</h2>
 
-            {/* Campo Nome Completo */}
-             <div className={styles.formGroup}>
+            <div className={styles.formGroup}>
                 <label htmlFor="fullName"><FaUserCircle className={styles.icon} /> Nome Completo:</label>
                 <input
                     type="text"
@@ -50,10 +81,10 @@ const PrivacySettings = () => {
                     value={userFullName}
                     onChange={(e) => setUserFullName(e.target.value)}
                     className={styles.input}
+                    disabled={isSaving}
                 />
             </div>
 
-            {/* Campo E-mail */}
             <div className={styles.formGroup}>
                 <label htmlFor="email"><FaEnvelope className={styles.icon} /> E-mail:</label>
                 <input
@@ -62,10 +93,10 @@ const PrivacySettings = () => {
                     value={userEmail}
                     onChange={(e) => setUserEmail(e.target.value)}
                     className={styles.input}
+                    disabled={isSaving}
                 />
             </div>
 
-            {/* Campo Telefone */}
             <div className={styles.formGroup}>
                  <label htmlFor="phone"><FaPhone className={styles.icon} /> Telefone:</label>
                  <input
@@ -74,10 +105,10 @@ const PrivacySettings = () => {
                     value={userPhone}
                     onChange={(e) => setUserPhone(e.target.value)}
                     className={styles.input}
+                    disabled={isSaving}
                 />
             </div>
 
-            {/* Campo Senha */}
             <div className={styles.formGroup}>
                  <label><FaLock className={styles.icon} /> Senha:</label>
                  <motion.button
@@ -85,22 +116,21 @@ const PrivacySettings = () => {
                      onClick={handleChangePassword}
                      whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    disabled={isSaving}
                  >
                      Mudar Senha
                  </motion.button>
             </div>
 
-             {/* Botão Salvar */}
              <motion.button
                 className={styles.saveButton}
                 onClick={handleSave}
                  whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                disabled={isSaving || !hasChanges}
             >
-                <FaSave /> Salvar Alterações
+                {isSaving ? <FaSpinner className={styles.spinner} /> : <FaSave />} Salvar Alterações
             </motion.button>
-
-            {/* TODO: Adicionar seção de controle de dados, exclusão de conta, etc. */}
 
         </motion.div>
     );

@@ -1,168 +1,70 @@
 // src/app/book-details/[bookId]/page.js
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Adicionado useEffect
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation'; // Adicionado useRouter
 import styles from './page.module.css';
 import BookPreviewCarousel from '@/components/BookPreviewCarousel/BookPreviewCarousel';
 import CharacterMessage from '@/components/CharacterMessage/CharacterMessage';
 import RelatedBooksGrid from '@/components/RelatedBooksGrid/RelatedBooksGrid';
 import { FaMinus, FaPlus } from 'react-icons/fa';
+import { shopService } from '@/services/api'; // Importa o serviço de shop
+import { useCart } from '@/contexts/CartContext'; // Importa o hook do carrinho
 
-// --- DADOS MOCKADOS DOS LIVROS (COMPLETOS E ATUALIZADOS) ---
-const mockBooksDetails = [
-  {
-    id: 'livro-historia-1',
-    title: 'Minha Primeira Aventura',
-    description: 'Uma história emocionante e personalizada, onde o personagem principal é você!',
-    authorType: 'jackboo',
-    authorInfo: { name: 'JackBoo', slug: null, avatarUrl: '/images/jackboo.png' },
-    protagonistInfo: { name: 'JackBoo Protagonista', imageUrl: '/images/jackboo-protagonist.png' },
-    pageImages: [
-      { src: '/images/Group 100.png' },
-      { src: '/images/Group 100.png' },
-      { src: '/images/Group 100.png' },
-      { src: '/images/Group 100.png' }
-    ],
-    variations: [
-      { id: 'physical', name: 'Livro Físico', price: 39.90, info: 'Capa dura, 20 páginas' },
-      { id: 'digital', name: 'Livro Digital (PDF)', price: 19.90, info: 'Receba por e-mail na hora!' }
-    ],
-    message: 'Essa é a minha história favorita! Espero que você goste de ler tanto quanto eu gostei de viver essa aventura!',
-    bgColor: 'var(--color-jackboo-blue-lightest)'
-  },
-  {
-    id: 'livro-colorir-1',
-    title: 'Desenhos Mágicos da Floresta',
-    description: 'Um livro de colorir com desenhos incríveis de criaturas da floresta, todos baseados nos seus próprios desenhos!',
-    authorType: 'jackboo',
-    authorInfo: { name: 'JackBoo', slug: null, avatarUrl: '/images/jackboo.png' },
-    protagonistInfo: { name: 'JackBoo Pintor', imageUrl: '/images/jackboo-coloring.png' },
-    pageImages: [
-      { src: '/images/Group 100.png' },
-      { src: '/images/Group 100.png' },
-      { src: '/images/Group 100.png' },
-      { src: '/images/Group 100.png' }
-    ],
-    variations: [
-      { id: 'physical', name: 'Livro Físico', price: 39.90, info: 'Papel especial para colorir' },
-      { id: 'digital', name: 'Livro Digital (PDF)', price: 19.90, info: 'Imprima e pinte quantas vezes quiser!' }
-    ],
-    message: 'Pegue seus lápis de cor e solte a imaginação! Pinte tudo bem colorido!',
-    bgColor: 'var(--color-jackboo-green-lightest)'
-  },
-   {
-    id: 'amigo-historia-1',
-    title: 'O Herói do Jardim Secreto',
-    description: 'Uma aventura criada por Lívia Colorida, onde ela e seu personagem exploram um jardim mágico!',
-    authorType: 'friend',
-     authorInfo: { name: 'Lívia Colorida', slug: 'livia-colorida', avatarUrl: '/images/jackboo-sad.png' },
-     protagonistInfo: { name: 'Herói do Jardim', imageUrl: '/images/character-generated.png' },
-    pageImages: [
-      { src: '/images/Group 100.png' },
-      { src: '/images/Group 100.png' },
-      { src: '/images/Group 100.png' }
-    ],
-    variations: [
-      { id: 'physical', name: 'Livro Físico', price: 39.90, info: 'Capa dura, 20 páginas' },
-      { id: 'digital', name: 'Livro Digital (PDF)', price: 19.90, info: 'Receba por e-mail na hora!' }
-    ],
-    message: 'Venha conhecer a minha história secreta! É super divertida!',
-     bgColor: 'var(--color-jackboo-pink-lightest)'
-  },
-   {
-    id: 'amigo-colorir-1',
-    title: 'Criaturas Fantásticas Coloridas',
-    description: 'Desenhos originais do Max Aventureiro para você colorir e se divertir!',
-    authorType: 'friend',
-     authorInfo: { name: 'Max Aventureiro', slug: 'max-aventureiro', avatarUrl: '/images/hero-jackboo.png' },
-     protagonistInfo: { name: 'Criatura Estelar', imageUrl: '/images/bear-upload.png' },
-    pageImages: [
-      { src: '/images/Group 100.png' },
-      { src: '/images/Group 100.png' },
-    ],
-    variations: [
-      { id: 'physical', name: 'Livro Físico', price: 39.90, info: 'Capa dura, 20 páginas' },
-      { id: 'digital', name: 'Livro Digital (PDF)', price: 19.90, info: 'Receba por e-mail na hora!' }
-    ],
-    message: 'Use as cores mais brilhantes que você tiver para pintar meus amigos!',
-    bgColor: 'var(--color-jackboo-orange-lightest)'
-  },
-    // --- LIVROS ADICIONAIS PARA TESTAR RELACIONADOS (MIX DE JACKBOO E AMIGOS) ---
-    {
-      id: 'livro-historia-2',
-      title: 'A Cidade Flutuante',
-      description: 'Uma nova aventura espacial com JackBoo e seus amigos!',
-      authorType: 'jackboo',
-       authorInfo: { name: 'JackBoo', slug: null, avatarUrl: '/images/jackboo.png' },
-       protagonistInfo: { name: 'JackBoo', imageUrl: '/images/jackboo.png' },
-      pageImages: [{ src: '/images/Group 100.png' }],
-      variations: [{ id: 'physical', name: 'Livro Físico', price: 44.90, info: 'Capa dura' }],
-      message: 'Explorei as nuvens para encontrar essa história!',
-      bgColor: 'var(--color-jackboo-lilac-light)'
-    },
-    {
-      id: 'amigo-historia-2',
-      title: 'O Dragão Amigo',
-      description: 'Criado por Lívia Colorida. Um menino e um dragão se tornam melhores amigos.',
-      authorType: 'friend',
-       authorInfo: { name: 'Lívia Colorida', slug: 'livia-colorida', avatarUrl: '/images/jackboo-sad.png' },
-       protagonistInfo: { name: 'Draguinho', imageUrl: '/images/club-jackboo-hero.png' },
-      pageImages: [{ src: '/images/Group 100.png' }],
-      variations: [{ id: 'physical', name: 'Livro Físico', price: 39.90, info: 'Capa dura' }],
-      message: 'Meu dragão é muito legal e quer te conhecer!',
-       bgColor: 'var(--color-jackboo-blue-lightest)'
-    },
-     {
-      id: 'amigo-colorir-2',
-      title: 'Animais da Selva',
-      description: 'Desenhos de animais selvagens feitos por Max Aventureiro.',
-      authorType: 'friend',
-       authorInfo: { name: 'Max Aventureiro', slug: 'max-aventureiro', avatarUrl: '/images/hero-jackboo.png' },
-       protagonistInfo: { name: 'Leãozinho', imageUrl: '/images/how-it-works/step1-draw.png' },
-      pageImages: [{ src: '/images/Group 100.png' }],
-      variations: [{ id: 'physical', name: 'Livro Físico', price: 39.90, info: 'Capa dura' }],
-      message: 'Quero ver esses animais bem coloridos!',
-       bgColor: 'var(--color-jackboo-green-lightest)'
-    },
-     {
-      id: 'livro-colorir-2',
-      title: 'Pintando o Espaço',
-      description: 'Um livro de colorir sobre planetas e estrelas, feito pelo JackBoo.',
-      authorType: 'jackboo',
-       authorInfo: { name: 'JackBoo', slug: null, avatarUrl: '/images/jackboo.png' },
-       protagonistInfo: { name: 'JackBoo', imageUrl: '/images/jackboo-coloring.png' },
-      pageImages: [{ src: '/images/Group 100.png' }],
-      variations: [{ id: 'physical', name: 'Livro Físico', price: 39.90, info: 'Capa dura' }],
-      message: 'As estrelas esperam por você e suas cores!',
-       bgColor: 'var(--color-jackboo-orange-lightest)'
-    },
-     {
-      id: 'amigo-historia-3',
-      title: 'A Fada e o Unicórnio',
-      description: 'Uma história mágica sobre amizade, criada por Sophia Criativa.',
-      authorType: 'friend',
-       authorInfo: { name: 'Sophia Criativa', slug: 'sophia-criativa', avatarUrl: '/images/club-jackboo.png' },
-       protagonistInfo: { name: 'Fada Estela', imageUrl: '/images/friends-jackboo.png' },
-      pageImages: [{ src: '/images/Group 100.png' }],
-      variations: [{ id: 'physical', name: 'Livro Físico', price: 39.90, info: 'Capa dura' }],
-      message: 'Venha voar comigo e meu amigo unicórnio!',
-       bgColor: 'var(--color-jackboo-pink-lightest)'
-    },
-];
+// --- DADOS MOCKADOS DOS LIVROS (AGORA OBTIDOS PELA API) ---
+// Removemos a necessidade deste mock, pois a API Shop.service.js já fornece os detalhes.
+// Vamos usar um estado para o livro e carregá-lo.
 
 
 export default function BookDetailsPage() {
   const params = useParams();
   const { bookId } = params;
-  const book = mockBooksDetails.find(b => b.id === bookId);
+  const router = useRouter(); // Para redirecionar para o carrinho
+  const { addToCart } = useCart(); // Obtém a função addToCart do contexto
 
-  const [selectedVariation, setSelectedVariation] = useState(book ? book.variations[0] : null);
+  const [book, setBook] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const [selectedVariation, setSelectedVariation] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
-  if (!book) {
+  // Efeito para carregar os detalhes do livro
+  useEffect(() => {
+    const fetchBookDetails = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const data = await shopService.getBookDetails(bookId);
+        setBook(data);
+        if (data.variations && data.variations.length > 0) {
+            // Seleciona a primeira variação como padrão
+            setSelectedVariation(data.variations[0]);
+        }
+      } catch (err) {
+        console.error("Erro ao buscar detalhes do livro:", err);
+        setError("Livro não encontrado ou erro ao carregar os detalhes.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (bookId) {
+      fetchBookDetails();
+    }
+  }, [bookId]);
+
+  if (isLoading) {
+    return <main className={styles.main}><div className={styles.container}><p className={styles.loadingMessage}>Carregando livro mágico...</p></div></main>;
+  }
+
+  if (error) {
+    return <main className={styles.main}><div className={styles.container}><p className={styles.notFoundMessage}>{error}</p></div></main>;
+  }
+
+  if (!book) { // Caso não encontre o livro mesmo sem erro aparente
       return <main className={styles.main}><div className={styles.container}><p className={styles.notFoundMessage}>Livro não encontrado!</p></div></main>;
   }
 
@@ -175,35 +77,74 @@ export default function BookDetailsPage() {
   };
 
   const handleAddToCart = () => {
-      console.log(`Adicionou ${quantity}x "${book.title} - ${selectedVariation.name}" (ID: ${book.id}) ao carrinho.`);
-      alert(`${quantity}x ${book.title} (${selectedVariation.name}) adicionado ao carrinho!`);
+      if (!selectedVariation) {
+          alert("Por favor, selecione uma variação do livro.");
+          return;
+      }
+      addToCart(book, selectedVariation, quantity);
   };
 
    const handleBuyNow = () => {
-      console.log(`Comprou ${quantity}x "${book.title} - ${selectedVariation.name}" (ID: ${book.id}) agora.`);
-      alert(`Comprando ${quantity}x ${book.title} (${selectedVariation.name}) agora!`);
+      if (!selectedVariation) {
+          alert("Por favor, selecione uma variação do livro.");
+          return;
+      }
+      addToCart(book, selectedVariation, quantity);
+      router.push('/cart'); // Redireciona para o carrinho após adicionar
    };
 
   // --- Lógica para Livros Relacionados ---
-  let relatedBooksSource = [];
+  let relatedBooksFinal = [];
   let relatedSectionTitle = '';
-  if (book.authorType === 'jackboo') {
-      relatedBooksSource = mockBooksDetails.filter(b => b.authorType === 'jackboo' && b.id !== bookId);
-      relatedSectionTitle = 'Mais Livros JackBoo que você pode gostar!';
-  } else {
-      relatedBooksSource = mockBooksDetails.filter(b => b.authorType === 'friend' && b.authorInfo.slug === book.authorInfo.slug && b.id !== bookId);
-       relatedSectionTitle = `Outros Livros de ${book.authorInfo.name}!`;
-       if (relatedBooksSource.length === 0) {
-            relatedBooksSource = mockBooksDetails.filter(b => b.id !== bookId && b.authorType === 'friend');
-             if (relatedBooksSource.length === 0) {
-                  relatedBooksSource = mockBooksDetails.filter(b => b.id !== bookId && b.authorType === 'jackboo');
-                   relatedSectionTitle = 'Descubra outros Livros Mágicos!';
-             } else {
-                 relatedSectionTitle = 'Confira outros Livros Incríveis de Amigos!';
-             }
-       }
-  }
-  const relatedBooksFinal = relatedBooksSource.slice(0, 5);
+  // Assumimos que a API getBookDetails retorna `book.author.isSystemUser`
+  // Se for um livro do sistema (JackBoo), buscar outros livros do JackBoo.
+  // Se for um livro de usuário, buscar outros livros do mesmo autor.
+  // Se não encontrar do mesmo autor, buscar outros livros de amigos.
+  // Se ainda não encontrar, buscar outros livros do JackBoo.
+
+  useEffect(() => {
+    const fetchRelatedBooks = async () => {
+      if (!book) return;
+
+      const baseParams = { excludeBookId: book.id };
+      let books = [];
+
+      try {
+        if (book.author.isSystemUser) { // Se for livro do JackBoo (isSystemUser)
+          relatedSectionTitle = 'Mais Livros JackBoo que você pode gostar!';
+          books = await shopService.getRelatedBooks({
+            ...baseParams,
+            authorId: book.author.id,
+            bookType: book.type // Usar o tipo do livro para relevância
+          });
+        } else { // Se for livro de amigo
+          relatedSectionTitle = `Outros Livros de ${book.author.nickname}!`;
+          books = await shopService.getRelatedBooks({
+            ...baseParams,
+            authorId: book.author.id,
+            bookType: book.type // Usar o tipo do livro para relevância
+          });
+
+          if (books.length === 0) { // Se não houver do mesmo autor
+            relatedSectionTitle = 'Confira outros Livros Incríveis de Amigos!';
+            books = await shopService.getFriendsShelf({ limit: 5 }); // Pegar 5 da prateleira de amigos
+            books = books.books.filter(b => b.id !== book.id).slice(0,5); // Filtrar o livro atual e limitar
+          }
+          if (books.length === 0) { // Se ainda não houver nenhum de amigos
+              relatedSectionTitle = 'Descubra outros Livros Mágicos!';
+              books = await shopService.getJackbooShelf({ limit: 5 }); // Pegar 5 da prateleira JackBoo
+              books = books.books.filter(b => b.id !== book.id).slice(0,5); // Filtrar o livro atual e limitar
+          }
+        }
+        relatedBooksFinal = books; // Atualiza a variável para ser usada no JSX
+      } catch (relatedError) {
+        console.error("Erro ao buscar livros relacionados:", relatedError);
+        relatedBooksFinal = [];
+      }
+    };
+
+    fetchRelatedBooks();
+  }, [book]); // Recarrega os relacionados quando o livro principal muda
 
 
   return (
@@ -214,22 +155,22 @@ export default function BookDetailsPage() {
         </motion.h1>
 
         <div className={styles.contentLayout}>
-          {/* --- SEÇÃO DA ESQUERDA (PERSONAGEM + CARROSSEL) --- */}
           <motion.div className={styles.carouselSection} initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, ease: 'easeOut' }}>
             <div className={styles.characterAndCarouselWrapper}>
                 <CharacterMessage
-                    protagonistName={book.protagonistInfo.name}
-                    protagonistImage={book.protagonistInfo.imageUrl}
-                    message={book.message}
-                    authorName={book.authorInfo.name}
-                    authorSlug={book.authorInfo.slug}
-                    authorType={book.authorType}
+                    protagonistName={book.mainCharacter?.name || 'Personagem'} // Usar mainCharacter
+                    protagonistImage={book.mainCharacter?.generatedCharacterUrl || '/images/default-avatar.png'} // Usar generatedCharacterUrl
+                    message={book.storyPrompt?.summary || 'Um livro incrível para a sua imaginação!'} // Usar storyPrompt.summary para a mensagem
+                    authorName={book.author?.nickname || 'Autor Desconhecido'} // Usar author.nickname
+                    authorSlug={book.author?.slug}
+                    authorType={book.author?.isSystemUser ? 'jackboo' : 'friend'} // Determinar tipo de autor
                 />
-                <BookPreviewCarousel pages={book.pageImages} />
+                {book.variations?.[0]?.pages?.length > 0 && (
+                    <BookPreviewCarousel pages={book.variations[0].pages.map(p => ({ src: p.imageUrl }))} />
+                )}
             </div>
           </motion.div>
 
-          {/* --- SEÇÃO DE DETALHES DA DIREITA --- */}
           <motion.div className={styles.detailsSection} initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}>
 
             <p className={styles.bookDescription}>{book.description}</p>
@@ -244,15 +185,15 @@ export default function BookDetailsPage() {
             <div className={styles.variationsContainer}>
                 <h3 className={styles.variationsTitle}>Variações:</h3>
                 {book.variations.map(variation => (
-                    <label key={variation.id} className={`${styles.variationOption} ${selectedVariation.id === variation.id ? styles.selected : ''}`} onClick={() => handleVariationChange(variation)}>
+                    <label key={variation.id} className={`${styles.variationOption} ${selectedVariation?.id === variation.id ? styles.selected : ''}`} onClick={() => handleVariationChange(variation)}>
                         <div className={styles.customRadio}>
-                            {selectedVariation.id === variation.id && <motion.div className={styles.radioInner} layoutId="radio-selected" />}
+                            {selectedVariation?.id === variation.id && <motion.div className={styles.radioInner} layoutId="radio-selected" />}
                         </div>
                         <div className={styles.variationDetails}>
                             <span className={styles.variationName}>{variation.name}</span>
-                            <span className={styles.variationInfo}>{variation.info}</span>
+                            <span className={styles.variationInfo}>{variation.info || ''}</span> {/* Usar info se existir */}
                         </div>
-                        <span className={styles.variationPrice}>R$ {variation.price.toFixed(2).replace('.', ',')}</span>
+                        <span className={styles.variationPrice}>R$ {parseFloat(variation.price).toFixed(2).replace('.', ',')}</span>
                     </label>
                 ))}
             </div>
@@ -272,7 +213,9 @@ export default function BookDetailsPage() {
         </div>
 
         {/* --- SEÇÃO DE LIVROS RELACIONADOS --- */}
-        <RelatedBooksGrid books={relatedBooksFinal} title={relatedSectionTitle} />
+        {relatedBooksFinal.length > 0 && (
+          <RelatedBooksGrid books={relatedBooksFinal} title={relatedSectionTitle} />
+        )}
 
       </div>
     </main>

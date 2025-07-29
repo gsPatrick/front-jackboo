@@ -104,4 +104,12 @@
   border: none;
   border-radius: 50px;
   cursor: pointer;
+  transition: all 0.2s ease; /* Added for motion button */
 }
+
+.applyButton:hover {
+    background-color: #e07b00; /* Darker orange on hover */
+    transform: translateY(-2px); /* Slight lift */
+}
+
+/* Responsive adjustments already present for ShopSidebar.module.css */

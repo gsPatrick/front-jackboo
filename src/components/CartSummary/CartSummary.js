@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import styles from './CartSummary.module.css';
 import { FaTruck, FaMapMarkerAlt } from 'react-icons/fa';
 
+// O subtotal agora é recebido via props do CartPage, que por sua vez obtém do CartContext
 const CartSummary = ({ subtotal }) => {
   const [cep, setCep] = useState('');
   const [shippingOptions, setShippingOptions] = useState([]);
@@ -13,6 +14,10 @@ const CartSummary = ({ subtotal }) => {
   const [isLoadingShipping, setIsLoadingShipping] = useState(false);
 
   const handleCalculateShipping = () => {
+    if (subtotal <= 0) { // Adicionado verificação para carrinho vazio
+        alert('Adicione itens ao carrinho para calcular o frete.');
+        return;
+    }
     if (cep.length !== 8) {
       alert('Por favor, insira um CEP válido com 8 dígitos (somente números).');
       return;
@@ -21,6 +26,7 @@ const CartSummary = ({ subtotal }) => {
     setShippingOptions([]);
     setSelectedShipping(null);
 
+    // Simulação de chamada de API para frete
     setTimeout(() => {
       const options = [
         { id: 'sedex', carrier: 'Correios SEDEX', price: 25.50, deliveryTime: '2-5 dias úteis' },
@@ -76,7 +82,7 @@ const CartSummary = ({ subtotal }) => {
                   className={styles.cepInput}
                 />
             </div>
-            <button className={styles.calculateCepButton} onClick={handleCalculateShipping} disabled={isLoadingShipping || cep.length !== 8}>
+            <button className={styles.calculateCepButton} onClick={handleCalculateShipping} disabled={isLoadingShipping || cep.length !== 8 || subtotal <= 0}>
               {isLoadingShipping ? '...' : 'Calcular'}
             </button>
         </div>
@@ -115,7 +121,7 @@ const CartSummary = ({ subtotal }) => {
         className={styles.checkoutButton} 
         whileHover={{ scale: 1.05 }} 
         whileTap={{ scale: 0.95 }}
-        disabled={!selectedShipping}
+        disabled={!selectedShipping || subtotal <= 0} // Desabilita se não tiver frete selecionado ou carrinho vazio
       >
         Finalizar Compra
       </motion.button>

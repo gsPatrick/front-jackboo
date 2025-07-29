@@ -3,15 +3,15 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { FaPlus, FaTrash, FaSync, FaEdit } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaSync, FaEye } from 'react-icons/fa'; // Alterado FaEdit para FaEye
 import { adminLeonardoService } from '@/services/api';
 import styles from './Elements.module.css';
-import TrainElementModal from './_components/TrainElementModal';
-import EditElementModal from './_components/EditElementModal';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// ✅ CORREÇÃO: Componente movido para fora do componente principal para evitar problemas de escopo.
+import TrainElementModal from './_components/TrainElementModal';
+import ElementDetailsModal from './_components/ElementDetailsModal'; // Renomeado o modal de edição
+
 const StatusBadge = ({ status }) => {
     const statusMap = {
         PENDING: { text: 'Pendente', className: 'pending' },
@@ -31,54 +31,45 @@ const ElementsPage = () => {
     const [elements, setElements] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isPolling, setIsPolling] = useState(false);
+    
     const [isTrainModalOpen, setIsTrainModalOpen] = useState(false);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false); // Novo estado para o modal de detalhes
     const [selectedElement, setSelectedElement] = useState(null);
 
-    const fetchElements = useCallback(async () => {
+    const fetchElements = useCallback(async (isSilent = false) => {
+        if (!isSilent) setIsLoading(true);
         try {
             const data = await adminLeonardoService.listElements();
             setElements(data);
         } catch (error) {
-            toast.error(`Erro ao buscar Elements: ${error.message}`);
+            if (!isSilent) toast.error(`Erro ao buscar Elements: ${error.message}`);
         } finally {
-            setIsLoading(false);
-        }
-    }, []);
-
-    const pollElementStatus = useCallback(async (elementId) => {
-        try {
-            await adminLeonardoService.getElementDetails(elementId);
-        } catch (error) {
-            console.error(`Erro ao fazer polling do element ${elementId}:`, error.message);
+            if (!isSilent) setIsLoading(false);
         }
     }, []);
 
     useEffect(() => {
-        setIsLoading(true);
         fetchElements();
     }, [fetchElements]);
 
     useEffect(() => {
         const pendingElements = elements.filter(el => ['PENDING', 'TRAINING'].includes(el.status));
-        if (pendingElements.length > 0 && !isPolling) {
+        if (pendingElements.length > 0) {
             setIsPolling(true);
-            const intervalId = setInterval(async () => {
-                console.log("Executando polling para elements pendentes...");
-                const updatedData = await adminLeonardoService.listElements();
-                setElements(updatedData);
-                if (!updatedData.some(el => ['PENDING', 'TRAINING'].includes(el.status))) {
-                    setIsPolling(false);
-                    clearInterval(intervalId);
-                    toast.info("Todos os treinamentos foram concluídos!");
-                }
+            const intervalId = setInterval(() => {
+                fetchElements(true);
             }, 15000);
 
             return () => clearInterval(intervalId);
-        } else if (pendingElements.length === 0) {
+        } else {
             setIsPolling(false);
         }
-    }, [elements, isPolling]);
+    }, [elements, fetchElements]);
+
+    const handleOpenDetailsModal = (element) => { // Novo handler
+        setSelectedElement(element);
+        setIsDetailsModalOpen(true);
+    };
 
     const handleDelete = async (elementId) => {
         if (window.confirm('Tem certeza que deseja deletar este Element? Esta ação também o removerá do Leonardo.AI.')) {
@@ -92,18 +83,8 @@ const ElementsPage = () => {
         }
     };
 
-    const handleOpenEditModal = (element) => {
-        setSelectedElement(element);
-        setIsEditModalOpen(true);
-    };
-
     return (
-        <motion.div
-            className={styles.container}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-        >
+        <motion.div className={styles.container} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <ToastContainer position="bottom-right" theme="colored" />
             <div className={styles.header}>
                 <h1 className={styles.title}>Gerenciar Models (Elements)</h1>
@@ -119,50 +100,34 @@ const ElementsPage = () => {
                 </div>
             </div>
             <p className={styles.subtitle}>
-                Elements são seus modelos de IA personalizados (LoRAs) treinados com seus datasets.
+                Elements são seus modelos de IA personalizados (LoRAs). Uma vez treinados, suas características principais são imutáveis. Você pode ajustar apenas o prompt base para refine os resultados.
             </p>
-
             <div className={styles.tableContainer}>
                 <table className={styles.table}>
                     <thead>
                         <tr>
                             <th>Nome do Modelo</th>
                             <th>Status</th>
-                            <th>Dataset de Origem</th>
-                            <th>Prompt Base</th>
+                            <th>Prompt de Base</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {isLoading ? (
-                            <tr><td colSpan="5">Carregando modelos...</td></tr>
-                        ) : elements.length === 0 ? (
-                            <tr><td colSpan="5">Nenhum modelo treinado. Clique em "Treinar Novo Modelo".</td></tr>
-                        ) : (
+                        {isLoading ? ( <tr><td colSpan="4" style={{textAlign: 'center'}}>Carregando modelos...</td></tr> ) : 
+                        elements.length === 0 ? ( <tr><td colSpan="4" style={{textAlign: 'center'}}>Nenhum modelo treinado. Clique em "Treinar Novo Modelo".</td></tr> ) : 
+                        (
                             elements.map(el => (
                                 <tr key={el.id}>
-                                    <td>{el.name}</td>
+                                    <td className={styles.strong}>{el.name}</td>
                                     <td><StatusBadge status={el.status} /></td>
-                                    <td>{el.sourceDataset?.name || 'N/A'}</td>
-                                    <td className={styles.promptCell}>{el.basePromptText || '-'}</td>
-                                    <td>
-                                        <div className={styles.actions}>
-                                            <button 
-                                                className={`${styles.actionButton} ${styles.edit}`}
-                                                onClick={() => handleOpenEditModal(el)}
-                                                title="Editar Prompt e Detalhes"
-                                            >
-                                                <FaEdit />
-                                            </button>
-                                            <button 
-                                                className={`${styles.actionButton} ${styles.delete}`}
-                                                onClick={() => handleDelete(el.id)}
-                                                disabled={el.status === 'TRAINING'}
-                                                title="Deletar Element"
-                                            >
-                                                <FaTrash />
-                                            </button>
-                                        </div>
+                                    <td className={styles.promptCell}>{el.basePrompt || '-'}</td>
+                                    <td className={styles.actionsCell}>
+                                        <button className={`${styles.actionButton} ${styles.view}`} onClick={() => handleOpenDetailsModal(el)}>
+                                            <FaEye /> {/* Alterado para FaEye */}
+                                        </button>
+                                        <button className={`${styles.actionButton} ${styles.delete}`} onClick={() => handleDelete(el.id)} disabled={el.status === 'TRAINING' || el.status === 'PENDING'}> {/* Desabilitar delete durante treinamento/pendente */}
+                                            <FaTrash />
+                                        </button>
                                     </td>
                                 </tr>
                             ))
@@ -174,21 +139,15 @@ const ElementsPage = () => {
             <TrainElementModal
                 isOpen={isTrainModalOpen}
                 onClose={() => setIsTrainModalOpen(false)}
-                onSuccess={() => {
-                    fetchElements();
-                    setIsTrainModalOpen(false);
-                }}
+                onSuccess={() => { fetchElements(); setIsTrainModalOpen(false); }}
             />
             
             {selectedElement && (
-                <EditElementModal
-                    isOpen={isEditModalOpen}
-                    onClose={() => setIsEditModalOpen(false)}
-                    onSuccess={() => {
-                        fetchElements();
-                        setIsEditModalOpen(false);
-                    }}
-                    elementData={selectedElement}
+                <ElementDetailsModal // Usando o novo nome do componente
+                    isOpen={isDetailsModalOpen}
+                    onClose={() => {setIsDetailsModalOpen(false); setSelectedElement(null);}}
+                    onSuccess={() => { fetchElements(); setIsDetailsModalOpen(false); setSelectedElement(null); }}
+                    element={selectedElement}
                 />
             )}
         </motion.div>

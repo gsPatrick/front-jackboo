@@ -3,7 +3,8 @@ import './globals.css';
 import { Luckiest_Guy, Mali } from 'next/font/google';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
-import { AuthProvider } from '@/contexts/AuthContext'; // <-- IMPORTAR O PROVIDER
+import { AuthProvider } from '@/contexts/AuthContext';
+import { CartProvider } from '@/contexts/CartContext'; // <-- IMPORTAR O PROVIDER DO CARRINHO
 
 const luckiestGuy = Luckiest_Guy({
   subsets: ['latin'],
@@ -26,11 +27,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="pt-BR">
       <body className={`${luckiestGuy.variable} ${mali.variable}`}>
-        <AuthProvider> {/* --- ENVOLVE TUDO COM O PROVIDER --- */}
-          <Header />
-          <main>{children}</main>
-          <Footer />
-        </AuthProvider> {/* --- FECHA O PROVIDER --- */}
+        <AuthProvider>
+          <CartProvider> {/* --- ENVOLVE TUDO COM O PROVIDER DO CARRINHO --- */}
+            <Header />
+            <main>{children}</main>
+            <Footer />
+          </CartProvider> {/* --- FECHA O PROVIDER DO CARRINHO --- */}
+        </AuthProvider>
       </body>
     </html>
   );

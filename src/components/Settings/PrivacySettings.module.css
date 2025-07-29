@@ -83,7 +83,27 @@
   color: white;
   margin-top: 2rem;
   align-self: center; /* Centraliza o botão */
+   transition: all 0.2s ease;
+   display: flex; /* Para alinhar o spinner */
+   align-items: center;
+   gap: 0.5rem;
 }
+
+.saveButton:disabled {
+    background-color: #ffcda1;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.spinner { /* Added spinner style */
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 
 /* Responsividade */
 @media (max-width: 768px) {

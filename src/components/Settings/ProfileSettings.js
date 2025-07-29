@@ -1,56 +1,80 @@
 // src/components/Settings/ProfileSettings.js
 'use client';
 
-import React, { useState, useRef } from 'react'; // Importar useRef
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './ProfileSettings.module.css';
-import { FaCamera, FaImages, FaSave, FaEdit, FaCheckCircle, FaArrowLeft, FaArrowRight } from 'react-icons/fa'; // Importar setas
-
-// Mock Data: Usuário e Desenhos Criados
-const mockUser = {
-    nickname: 'Pequeno Artista', // Nickname/Nome de usuário
-    fullName: 'Arthur Silva', // Nome completo (usado em privacidade)
-    avatarUrl: '/images/character-generated.png', // Avatar atual
-    drawings: [ // Galeria de desenhos/personagens criados
-        { id: 'char-1', imageUrl: '/images/character-generated.png', name: 'Herói Mágico' },
-        { id: 'char-2', imageUrl: '/images/bear-upload.png', name: 'Urso Desenho' },
-        { id: 'char-3', imageUrl: '/images/jackboo-sad.png', name: 'JackBoo Triste' },
-        { id: 'char-4', imageUrl: '/images/how-it-works/step3-character.png', name: 'Personagem JackBoo' },
-         { id: 'char-5', imageUrl: '/images/club-jackboo-hero.png', name: 'JackBoo Herói' },
-         { id: 'char-6', imageUrl: '/images/friends-jackboo.png', name: 'Amigos JackBoo' },
-          { id: 'char-7', imageUrl: '/images/how-it-works/step1-draw.png', name: 'Desenho Original' },
-           { id: 'char-8', imageUrl: '/images/hero-jackboo.png', name: 'JackBoo Herói Pose' },
-            { id: 'char-9', imageUrl: '/images/character-generated.png', name: 'Herói Mágico 2' }, // Mais alguns para simular scroll
-             { id: 'char-10', imageUrl: '/images/bear-upload.png', name: 'Urso Desenho 2' },
-    ]
-};
-
+// Adicionado FaTimes aqui
+import { FaCamera, FaImages, FaSave, FaEdit, FaCheckCircle, FaArrowLeft, FaArrowRight, FaTimes } from 'react-icons/fa';
+import { useAuth } from '@/contexts/AuthContext';
+import { authService, contentService } from '@/services/api';
 
 const ProfileSettings = () => {
     const router = useRouter();
+    const { user: loggedInUser, updateUserProfile: updateAuthUserProfile } = useAuth();
+
     const [editingName, setEditingName] = useState(false);
-    const [userName, setUserName] = useState(mockUser.nickname); // Usar nickname aqui
-    const [tempUserName, setTempUserName] = useState(mockUser.nickname);
-    const [currentAvatarUrl, setCurrentAvatarUrl] = useState(mockUser.avatarUrl);
+    const [userName, setUserName] = useState(loggedInUser?.nickname || '');
+    const [tempUserName, setTempUserName] = useState(loggedInUser?.nickname || '');
+    const [currentAvatarUrl, setCurrentAvatarUrl] = useState(loggedInUser?.avatarUrl || '/images/default-avatar.png');
     const [selectedDrawingId, setSelectedDrawingId] = useState(null);
-
+    const [drawings, setDrawings] = useState([]);
+    
+    const [isSavingName, setIsSavingName] = useState(false);
+    const [isSavingAvatar, setIsSavingAvatar] = useState(false);
     const [avatarSaved, setAvatarSaved] = useState(false);
+    const [isLoadingDrawings, setIsLoadingDrawings] = useState(true);
+    const [drawingsError, setDrawingsError] = useState(null);
 
-     // Ref para o contêiner do carrossel para controlar a rolagem
     const carouselRef = useRef(null);
 
+    useEffect(() => {
+        const fetchCharacters = async () => {
+            setIsLoadingDrawings(true);
+            setDrawingsError(null);
+            try {
+                const characters = await contentService.getMyCharacters();
+                setDrawings(characters);
+            } catch (err) {
+                console.error("Erro ao buscar personagens:", err);
+                setDrawingsError("Não foi possível carregar seus personagens.");
+            } finally {
+                setIsLoadingDrawings(false);
+            }
+        };
 
-    const handleSaveName = () => {
-         if (tempUserName.trim() === '') {
-             alert("O nome não pode ser vazio.");
+        if (loggedInUser) {
+            fetchCharacters();
+        }
+    }, [loggedInUser]);
+
+    useEffect(() => {
+        setUserName(loggedInUser?.nickname || '');
+        setTempUserName(loggedInUser?.nickname || '');
+        setCurrentAvatarUrl(loggedInUser?.avatarUrl || '/images/default-avatar.png');
+    }, [loggedInUser]);
+
+
+    const handleSaveName = async () => {
+         if (tempUserName.trim() === '' || tempUserName.trim() === userName) {
+             alert("O nome não pode ser vazio ou igual ao atual.");
              return;
          }
-        setUserName(tempUserName.trim());
-        setEditingName(false);
-        // TODO: Implementar lógica para salvar o nome no backend/estado global
-        console.log("Nickname salvo:", tempUserName.trim());
+        setIsSavingName(true);
+        try {
+            const updatedProfile = await authService.updateUserProfile({ nickname: tempUserName.trim() });
+            updateAuthUserProfile({ nickname: updatedProfile.nickname });
+            setUserName(updatedProfile.nickname);
+            setEditingName(false);
+            alert("Apelido atualizado com sucesso!");
+        } catch (err) {
+            console.error("Erro ao salvar apelido:", err);
+            alert(err.message || "Erro ao salvar apelido. Tente novamente.");
+        } finally {
+            setIsSavingName(false);
+        }
     };
 
      const handleCancelEditName = () => {
@@ -61,7 +85,7 @@ const ProfileSettings = () => {
     const handleSelectDrawing = (drawingId, imageUrl) => {
         if (selectedDrawingId === drawingId) {
              setSelectedDrawingId(null);
-             setCurrentAvatarUrl(mockUser.avatarUrl);
+             setCurrentAvatarUrl(loggedInUser?.avatarUrl || '/images/default-avatar.png');
         } else {
             setSelectedDrawingId(drawingId);
             setCurrentAvatarUrl(imageUrl);
@@ -69,36 +93,43 @@ const ProfileSettings = () => {
         }
     };
 
-     const handleSaveAvatar = () => {
-         if (selectedDrawingId) {
-             // A imagem já está em currentAvatarUrl por causa da pré-visualização
-             // TODO: Implementar lógica para salvar o novo avatar (currentAvatarUrl) no backend/estado global
-             console.log("Novo avatar salvo:", currentAvatarUrl, "do desenho ID:", selectedDrawingId);
+     const handleSaveAvatar = async () => {
+         if (!selectedDrawingId) {
+             alert("Nenhum desenho selecionado para avatar.");
+             return;
+         }
+         if (currentAvatarUrl === (loggedInUser?.avatarUrl || '/images/default-avatar.png')) {
+             alert("Este já é o seu avatar atual.");
+             return;
+         }
 
-             // Simula salvamento e mostra feedback visual
+         setIsSavingAvatar(true);
+         try {
+             const updatedProfile = await authService.updateUserProfile({ avatarUrl: currentAvatarUrl });
+             updateAuthUserProfile({ avatarUrl: updatedProfile.avatarUrl });
              setAvatarSaved(true);
+             alert("Avatar atualizado com sucesso!");
              setTimeout(() => setAvatarSaved(false), 3000);
-
-             // Opcional: Manter a seleção ou resetar após salvar
-             // setSelectedDrawingId(null); // Descomente para resetar a seleção após salvar
-         } else {
-             console.log("Nenhum desenho selecionado para avatar.");
+             setSelectedDrawingId(null);
+         } catch (err) {
+             console.error("Erro ao salvar avatar:", err);
+             alert(err.message || "Erro ao salvar avatar. Tente novamente.");
+         } finally {
+             setIsSavingAvatar(false);
          }
      };
 
 
      const handleUploadDrawing = () => {
-         router.push('/create-character'); // Redireciona
-         console.log("Redirecionando para Criar Personagem");
+         router.push('/create-character');
      };
 
-     // Função para rolar o carrossel
     const scrollCarousel = (direction) => {
         if (carouselRef.current) {
-            const scrollAmount = 200; // Quantidade de pixels para rolar
+            const scrollAmount = 200;
             carouselRef.current.scrollBy({
                 left: direction * scrollAmount,
-                behavior: 'smooth', // Rolagem suave
+                behavior: 'smooth',
             });
         }
     };
@@ -113,7 +144,6 @@ const ProfileSettings = () => {
         >
             <h2 className={styles.sectionTitle}>Meu Perfil</h2>
 
-            {/* --- Seção de Nome e Avatar --- */}
             <div className={styles.infoSection}>
                 <div className={styles.avatarWrapper}>
                     <Image
@@ -122,6 +152,7 @@ const ProfileSettings = () => {
                         width={150}
                         height={150}
                         className={styles.avatarImage}
+                        onError={(e) => { e.target.src = '/images/jackboo-full-logo-placeholder.png'; }} // Fallback
                     />
                      <AnimatePresence>
                          {avatarSaved && (
@@ -149,23 +180,25 @@ const ProfileSettings = () => {
                                 className={styles.nameInput}
                                 placeholder="Novo apelido..."
                                 autoFocus
+                                disabled={isSavingName}
                             />
                             <motion.button
                                 className={styles.saveNameButton}
                                 onClick={handleSaveName}
                                 whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 9.9 }}
-                                disabled={tempUserName.trim() === '' || tempUserName.trim() === userName}
+                                whileTap={{ scale: 0.9 }}
+                                disabled={isSavingName || tempUserName.trim() === '' || tempUserName.trim() === userName}
                             >
-                                <FaCheckCircle />
+                                {isSavingName ? '...' : <FaCheckCircle />}
                             </motion.button>
                              <motion.button
                                  className={styles.cancelEditNameButton}
                                  onClick={handleCancelEditName}
                                  whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
+                                disabled={isSavingName}
                              >
-                                X
+                                <FaTimes />
                              </motion.button>
                         </div>
                     ) : (
@@ -186,42 +219,44 @@ const ProfileSettings = () => {
 
              <hr className={styles.divider} />
 
-             {/* --- Seção de Galeria de Desenhos (AGORA CARROSSEL) --- */}
             <div className={styles.gallerySection}>
                  <h3 className={styles.galleryTitle}>Escolha um desenho para ser seu Avatar:</h3>
 
-                 {mockUser.drawings.length === 0 ? (
+                 {isLoadingDrawings ? (
+                    <div className={styles.loadingMessage}>Carregando desenhos...</div>
+                 ) : drawingsError ? (
+                    <p className={styles.errorMessage}>{drawingsError}</p>
+                 ) : drawings.length === 0 ? (
                      <p className={styles.emptyMessage}>Você ainda não tem desenhos salvos na sua galeria.</p>
                  ) : (
-                    <div className={styles.carouselContainer}> {/* Container para o carrossel e botões */}
-                        {/* Botões de navegação */}
-                         <motion.button
+                    <div className={styles.carouselContainer}>
+                        <motion.button
                             className={`${styles.navButton} ${styles.navLeft}`}
-                             onClick={() => scrollCarousel(-1)} // Rola para a esquerda
+                             onClick={() => scrollCarousel(-1)}
                              whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
                         >
                              <FaArrowLeft size={20} />
                         </motion.button>
 
-                         {/* O wrapper que será o carrossel */}
                         <div ref={carouselRef} className={styles.carouselWrapper}>
-                            <AnimatePresence initial={false}> {/* initial={false} para evitar animações na montagem */}
-                                {mockUser.drawings.map(drawing => (
+                            <AnimatePresence initial={false}>
+                                {drawings.map(drawing => (
                                     <motion.div
                                         key={drawing.id}
                                         className={`${styles.drawingThumbnailWrapper} ${selectedDrawingId === drawing.id ? styles.selected : ''}`}
-                                         onClick={() => handleSelectDrawing(drawing.id, drawing.imageUrl)}
+                                         onClick={() => handleSelectDrawing(drawing.id, drawing.generatedCharacterUrl || drawing.originalDrawingUrl)}
                                          whileHover={{ scale: 1.05, rotate: selectedDrawingId === drawing.id ? 0 : 2 }}
                                         whileTap={{ scale: 0.95 }}
-                                         layout // Ajuda com animações de layout
+                                         layout
                                     >
                                         <Image
-                                            src={drawing.imageUrl}
+                                            src={drawing.generatedCharacterUrl || drawing.originalDrawingUrl || '/images/jackboo-full-logo-placeholder.png'}
                                             alt={`Desenho: ${drawing.name}`}
-                                            width={100} // Tamanho do thumbnail no carrossel
+                                            width={100}
                                             height={100}
                                             className={styles.drawingThumbnail}
+                                            onError={(e) => { e.target.src = '/images/jackboo-full-logo-placeholder.png'; }} // Fallback
                                         />
                                          {selectedDrawingId === drawing.id && (
                                              <motion.div
@@ -238,10 +273,9 @@ const ProfileSettings = () => {
                             </AnimatePresence>
                         </div>
 
-                         {/* Botões de navegação */}
                         <motion.button
                              className={`${styles.navButton} ${styles.navRight}`}
-                             onClick={() => scrollCarousel(1)} // Rola para a direita
+                             onClick={() => scrollCarousel(1)}
                               whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
                         >
@@ -250,18 +284,16 @@ const ProfileSettings = () => {
                     </div>
                  )}
 
-                {/* Botão para salvar o avatar selecionado */}
                 <motion.button
                      className={styles.saveAvatarButton}
                      onClick={handleSaveAvatar}
-                     disabled={!selectedDrawingId || currentAvatarUrl === mockUser.avatarUrl}
+                     disabled={isSavingAvatar || !selectedDrawingId || currentAvatarUrl === (loggedInUser?.avatarUrl || '/images/default-avatar.png')}
                      whileHover={{ scale: 1.05 }}
                      whileTap={{ scale: 0.95 }}
                 >
-                    Salvar Avatar Selecionado
+                    {isSavingAvatar ? 'Salvando...' : 'Salvar Avatar Selecionado'}
                 </motion.button>
 
-                {/* Botão para fazer upload de um novo desenho */}
                 <motion.button
                     className={styles.uploadNewDrawingButton}
                     onClick={handleUploadDrawing}

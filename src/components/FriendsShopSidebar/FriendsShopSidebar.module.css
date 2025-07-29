@@ -26,8 +26,7 @@
     gap: 0.8rem;
 }
 
-/* Reutilizando estilos de checkbox/radio do ShopSidebar */
-.checkboxLabel, .radioLabel {
+.checkboxLabel {
     font-family: var(--font-mali);
     font-size: 1.1rem;
     font-weight: 700;
@@ -37,7 +36,7 @@
     cursor: pointer;
 }
 
-.checkboxLabel input, .radioLabel input {
+.checkboxLabel input {
     display: none; /* Esconde o input original */
 }
 
@@ -49,7 +48,6 @@
     display: inline-block;
     position: relative;
     transition: all 0.2s ease;
-    flex-shrink: 0; /* Previne encolhimento */
 }
 
 .customCheckbox {
@@ -61,12 +59,12 @@
 }
 
 .checkboxLabel:hover .customCheckbox,
-.radioLabel:hover .customRadio {
+.checkboxLabel:hover .customRadio {
     border-color: var(--color-jackboo-primary-orange);
 }
 
 .checkboxLabel input:checked + .customCheckbox,
-.radioLabel input:checked + .customRadio {
+.checkboxLabel input:checked + .customRadio {
     background-color: var(--color-jackboo-primary-orange);
     border-color: var(--color-jackboo-primary-orange);
 }
@@ -81,7 +79,7 @@
     transform: translate(-50%, -50%);
 }
 
-.radioLabel input:checked + .customRadio::after {
+.checkboxLabel input:checked + .customRadio::after {
     content: '';
     width: 10px;
     height: 10px;
@@ -106,26 +104,12 @@
   border: none;
   border-radius: 50px;
   cursor: pointer;
+  transition: all 0.2s ease; /* Added for motion button */
 }
 
-/* Responsividade */
-@media (max-width: 992px) {
-    .sidebar {
-        padding: 1.5rem;
-    }
-    .filterTitle {
-        font-size: 1.3rem;
-        margin-bottom: 0.8rem;
-    }
-    .checkboxLabel, .radioLabel {
-        font-size: 1rem;
-    }
-    .customCheckbox, .customRadio {
-        width: 18px;
-        height: 18px;
-    }
-    .applyButton {
-        font-size: 1.1rem;
-        padding: 0.8rem;
-    }
+.applyButton:hover {
+    background-color: #e07b00; /* Darker orange on hover */
+    transform: translateY(-2px); /* Slight lift */
 }
+
+/* Responsive adjustments already present for FriendsShopSidebar.module.css */

@@ -63,7 +63,10 @@ const apiRequest = async (endpoint, options = {}) => {
 export const authService = {
   register: (userData) => apiRequest('/auth/register', { method: 'POST', body: userData }),
   login: (email, password) => apiRequest('/auth/login', { method: 'POST', body: { email, password } }),
+  // Atualizado: buscar perfil do usuário logado
   getUserProfile: () => apiRequest('/auth/profile', { method: 'GET' }),
+  // NOVO: Atualizar perfil do usuário logado
+  updateUserProfile: (profileData) => apiRequest('/auth/profile', { method: 'PUT', body: profileData }),
   getSettings: () => apiRequest('/auth/settings', { method: 'GET' }),
   updateSetting: (key, value) => apiRequest(`/auth/settings/${key}`, { method: 'PUT', body: { value } }),
 };
@@ -79,6 +82,31 @@ export const contentService = {
   getMyBooks: () => apiRequest('/content/books', { method: 'GET' }),
   getBookStatus: (bookId) => apiRequest(`/content/books/${bookId}/status`, { method: 'GET' }),
 };
+
+// --- SERVIÇO DE LOJA (Shop) ---
+export const shopService = {
+    getJackbooShelf: (params) => {
+        const query = new URLSearchParams(params).toString();
+        return apiRequest(`/shop/jackboo?${query}`, { method: 'GET' });
+    },
+    getFriendsShelf: (params) => {
+        const query = new URLSearchParams(params).toString();
+        return apiRequest(`/shop/friends?${query}`, { method: 'GET' });
+    },
+    getBookDetails: (bookId) => apiRequest(`/shop/books/${bookId}`, { method: 'GET' }),
+    getRelatedBooks: (params) => {
+        const query = new URLSearchParams(params).toString();
+        return apiRequest(`/shop/related?${query}`, { method: 'GET' });
+    },
+};
+
+// --- NOVO: SERVIÇO DE POPULARIDADE (Likes) ---
+export const popularityService = {
+  toggleLike: (likableType, likableId) => apiRequest(`/popularity/${likableType}/${likableId}/toggle-like`, { method: 'POST' }),
+  getLikesCount: (likableType, likableId) => apiRequest(`/popularity/${likableType}/${likableId}/count`, { method: 'GET' }),
+};
+// --- FIM: SERVIÇO DE POPULARIDADE ---
+
 
 // --- SERVIÇOS DE ADMIN ---
 export const adminLeonardoService = {
@@ -108,14 +136,8 @@ export const adminAssetsService = {
 
 export const adminCharactersService = {
     listCharacters: () => apiRequest('/admin/characters', { method: 'GET' }),
-    
-    // Rota para geração com IA
     createOfficialCharacter: (formData) => apiRequest('/admin/characters/generate', { method: 'POST', body: formData }),
-    
-    // ✅ CORREÇÃO: Esta é a função para upload direto. Ela está correta,
-    // mas a confirmamos para garantir a consistência.
     createOfficialCharacterByUpload: (formData) => apiRequest('/admin/characters/upload', { method: 'POST', body: formData }),
-    
     deleteOfficialCharacter: (id) => apiRequest(`/admin/characters/${id}`, { method: 'DELETE' }),
 };
 export const adminTaxonomiesService = {

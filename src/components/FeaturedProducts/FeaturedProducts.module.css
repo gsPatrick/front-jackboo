@@ -174,6 +174,51 @@
   margin-top: 0.5rem;
 }
 
+
+/* NOVO: Estilo para o botão "Adicionar ao Carrinho" em FeaturedProducts */
+.addToCartButton {
+  font-family: var(--font-mali);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white;
+  background-color: var(--color-jackboo-primary-orange); /* Laranja primário para o destaque */
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  margin-top: auto;
+  align-self: center;
+  width: 80%;
+  max-width: 200px;
+  transition: all 0.2s ease; /* Adicionando transição */
+}
+
+.addToCartButton:hover {
+  background-color: #e07b00; /* Laranja mais escuro no hover */
+  transform: translateY(-2px); /* Pequeno efeito de elevação */
+}
+
+/* Manter o estilo original para 'viewProductButton' caso ele ainda seja usado */
+.viewProductButton {
+  font-family: var(--font-mali);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white;
+  background-color: var(--color-jackboo-light-orange);
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  margin-top: auto;
+  align-self: center;
+  width: 80%;
+  max-width: 200px;
+}
+.viewProductButton:hover {
+    background-color: var(--color-jackboo-primary-orange);
+    color: white;
+}
+
 /* Responsividade */
 @media (max-width: 992px) {
   .grid {

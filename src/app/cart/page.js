@@ -1,17 +1,12 @@
 // src/app/cart/page.js
 'use client';
-import React, { useState, useEffect } from 'react';
+import React from 'react'; // Removido useState e useEffect, agora vêm do contexto
 import styles from './page.module.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import EmptyCart from '@/components/EmptyCart/EmptyCart';
 import CartItem from '@/components/CartItem/CartItem';
 import CartSummary from '@/components/CartSummary/CartSummary';
-
-// Mock data inicial para simulação
-const initialItems = [
-  { id: 1, name: 'Livro de História Personalizado', price: 39.90, quantity: 1, imageUrl: '/images/product-book.png' },
-  { id: 2, name: 'Cards Colecionáveis de Colorir', price: 4.90, quantity: 3, imageUrl: '/images/product-book.png' },
-];
+import { useCart } from '@/contexts/CartContext'; // <-- IMPORTA O HOOK DO CARRINHO
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -19,25 +14,7 @@ const containerVariants = {
 };
 
 const CartPage = () => {
-  const [cartItems, setCartItems] = useState(initialItems);
-  const [subtotal, setSubtotal] = useState(0);
-
-  useEffect(() => {
-    const newSubtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    setSubtotal(newSubtotal);
-  }, [cartItems]);
-
-  const handleQuantityChange = (id, newQuantity) => {
-    if (newQuantity === 0) {
-      handleRemoveItem(id);
-    } else {
-      setCartItems(cartItems.map(item => item.id === id ? { ...item, quantity: newQuantity } : item));
-    }
-  };
-
-  const handleRemoveItem = (id) => {
-    setCartItems(cartItems.filter(item => item.id !== id));
-  };
+  const { cartItems, subtotal, updateQuantity, removeFromCart } = useCart(); // Obtém do contexto
 
   return (
     <main className={styles.main}>
@@ -51,10 +28,11 @@ const CartPage = () => {
               <AnimatePresence>
                 {cartItems.map(item => (
                   <CartItem
-                    key={item.id}
+                    key={`${item.id}-${item.variationId}`} // Chave única para item e variação
                     item={item}
-                    onQuantityChange={handleQuantityChange}
-                    onRemove={handleRemoveItem}
+                    // Passa as funções do contexto diretamente
+                    onQuantityChange={updateQuantity}
+                    onRemove={removeFromCart}
                   />
                 ))}
               </AnimatePresence>
@@ -67,4 +45,4 @@ const CartPage = () => {
   );
 };
 
-export default CartPage;    
+export default CartPage;

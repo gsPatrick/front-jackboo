@@ -18,15 +18,16 @@ const CartItem = ({ item, onQuantityChange, onRemove }) => {
       <Image src={item.imageUrl} alt={item.name} width={100} height={100} className={styles.image}/>
       <div className={styles.details}>
         <h3 className={styles.name}>{item.name}</h3>
+        {item.variationName && <p className={styles.variationName}>{item.variationName}</p>} {/* Exibe o nome da variação */}
         <p className={styles.price}>R$ {item.price.toFixed(2).replace('.', ',')}</p>
       </div>
       <div className={styles.quantityControl}>
-        <button onClick={() => onQuantityChange(item.id, item.quantity - 1)}><FaMinus/></button>
+        <button onClick={() => onQuantityChange(item.id, item.variationId, item.quantity - 1)}><FaMinus/></button>
         <span>{item.quantity}</span>
-        <button onClick={() => onQuantityChange(item.id, item.quantity + 1)}><FaPlus/></button>
+        <button onClick={() => onQuantityChange(item.id, item.variationId, item.quantity + 1)}><FaPlus/></button>
       </div>
       <p className={styles.total}>R$ {(item.price * item.quantity).toFixed(2).replace('.', ',')}</p>
-      <button className={styles.removeButton} onClick={() => onRemove(item.id)}><FaTrashAlt/></button>
+      <button className={styles.removeButton} onClick={() => onRemove(item.id, item.variationId)}><FaTrashAlt/></button>
     </motion.div>
   );
 };

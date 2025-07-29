@@ -120,6 +120,10 @@
     text-align: center;
     width: 100%;
     border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
 .dropdownItemLink:hover,
@@ -217,8 +221,10 @@
     border: 2px solid var(--color-jackboo-primary-orange);
     overflow: hidden;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    /* NOVO: Adicionado background-color para placeholder */
+    background-color: var(--color-jackboo-light-orange); 
 }
-.userAvatarWrapper img {
+.userAvatarImage { /* Renomeado de .userAvatarWrapper img para ser aplicado diretamente na imagem */
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -245,7 +251,7 @@
 .navMobile {
   position: fixed;
   top: 0;
-  right: 0; /* Altera para a direita para animação X */
+  right: 0;
   width: 100%;
   height: 100vh;
   background-color: var(--color-header-background);
@@ -281,6 +287,10 @@
   cursor: pointer;
   width: 100%;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .navMobile li a:hover, .mobileNavLinkButton:hover {
@@ -347,11 +357,24 @@
     border-radius: 50%;
     overflow: hidden;
     border: 2px solid var(--color-jackboo-primary-orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* NOVO: Adicionado background-color para placeholder */
+    background-color: var(--color-jackboo-light-orange); 
   }
-  .mobileUserAvatar img {
+  /* NOVO: Renomeado de .mobileUserAvatar img para mobileUserAvatarImage */
+  .mobileUserAvatarImage { 
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  /* NOVO: Estilo para ícones dentro de mobileUserAvatar (para admins) */
+  .mobileUserAvatar .icon {
+      width: 24px;
+      height: 24px;
+      color: var(--color-jackboo-primary-orange);
   }
 }
 

@@ -39,6 +39,24 @@
   transform: rotate(-1.5deg);
 }
 
+/* --- Loading and Error Messages --- */
+.loadingMessage, .emptyMessage {
+  font-family: var(--font-mali);
+  font-size: 1.5rem;
+  color: var(--color-text-dark-blue);
+  text-align: center;
+  opacity: 0.8;
+  margin-top: 5rem;
+}
+.emptyMessageSmall { /* For smaller messages like in competitions */
+  font-family: var(--font-mali);
+  font-size: 1rem;
+  text-align: center;
+  opacity: 0.6;
+  padding: 1rem;
+}
+
+
 /* --- SEÇÃO DE INFORMAÇÕES DO USUÁRIO --- */
 .userInfo {
   display: flex;
@@ -64,6 +82,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* NOVO: Placeholder style */
+  background-color: var(--color-jackboo-light-orange);
 }
 
 .userDetails {
@@ -204,6 +224,8 @@
     border: 4px solid white;
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     transition: transform 0.2s;
+    /* NOVO: Placeholder style */
+    background-color: var(--color-jackboo-blue-lightest);
 }
 .characterCard:hover .characterImage { transform: scale(1.1); }
 .characterName {
@@ -227,11 +249,9 @@
 .rank1 { color: #FFD700; border-left-color: #FFD700; }
 .rank2 { color: #C0C0C0; border-left-color: #C0C0C0; }
 .rank3 { color: #CD7F32; border-left-color: #CD7F32; }
-.emptyMessageSmall { font-family: var(--font-mali); font-size: 1rem; text-align: center; opacity: 0.6; padding: 1rem; }
 
 /* --- SEÇÃO DE LIVROS --- */
 .booksSection { background-color: white; border-radius: 25px; padding: 2rem; box-shadow: 0 8px 25px rgba(0,0,0,0.07); }
-.emptyMessage { font-family: var(--font-mali); font-size: 1.3rem; color: var(--color-text-dark-blue); text-align: center; opacity: 0.7; margin-top: 3rem; }
 .tabsContainer { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
 .tabButton { font-family: var(--font-mali); font-weight: 700; font-size: 1.1rem; padding: 0.8rem 1.5rem; border-radius: 25px; border: 2px solid var(--color-jackboo-light-orange); background-color: white; color: var(--color-text-dark-blue); cursor: pointer; transition: all 0.2s ease; }
 .tabButton:hover:not(.active) { border-color: var(--color-jackboo-primary-orange); color: var(--color-jackboo-primary-orange); }
@@ -251,11 +271,46 @@
   width: 220px;
 }
 .bookCoverWrapper { padding: 0.5rem; background-color: white; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-.bookCover { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 10px; }
+.bookCover { 
+    width: 100%; 
+    height: auto; 
+    aspect-ratio: 4 / 5; 
+    object-fit: cover; 
+    border-radius: 10px; 
+    /* NOVO: Placeholder style */
+    background-color: var(--color-jackboo-orange-lightest);
+}
 .bookTitle { font-family: var(--font-mali); font-weight: 700; font-size: 1.3rem; color: var(--color-text-dark-blue); margin-top: 0.5rem; min-height: 45px; }
 .bookPrice { font-family: var(--font-mali); font-weight: 700; font-size: 1.1rem; color: var(--color-jackboo-primary-orange); opacity: 0.9; margin: 0.5rem 0; }
 .cardActions { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0 0.5rem; margin-top: 0.5rem; }
-.likesWrapper { display: flex; align-items: center; gap: 0.4rem; font-family: var(--font-mali); font-size: 1.1rem; font-weight: 700; color: var(--color-text-dark-blue); cursor: pointer; user-select: none; flex-shrink: 0; }
+
+/* Like Button Styles */
+.likesWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mali);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text-dark-blue);
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+  padding: 0.5rem 0.8rem;
+  border-radius: 15px;
+  background-color: var(--color-jackboo-blue-lightest);
+  border: 2px solid var(--color-jackboo-blue-lightest);
+  transition: all 0.2s ease;
+}
+.likesWrapper.disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.likesWrapper:hover:not(.disabled) {
+    border-color: var(--color-jackboo-light-orange);
+}
+
 .heartIcon { width: 24px; height: 24px; stroke: var(--color-text-red-heart); stroke-width: 2; fill: none; transition: fill 0.2s ease-in-out; }
 .heartIcon.liked { fill: var(--color-text-red-heart); stroke: var(--color-text-red-heart); }
 .viewBookButton { font-family: var(--font-mali); font-size: 1rem; font-weight: 700; color: white; background-color: var(--color-jackboo-light-orange); padding: 0.5rem 1rem; border: none; border-radius: 50px; cursor: pointer; flex-shrink: 0; }

@@ -16,29 +16,24 @@
   text-align: center;
   display: flex;
   flex-direction: column;
-  /* Ajustado gap geral */
   gap: 0.8rem;
   position: relative;
-  overflow: hidden; /* Esconde o que sair das bordas, importante para a animação da capa */
-
-  /* Transições adicionadas nos variants do componente JS */
+  overflow: hidden;
+  color: inherit; /* Ensure link color doesn't override */
+  text-decoration: none; /* Remove underline for links */
 }
 
 .bookCard[style] {
   border-color: rgba(0, 0, 0, 0.05);
 }
 
-/* --- SEÇÃO DO AUTOR (AGORA NO TOPO, DENTRO DO FLUXO) --- */
 .authorLink {
     text-decoration: none;
     color: inherit;
     width: 100%;
-    /* Centraliza o contêiner do autor */
     display: flex;
     justify-content: center;
-    /* Margem inferior para espaçar do conteúdo abaixo */
     margin-bottom: 1.5rem;
-    /* Removido o position: absolute e ajustes de top/transform */
 }
 
 .authorInfo {
@@ -53,8 +48,6 @@
     transition: all 0.2s ease;
     flex-shrink: 0;
     width: fit-content;
-     /* Removido o tilt */
-    /* transform: rotate(-3deg); */
 }
 
 .authorInfo:hover {
@@ -94,19 +87,15 @@
 }
 
 
-/* --- CAPA DO LIVRO --- */
 .bookCoverWrapper {
    width: 100%;
    border-radius: 15px;
    overflow: hidden;
    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
    transition: transform 0.4s ease;
-    /* Margem inferior para espaçar do título/preço */
     margin-bottom: 1rem;
-    /* Removido o padding top */
 }
 
-/* Efeito de zoom na imagem ao passar o mouse no card */
 .bookCard:hover .bookCoverWrapper {
      transform: scale(1.08);
 }
@@ -120,7 +109,6 @@
   border-radius: 0;
 }
 
-/* --- DETALHES DO LIVRO --- */
 .bookTitle {
   font-family: var(--font-mali);
   font-weight: 700;
@@ -140,7 +128,6 @@
   margin: 0.5rem 0;
 }
 
-/* --- Contêiner de Ações (Likes e Botão Ver Livro) --- */
 .cardActions {
     display: flex;
     justify-content: space-between;
@@ -190,12 +177,12 @@
   stroke: var(--color-text-red-heart);
 }
 
-.viewBookButton {
+.addToCartButton {
   font-family: var(--font-mali);
   font-weight: 700;
   font-size: 1rem;
-  color: var(--color-text-dark-blue);
-  background-color: var(--color-jackboo-light-orange);
+  color: white;
+  background-color: var(--color-jackboo-primary-orange); /* Changed to primary orange for consistency with featured */
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 50px;
@@ -205,9 +192,49 @@
    flex-grow: 1;
 }
 
-.viewBookButton:hover {
-    background-color: var(--color-jackboo-primary-orange);
+.addToCartButton:hover {
+    background-color: #e07b00; /* Darker orange on hover */
     color: white;
+}
+
+/* --- NEW: Loading and Empty States (copied from ProductGrid and adapted) --- */
+.statusMessage, .emptyContainer {
+  font-family: var(--font-mali);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  color: var(--color-text-dark-blue);
+  text-align: center;
+  padding: 4rem 2rem;
+  opacity: 0.7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  min-height: 300px;
+  justify-content: center;
+}
+
+.errorMessage {
+    color: var(--color-text-red-heart);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top-color: var(--color-jackboo-primary-orange);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.emptySubMessage {
+  font-size: 1rem;
+  opacity: 0.8;
+  margin-top: 0.5rem;
 }
 
 
@@ -225,7 +252,7 @@
     }
 
     .authorLink {
-        margin-bottom: 1rem; /* Espaço menor em mobile */
+        margin-bottom: 1rem;
     }
 
     .authorInfo {
@@ -242,7 +269,7 @@
      }
 
     .bookCoverWrapper {
-         margin-bottom: 0.8rem; /* Espaço menor em mobile */
+         margin-bottom: 0.8rem;
     }
 
 
@@ -276,7 +303,7 @@
         height: 16px;
     }
 
-    .viewBookButton {
+    .addToCartButton {
         font-size: 0.85rem;
         padding: 0.3rem 0.6rem;
         flex-grow: 1;

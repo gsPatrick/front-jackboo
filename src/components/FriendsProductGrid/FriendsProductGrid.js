@@ -6,8 +6,8 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './FriendsProductGrid.module.css';
 import { FaHeart } from 'react-icons/fa';
-import Pagination from '../Pagination/Pagination'; // Importa o componente de paginação
-
+import Pagination from '../Pagination/Pagination';
+import { useCart } from '@/contexts/CartContext';
 
 // --- Componente/Lógica de Botão de Like ---
 const LikeButton = ({ initialLikes }) => {
@@ -20,11 +20,6 @@ const LikeButton = ({ initialLikes }) => {
       setLiked(true);
       setLikesCount(likesCount + 1);
     }
-    // Opcional: permitir descurtir
-    // else {
-    //   setLiked(false);
-    //   setLikesCount(likesCount - 1);
-    // }
   };
 
   return (
@@ -55,33 +50,65 @@ const itemVariants = {
 };
 
 
-const FriendsProductGrid = ({ products }) => { // 'products' agora é a lista COMPLETA para paginação
+const FriendsProductGrid = ({ products, isLoading, error }) => { // Accept isLoading, error
+  const { addToCart } = useCart();
 
   // --- PAGINAÇÃO ---
+  const productsPerPage = 6;
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 6; // Quantidade de produtos por página
   const totalPages = Math.ceil(products.length / productsPerPage);
 
   const currentProducts = products.slice(
     (currentPage - 1) * productsPerPage,
     currentPage * productsPerPage
   );
-  // Resetar para a primeira página sempre que a lista de produtos (filtros) mudar
   React.useEffect(() => {
       setCurrentPage(1);
   }, [products]);
 
 
-  // Função placeholder para lidar com o clique no botão "Ver Livro"
-  const handleViewBookClick = (bookId) => {
-      console.log(`Clicou em "Ver Livro" para o livro com ID: ${bookId}. Navegar para a página de detalhes.`);
-      // Futuramente, usaria algo como: router.push(`/product-details/${bookId}`);
-      alert(`Imagine que você navegou para a página de detalhes do Livro ${bookId}`);
+  const handleAddToCart = (e, product) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    const defaultVariation = product.variations?.[0];
+
+    if (defaultVariation) {
+        addToCart(product, defaultVariation, 1);
+    } else {
+        alert("Nenhuma variação de preço disponível para este livro.");
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className={styles.statusMessage}>
+        <div className={styles.spinner}></div>
+        <p>Carregando criações dos amigos...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.statusMessage}>
+        <p className={styles.errorMessage}>Oops! A magia falhou em carregar os livros dos amigos: {error}</p>
+      </div>
+    );
+  }
+
+  if (products.length === 0 && !isLoading) {
+    return (
+      <div className={styles.emptyContainer}>
+        <h3 className={styles.emptyMessage}>Nenhum livro de amigo encontrado no momento!</h3>
+        <p className={styles.emptySubMessage}>Convide seus amigos para criarem suas próprias histórias!</p>
+      </div>
+    );
+  }
 
 
   return (
-    <div> {/* Wrapper para conter o grid e a paginação */}
+    <div>
         <motion.div
             className={styles.grid}
             initial={{ opacity: 0 }}
@@ -90,82 +117,83 @@ const FriendsProductGrid = ({ products }) => { // 'products' agora é a lista CO
         >
             <AnimatePresence mode="wait">
                 {currentProducts.map(product => (
-                    <motion.div
-                        key={product.id}
-                        className={styles.bookCard}
-                        variants={itemVariants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                        whileHover={{ y: -8, rotate: 1, scale: 1.03 }}
-                        transition={{ type: 'spring', stiffness: 180, damping: 12 }}
-                        style={{ backgroundColor: product.bgColor || 'white' }}
-                    >
-                        {/* --- SEÇÃO DO AUTOR (AGORA NO TOPO) --- */}
-                        {/* O Link envolve APENAS o contêiner visual do autor */}
-                        <Link href={`/profile/${product.userSlug}`} passHref className={styles.authorLink} onClick={(e) => e.stopPropagation()}>
-                             <motion.div
-                                className={styles.authorInfo}
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                transition={{ type: 'spring', stiffness: 300 }}
-                             >
-                                <div className={styles.authorAvatarWrapper}>
-                                    <Image
-                                        src={product.userAvatarUrl}
-                                        alt={`Avatar de ${product.userName}`}
-                                        width={35} // Ajustado tamanho
-                                        height={35}
-                                        className={styles.authorAvatar}
-                                    />
-                                </div>
-                                <span className={styles.authorName}>por <strong>{product.userName}</strong></span> {/* Negrito no nome */}
-                             </motion.div>
-                        </Link>
+                    // Wrap the entire card with Link
+                    <Link href={`/book-details/${product.id}`} passHref key={product.id}>
+                        <motion.div
+                            className={styles.bookCard}
+                            variants={itemVariants}
+                            initial="hidden"
+                            animate="visible"
+                            exit="exit"
+                            whileHover={{ y: -8, rotate: 1, scale: 1.03 }}
+                            transition={{ type: 'spring', stiffness: 180, damping: 12 }}
+                            style={{ backgroundColor: product.bgColor || 'white' }}
+                        >
+                            {/* Author info moved inside the Link for the card, but its own Link handles navigation. */}
+                            <Link href={`/profile/${product.author.slug}`} passHref className={styles.authorLink} onClick={(e) => e.stopPropagation()}>
+                                 <motion.div
+                                    className={styles.authorInfo}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    transition={{ type: 'spring', stiffness: 300 }}
+                                 >
+                                    <div className={styles.authorAvatarWrapper}>
+                                        <Image
+                                            src={product.author.avatarUrl || '/images/default-avatar.png'} // Use author.avatarUrl
+                                            alt={`Avatar de ${product.author.nickname}`} // Use author.nickname
+                                            width={35}
+                                            height={35}
+                                            className={styles.authorAvatar}
+                                        />
+                                    </div>
+                                    <span className={styles.authorName}>por <strong>{product.author.nickname}</strong></span>
+                                 </motion.div>
+                            </Link>
+
+                             <div className={styles.bookCoverWrapper}>
+                                <Image
+                                    src={product.coverUrl || '/images/book.png'} // Use coverUrl
+                                    alt={`Capa do livro: ${product.title}`}
+                                    width={250}
+                                    height={310}
+                                    className={styles.bookCover}
+                                />
+                             </div>
+
+                            <h3 className={styles.bookTitle}>{product.title}</h3>
+                            {product.variations?.[0]?.price ? (
+                                <p className={styles.bookPrice}>R$ {product.variations[0].price.toFixed(2).replace('.', ',')}</p>
+                            ) : (
+                                <p className={styles.bookPrice}>Preço indisponível</p>
+                            )}
 
 
-                        {/* --- CAPA DO LIVRO --- */}
-                         <div className={styles.bookCoverWrapper}>
-                            <Image
-                                src={product.imageUrl}
-                                alt={`Capa do livro: ${product.title}`}
-                                width={250}
-                                height={310}
-                                className={styles.bookCover}
-                            />
-                         </div>
+                            <div className={styles.cardActions}>
+                              <LikeButton initialLikes={product.totalLikes} /> {/* Use totalLikes */}
+                               {product.variations?.[0] && ( // Only show button if there's a price
+                                   <motion.button
+                                        className={styles.addToCartButton}
+                                        onClick={(e) => handleAddToCart(e, product)}
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                   >
+                                        Adicionar ao Carrinho
+                                   </motion.button>
+                               )}
+                            </div>
 
-                        {/* --- DETALHES DO LIVRO --- */}
-                        <h3 className={styles.bookTitle}>{product.title}</h3>
-                        <p className={styles.bookPrice}>R$ {product.price.toFixed(2).replace('.', ',')}</p>
-
-
-                         {/* --- AÇÕES (Likes e Botão Ver Livro) --- */}
-                        <div className={styles.cardActions}>
-                          <LikeButton initialLikes={product.likes} />
-                           <motion.button
-                                className={styles.viewBookButton}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleViewBookClick(product.id);
-                                }}
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                           >
-                                Ver Livro
-                           </motion.button>
-                        </div>
-
-                    </motion.div>
+                        </motion.div>
+                    </Link>
                 ))}
             </AnimatePresence>
         </motion.div>
 
-        {/* --- PAGINAÇÃO --- */}
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+        {totalPages > 1 && (
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+        )}
 
     </div>
   );
 };
 
-export default FriendsProductGrid;  
+export default FriendsProductGrid;

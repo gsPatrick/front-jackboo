@@ -14,6 +14,31 @@
   margin-bottom: 2rem;
 }
 
+/* --- Loading and Error Messages --- */
+.loadingMessage {
+    font-family: var(--font-mali);
+    font-size: 1.2rem;
+    text-align: center;
+    color: var(--color-text-dark-blue);
+    opacity: 0.7;
+    margin: 2rem 0;
+}
+.errorMessage {
+    font-family: var(--font-mali);
+    font-size: 1.1rem;
+    text-align: center;
+    color: var(--color-text-red-heart);
+    margin: 2rem 0;
+}
+.emptyMessage {
+    font-family: var(--font-mali);
+    font-size: 1.1rem;
+    color: var(--color-text-dark-blue);
+    opacity: 0.7;
+    text-align: center;
+}
+
+
 /* --- SEÇÃO NOME E AVATAR --- */
 .infoSection {
   display: flex;
@@ -42,6 +67,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* NOVO: Placeholder style */
+  background-color: var(--color-jackboo-light-orange); /* Placeholder color for avatars */
 }
 
 .avatarSavedFeedback {
@@ -101,6 +128,7 @@
     font-size: 1.2rem;
     padding: 0.5rem 1rem;
     border: 2px solid var(--color-jackboo-light-orange);
+    background-color: white;
     border-radius: 20px;
     transition: all 0.2s ease;
 }
@@ -124,7 +152,7 @@
 .cancelEditNameButton {
     color: #ff0000;
 }
-.saveNameButton:disabled {
+.saveNameButton:disabled, .cancelEditNameButton:disabled {
     color: #ccc;
     cursor: not-allowed;
 }
@@ -153,43 +181,34 @@
     margin-bottom: 1rem;
 }
 
-.emptyMessage {
-    font-family: var(--font-mali);
-    font-size: 1.1rem;
-    color: var(--color-text-dark-blue);
-    opacity: 0.7;
-    text-align: center;
-}
-
 /* --- CONTAINER DO CARROSSEL --- */
 .carouselContainer {
     width: 100%;
-    max-width: 650px; /* Largura máxima do carrossel */
+    max-width: 650px;
     margin: 0 auto;
-    position: relative; /* Para posicionar os botões */
-    display: flex; /* Garante que os botões e o wrapper fiquem na mesma linha */
+    position: relative;
+    display: flex;
     align-items: center;
 }
 
 /* --- WRAPPER QUE ROLA --- */
 .carouselWrapper {
-  display: flex; /* Itens em linha */
-  overflow-x: auto; /* Permite rolagem horizontal */
-  scrollbar-width: none; /* Oculta scrollbar padrão Firefox */
-  -ms-overflow-style: none; /* Oculta scrollbar IE and Edge */
-  gap: 1rem; /* Espaço entre os thumbnails */
-  padding: 0.5rem 0; /* Um pouco de padding para a sombra/borda aparecer no scroll */
-  flex-grow: 1; /* Permite que ele ocupe o espaço disponível */
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  flex-grow: 1;
 }
 
-/* Oculta scrollbar padrão Webkit (Chrome, Safari) */
 .carouselWrapper::-webkit-scrollbar {
   display: none;
 }
 
 
 .drawingThumbnailWrapper {
-  width: 100px; /* Tamanho fixo para os itens do carrossel */
+  width: 100px;
   height: 100px;
   border-radius: 15px;
   overflow: hidden;
@@ -198,7 +217,7 @@
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   position: relative;
    transition: border-color 0.2s ease;
-   flex-shrink: 0; /* Essencial para que os itens não encolham e mantenham a largura */
+   flex-shrink: 0;
 }
 
 .drawingThumbnailWrapper.selected {
@@ -210,6 +229,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* NOVO: Placeholder style */
+  background-color: var(--color-jackboo-blue-lightest); /* Placeholder color for character thumbnails */
 }
 
 .selectedOverlay {
@@ -230,11 +251,11 @@
     background: none;
     border: none;
     color: var(--color-jackboo-primary-orange);
-    font-size: 1.8rem; /* Tamanho maior para os ícones de seta */
+    font-size: 1.8rem;
     cursor: pointer;
     padding: 0.5rem;
-    flex-shrink: 0; /* Impede que encolha */
-    z-index: 2; /* Garante que fiquem por cima dos thumbnails */
+    flex-shrink: 0;
+    z-index: 2;
     transition: transform 0.2s ease;
 }
 .navButton:hover {
@@ -249,10 +270,10 @@
 }
 
 .navLeft {
-    margin-right: 0.5rem; /* Espaço à direita da seta esquerda */
+    margin-right: 0.5rem;
 }
 .navRight {
-    margin-left: 0.5rem; /* Espaço à esquerda da seta direita */
+    margin-left: 0.5rem;
 }
 
 
@@ -331,18 +352,18 @@
      }
      /* Ajustes para o carrossel em mobile */
      .carouselContainer {
-         max-width: 95%; /* Ocupa mais largura em mobile */
+         max-width: 95%;
      }
      .carouselWrapper {
-         gap: 0.8rem; /* Espaço menor entre os thumbnails */
+         gap: 0.8rem;
          padding: 0.3rem 0;
      }
      .drawingThumbnailWrapper {
-         width: 80px; /* Tamanho menor em mobile */
+         width: 80px;
          height: 80px;
      }
      .navButton {
-         font-size: 1.5rem; /* Setas menores */
+         font-size: 1.5rem;
          padding: 0.3rem;
      }
      .selectedOverlay FaCheckCircle {

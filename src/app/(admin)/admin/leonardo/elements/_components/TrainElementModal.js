@@ -1,4 +1,6 @@
 // /app/(admin)/admin/leonardo/elements/_components/TrainElementModal.js
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import { adminLeonardoService, adminAIHelperService } from '@/services/api';
@@ -13,8 +15,7 @@ const TrainElementModal = ({ isOpen, onClose, onSuccess }) => {
     const [formData, setFormData] = useState({
         name: '',
         description: '',
-        lora_focus: 'Character',
-        instance_prompt: '',
+        basePrompt: '',
         localDatasetId: ''
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -31,6 +32,9 @@ const TrainElementModal = ({ isOpen, onClose, onSuccess }) => {
                 }
             };
             fetchDatasets();
+        } else {
+            // Limpa o formulário ao fechar
+            setFormData({ name: '', description: '', basePrompt: '', localDatasetId: '' });
         }
     }, [isOpen]);
 
@@ -59,21 +63,21 @@ const TrainElementModal = ({ isOpen, onClose, onSuccess }) => {
     
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const { name, localDatasetId, lora_focus, instance_prompt } = formData;
-        if (!name || !localDatasetId || !lora_focus) {
-            toast.warn('Nome, Dataset e Foco do LoRA são obrigatórios.');
-            return;
-        }
-        if (lora_focus === 'Character' && !instance_prompt) {
-            toast.warn('Para foco em "Personagem", o Prompt de Instância é obrigatório.');
+        const { name, localDatasetId } = formData;
+        if (!name || !localDatasetId) {
+            toast.warn('Nome e Dataset de Origem são obrigatórios.');
             return;
         }
         
         setIsSubmitting(true);
         try {
+            // AQUI ESTÁ A MUDANÇA:
+            // A função `trainElement` no serviço já deve estar retornando o elemento criado localmente
+            // ou lançando um erro. Se ela retornar, consideramos sucesso e fechamos.
             await adminLeonardoService.trainElement(formData);
-            toast.success('Treinamento do modelo iniciado com sucesso!');
-            onSuccess();
+            
+            toast.success('Treinamento do modelo iniciado com sucesso! O status será atualizado automaticamente.');
+            onSuccess(); // Isso já fecha o modal e atualiza a lista de Elements.
         } catch (error) {
             toast.error(`Falha ao iniciar treinamento: ${error.message}`);
         } finally {
@@ -93,7 +97,7 @@ const TrainElementModal = ({ isOpen, onClose, onSuccess }) => {
             <form onSubmit={handleSubmit} className={styles.form}>
                 <div className={styles.formGroup}>
                     <label htmlFor="name">Nome do Modelo</label>
-                    <input id="name" name="name" type="text" value={formData.name} onChange={handleChange} required placeholder="Ex: Estilo-Jackboo-Aquarela"/>
+                    <input id="name" name="name" type="text" value={formData.name} onChange={handleChange} required placeholder="Ex: Estilo-Aquarela-Magica"/>
                 </div>
 
                 <div className={styles.formGroup}>
@@ -105,29 +109,8 @@ const TrainElementModal = ({ isOpen, onClose, onSuccess }) => {
                 </div>
 
                 <div className={styles.formGroup}>
-                    <label htmlFor="lora_focus">Foco do LoRA</label>
-                    <select id="lora_focus" name="lora_focus" value={formData.lora_focus} onChange={handleChange}>
-                        <option value="Character">Personagem</option>
-                        <option value="Style">Estilo</option>
-                        <option value="Environment">Ambiente</option>
-                        <option value="Object">Objeto</option>
-                    </select>
-                </div>
-
-                <div className={styles.formGroup}>
-                    <label htmlFor="instance_prompt" className={styles.labelWithHelper}>
-                        Prompt de Instância
-                        <button 
-                            type="button" 
-                            className={styles.aiHelperButton}
-                            onClick={() => handleGenerateWithAI('instance_prompt', (name) => `Gere um "instance prompt" conciso e eficaz para um modelo LoRA do Leonardo.AI focado em "${formData.lora_focus}" e chamado "${name}".`)}
-                            disabled={isAILoading}
-                        >
-                            <FaBrain /> Gerar com IA
-                        </button>
-                    </label>
-                    <input id="instance_prompt" name="instance_prompt" type="text" value={formData.instance_prompt} onChange={handleChange} placeholder="Ex: no estilo de xyz-style"/>
-                    <small className={styles.helperText}>Palavra-chave para ativar o modelo. Obrigatório se o foco for "Personagem".</small>
+                    <label htmlFor="basePrompt">Prompt Base (Opcional)</label>
+                    <input id="basePrompt" name="basePrompt" type="text" value={formData.basePrompt} onChange={handleChange} placeholder="Ex: in the style of a whimsical watercolor painting"/>
                 </div>
 
                 <div className={styles.formGroup}>
@@ -136,13 +119,13 @@ const TrainElementModal = ({ isOpen, onClose, onSuccess }) => {
                          <button 
                             type="button" 
                             className={styles.aiHelperButton}
-                            onClick={() => handleGenerateWithAI('description', (name) => `Gere uma descrição curta e informativa para um modelo LoRA chamado "${name}".`)}
-                            disabled={isAILoading}
+                            onClick={() => handleGenerateWithAI('description', (name) => `Gere uma descrição curta e informativa para um modelo de estilo do Leonardo.AI chamado "${name}".`)}
+                            disabled={isAILoading || !formData.name}
                         >
                             <FaBrain /> Gerar com IA
                         </button>
                     </label>
-                    <textarea id="description" name="description" value={formData.description} onChange={handleChange} rows="3" placeholder="Descreva o que este modelo faz..."/>
+                    <textarea id="description" name="description" value={formData.description} onChange={handleChange} rows="2" placeholder="Descreva o que este modelo faz..."/>
                 </div>
 
                 <div className={styles.modalActions}>

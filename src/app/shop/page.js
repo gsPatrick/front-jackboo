@@ -1,10 +1,13 @@
 // src/app/shop/page.js
-import React from 'react';
-import ShopSidebar from '@/components/ShopSidebar/ShopSidebar';
-import ProductGrid from '@/components/ProductGrid/ProductGrid';
-import styles from './page.module.css';
+'use client'; // Ensure this is a client component
 
-// Componente para os confetes de fundo
+import React, { useState, useEffect } from 'react'; // Import useState and useEffect
+import ShopSidebar from '@/components/ShopSidebar/ShopSidebar';
+import ShopProductGrid from '@/components/ProductGrid/ProductGrid'; // Use the renamed component
+import styles from './page.module.css';
+import { shopService } from '@/services/api'; // Import shopService
+
+// Componente para os confetes de fundo (mantido)
 const Confetti = () => {
     const confettiPieces = Array.from({ length: 20 });
     const colors = ['#FF8C00', '#5bbde4', '#E0F2F7', '#FFB35E'];
@@ -24,6 +27,37 @@ const Confetti = () => {
 };
 
 const ShopPage = () => {
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [filters, setFilters] = useState({}); // State to hold current filters
+
+  // Function to fetch products based on current filters
+  const fetchProducts = async (currentFilters) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await shopService.getJackbooShelf(currentFilters);
+      setProducts(data.books);
+    } catch (err) {
+      console.error("Erro ao buscar produtos da lojinha JackBoo:", err);
+      setError(err.message || "Não foi possível carregar os produtos da lojinha.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Initial fetch on component mount
+  useEffect(() => {
+    fetchProducts(filters);
+  }, [filters]); // Re-fetch when filters change
+
+  // Handler for filter changes from the sidebar
+  const handleFilterChange = (newFilters) => {
+    // This will trigger the useEffect above to re-fetch products
+    setFilters(prevFilters => ({ ...prevFilters, ...newFilters }));
+  };
+
   return (
     <main className={styles.main}>
       <Confetti />
@@ -32,8 +66,8 @@ const ShopPage = () => {
             Explore nossa <span className={styles.highlight}>Lojinha</span> dos Sonhos!
         </h1>
         <div className={styles.shopLayout}>
-          <ShopSidebar />
-          <ProductGrid />
+          <ShopSidebar onFilterChange={handleFilterChange} /> {/* Pass filter handler */}
+          <ShopProductGrid products={products} isLoading={isLoading} error={error} /> {/* Pass data and status */}
         </div>
       </div>
     </main>
