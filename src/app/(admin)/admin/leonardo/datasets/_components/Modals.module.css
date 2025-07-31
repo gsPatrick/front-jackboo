@@ -34,6 +34,42 @@
     text-align: center;
 }
 
+/* --- ESTILOS PARA O AVISO --- */
+.alertBox {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background-color: var(--color-jackboo-orange-lightest);
+    border: 1px solid var(--color-jackboo-light-orange);
+    color: var(--color-text-dark-blue);
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+}
+.alertIcon {
+    font-size: 1.5rem;
+    color: var(--color-jackboo-primary-orange);
+    flex-shrink: 0;
+    margin-top: 0.25rem;
+}
+.alertContent {
+    flex-grow: 1;
+}
+.alertTitle {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+}
+.alertText {
+    margin: 0;
+    line-height: 1.5;
+    font-size: 0.9rem;
+}
+.alertText strong {
+    font-weight: 700;
+}
+/* --- FIM DOS ESTILOS DE AVISO --- */
+
 .formGroup {
     margin-bottom: 1.5rem;
 }

@@ -5,8 +5,20 @@ import { adminLeonardoService } from '@/services/api';
 import { toast } from 'react-toastify';
 import styles from './Modals.module.css';
 import Image from 'next/image';
+import { FaExclamationTriangle } from 'react-icons/fa'; // Importar o ícone
 
 Modal.setAppElement('body');
+
+// Componente de Aviso
+const AlertBox = ({ title, children }) => (
+    <div className={styles.alertBox}>
+        <FaExclamationTriangle className={styles.alertIcon} />
+        <div className={styles.alertContent}>
+            <h4 className={styles.alertTitle}>{title}</h4>
+            <p className={styles.alertText}>{children}</p>
+        </div>
+    </div>
+);
 
 const UploadImageModal = ({ isOpen, onClose, dataset }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -61,6 +73,11 @@ const UploadImageModal = ({ isOpen, onClose, dataset }) => {
       contentLabel="Upload de Imagem para Dataset"
     >
       <h2 className={styles.modalTitle}>Upload para: {dataset.name}</h2>
+      
+      <AlertBox title="Lembrete Importante">
+          Cada imagem adicionada é permanente. A API do Leonardo.AI não permite deletar imagens individuais. Para remover uma imagem, o dataset inteiro precisa ser recriado.
+      </AlertBox>
+
       <form onSubmit={handleSubmit}>
         <div className={styles.formGroup}>
           <label htmlFor="imageUpload">Selecione a Imagem</label>
