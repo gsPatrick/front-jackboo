@@ -1,17 +1,23 @@
-/* /app/(admin)/admin/leonardo/datasets/Datasets.module.css */
+/* /app/(admin)/admin/leonardo/datasets/[datasetId]/Gallery.module.css */
 .container {
     font-family: var(--font-mali);
 }
 
-.header {
-    display: flex;
-    justify-content: space-between;
+.backButton {
+    display: inline-flex;
     align-items: center;
-    margin-bottom: 0.5rem;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    color: #6c757d;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
 }
 
 .title {
-    font-size: 2rem;
+    font-size: 2.2rem;
     font-weight: 700;
     color: var(--color-text-dark-blue);
 }
@@ -19,27 +25,70 @@
 .subtitle {
     font-size: 1.1rem;
     color: #6c757d;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
 }
 
-.createButton {
+/* --- ESTILOS PARA O AVISO --- */
+.alertBox {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.8rem 1.5rem;
-    font-family: var(--font-mali);
+    align-items: flex-start;
+    gap: 1rem;
+    background-color: var(--color-jackboo-orange-lightest);
+    border: 1px solid var(--color-jackboo-light-orange);
+    color: var(--color-text-dark-blue);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2.5rem;
+}
+.alertIcon {
+    font-size: 1.8rem;
+    color: var(--color-jackboo-primary-orange);
+    flex-shrink: 0;
+    margin-top: 0.25rem;
+}
+.alertContent {
+    flex-grow: 1;
+}
+.alertTitle {
+    font-size: 1.2rem;
     font-weight: 700;
+    margin: 0 0 0.5rem 0;
+}
+.alertText {
+    margin: 0;
+    line-height: 1.6;
     font-size: 1rem;
-    color: white;
-    background-color: var(--color-jackboo-primary-orange);
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: background-color 0.2s;
+}
+.alertText strong {
+    font-weight: 700;
+}
+/* --- FIM DOS ESTILOS DE AVISO --- */
+
+.galleryGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
 }
 
-.createButton:hover {
-    background-color: #e07b00;
+.imageWrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    cursor: pointer;
+}
+
+.galleryImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.imageWrapper:hover .galleryImage {
+    transform: scale(1.05);
 }
 
 .emptyState {
@@ -59,95 +108,4 @@
     font-size: 1.2rem;
     font-weight: 700;
     margin-top: 1rem;
-}
-
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-}
-
-.card {
-    background-color: #fff;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-}
-
-.cardTitle {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--color-text-dark-blue);
-    margin-bottom: 0.5rem;
-}
-
-.cardDescription {
-    color: #6c757d;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    flex-grow: 1; /* Faz a descrição ocupar o espaço disponível */
-    margin-bottom: 1rem;
-}
-
-.cardFooter {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    border-top: 1px solid #eef2f7;
-    padding-top: 1rem;
-    margin-top: auto; /* Empurra o rodapé para baixo */
-}
-
-.actionButton {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    font-family: var(--font-mali);
-    font-weight: 700;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: 2px solid transparent;
-}
-
-.actionButton.upload {
-    background-color: var(--color-jackboo-blue-lightest);
-    color: var(--color-jackboo-blue);
-}
-
-.actionButton.upload:hover {
-    border-color: var(--color-jackboo-blue);
-}
-
-.actionButton.delete {
-    background-color: #ffebee;
-    color: #c62828;
-}
-
-.actionButton.delete:hover {
-    border-color: #c62828;
-}
-
-.actionButton.gallery {
-    background-color: #e8f5e9;
-    color: #2e7d32;
-    /* Faz o link se comportar como um flex container */
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    font-family: var(--font-mali);
-    font-weight: 700;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: 2px solid transparent;
-    text-decoration: none; /* Remove sublinhado do link */
-}
-
-.actionButton.gallery:hover {
-    border-color: #2e7d32;
 }

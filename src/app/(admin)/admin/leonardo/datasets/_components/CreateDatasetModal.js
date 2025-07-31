@@ -3,11 +3,22 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { adminLeonardoService } from '@/services/api';
 import { toast } from 'react-toastify';
-import styles from './CreateDatasetModal.module.css'; // Usaremos um CSS dedicado
+import styles from './CreateDatasetModal.module.css';
 import Image from 'next/image';
-import { FaImages, FaTrash, FaArrowRight } from 'react-icons/fa';
+import { FaImages, FaTrash, FaArrowRight, FaExclamationTriangle } from 'react-icons/fa';
 
 Modal.setAppElement('body');
+
+// Componente de Aviso
+const AlertBox = ({ title, children }) => (
+    <div className={styles.alertBox}>
+        <FaExclamationTriangle className={styles.alertIcon} />
+        <div className={styles.alertContent}>
+            <h4 className={styles.alertTitle}>{title}</h4>
+            <p className={styles.alertText}>{children}</p>
+        </div>
+    </div>
+);
 
 const CreateDatasetModal = ({ isOpen, onClose, onSuccess }) => {
   const [step, setStep] = useState(1);
@@ -43,17 +54,14 @@ const CreateDatasetModal = ({ isOpen, onClose, onSuccess }) => {
     const selectedFiles = Array.from(e.target.files);
     if (selectedFiles.length === 0) return;
 
-    // Concatena os novos arquivos com os existentes
     const newFiles = [...files, ...selectedFiles];
     setFiles(newFiles);
 
-    // Gera previews para os novos arquivos
     const newPreviews = selectedFiles.map(file => URL.createObjectURL(file));
     setPreviews(prev => [...prev, ...newPreviews]);
   };
   
   const removeImage = (indexToRemove) => {
-    // Revoga a URL do objeto para liberar memória
     URL.revokeObjectURL(previews[indexToRemove]);
     setFiles(files.filter((_, index) => index !== indexToRemove));
     setPreviews(previews.filter((_, index) => index !== indexToRemove));
@@ -67,11 +75,9 @@ const CreateDatasetModal = ({ isOpen, onClose, onSuccess }) => {
     }
     setIsSubmitting(true);
     try {
-      // Etapa 1: Criar o dataset
       const newDataset = await adminLeonardoService.createDataset(name, description);
       toast.info(`Dataset "${name}" criado. Iniciando upload de ${files.length} imagens...`);
 
-      // Etapa 2: Fazer upload de cada imagem
       const uploadPromises = files.map(file => {
           const formData = new FormData();
           formData.append('datasetImage', file);
@@ -119,6 +125,10 @@ const CreateDatasetModal = ({ isOpen, onClose, onSuccess }) => {
 
       {step === 2 && (
         <form onSubmit={handleSubmit} className={styles.stepContainer}>
+            <AlertBox title="Atenção: Ação Irreversível">
+                Selecione suas imagens com cuidado. A API do Leonardo.AI <strong>não permite deletar uma única imagem</strong> após o upload. Para remover uma imagem, você precisará apagar o dataset inteiro e criá-lo novamente.
+            </AlertBox>
+
           <div className={styles.formGroup}>
             <label>Imagens para Treinamento ({files.length} / 50)</label>
             <input id="imageUpload" type="file" multiple accept="image/png, image/jpeg, image/webp" onChange={handleFileChange} style={{ display: 'none' }} />

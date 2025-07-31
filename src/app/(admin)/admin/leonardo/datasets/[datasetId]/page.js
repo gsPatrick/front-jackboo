@@ -9,8 +9,19 @@ import { adminLeonardoService } from '@/services/api';
 import styles from './Gallery.module.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { FaArrowLeft, FaInfoCircle, FaTrash } from 'react-icons/fa';
+import { FaArrowLeft, FaInfoCircle, FaExclamationTriangle } from 'react-icons/fa';
 import ImageViewer from 'react-simple-image-viewer';
+
+// Componente para o aviso
+const AlertBox = ({ title, children }) => (
+    <div className={styles.alertBox}>
+        <FaExclamationTriangle className={styles.alertIcon} />
+        <div className={styles.alertContent}>
+            <h4 className={styles.alertTitle}>{title}</h4>
+            <p className={styles.alertText}>{children}</p>
+        </div>
+    </div>
+);
 
 const DatasetGalleryPage = () => {
     const [dataset, setDataset] = useState(null);
@@ -38,23 +49,6 @@ const DatasetGalleryPage = () => {
     useEffect(() => {
         fetchDatasetDetails();
     }, [fetchDatasetDetails]);
-
-    const handleDeleteImage = async (e, imageId) => {
-        e.stopPropagation(); // Impede que o viewer abra ao clicar no botão de deletar
-        if (window.confirm("Tem certeza que deseja apagar esta imagem do dataset? A ação é irreversível.")) {
-            try {
-                await adminLeonardoService.deleteImageFromDataset(datasetId, imageId);
-                toast.success("Imagem deletada com sucesso!");
-                // Atualiza o estado local para remover a imagem da UI instantaneamente
-                setDataset(prevDataset => ({
-                    ...prevDataset,
-                    dataset_images: prevDataset.dataset_images.filter(img => img.id !== imageId)
-                }));
-            } catch (error) {
-                toast.error(`Falha ao deletar imagem: ${error.message}`);
-            }
-        }
-    };
 
     const imagesForViewer = dataset?.dataset_images.map(image => image.url) || [];
 
@@ -89,6 +83,12 @@ const DatasetGalleryPage = () => {
             <h1 className={styles.title}>{dataset.name}</h1>
             <p className={styles.subtitle}>{dataset.description || 'Sem descrição'}</p>
 
+            {dataset.dataset_images.length > 0 && (
+                 <AlertBox title="Atenção: Gerenciamento de Imagens">
+                    A API do Leonardo.AI não permite a exclusão de uma única imagem de um dataset. Para remover uma imagem, é necessário <strong>deletar o dataset inteiro</strong> na página anterior e criá-lo novamente apenas com as imagens desejadas.
+                </AlertBox>
+            )}
+
             {dataset.dataset_images.length > 0 ? (
                 <div className={styles.galleryGrid}>
                     {dataset.dataset_images.map((image, index) => (
@@ -100,9 +100,6 @@ const DatasetGalleryPage = () => {
                                 height={250}
                                 className={styles.galleryImage}
                             />
-                            <button className={styles.deleteButton} onClick={(e) => handleDeleteImage(e, image.id)}>
-                                <FaTrash />
-                            </button>
                         </div>
                     ))}
                 </div>
