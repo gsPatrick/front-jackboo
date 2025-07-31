@@ -18,7 +18,7 @@ const ProfileSettings = () => {
     const [editingName, setEditingName] = useState(false);
     const [userName, setUserName] = useState(loggedInUser?.nickname || '');
     const [tempUserName, setTempUserName] = useState(loggedInUser?.nickname || '');
-    const [currentAvatarUrl, setCurrentAvatarUrl] = useState(loggedInUser?.avatarUrl || '/images/default-avatar.png');
+    const [currentAvatarUrl, setCurrentAvatarUrl] = useState(loggedInUser?.avatarUrl || '/default-avatar.png');
     const [selectedDrawingId, setSelectedDrawingId] = useState(null);
     const [drawings, setDrawings] = useState([]);
     
@@ -53,7 +53,7 @@ const ProfileSettings = () => {
     useEffect(() => {
         setUserName(loggedInUser?.nickname || '');
         setTempUserName(loggedInUser?.nickname || '');
-        setCurrentAvatarUrl(loggedInUser?.avatarUrl || '/images/default-avatar.png');
+        setCurrentAvatarUrl(loggedInUser?.avatarUrl || '/default-avatar.png');
     }, [loggedInUser]);
 
 
@@ -85,7 +85,7 @@ const ProfileSettings = () => {
     const handleSelectDrawing = (drawingId, imageUrl) => {
         if (selectedDrawingId === drawingId) {
              setSelectedDrawingId(null);
-             setCurrentAvatarUrl(loggedInUser?.avatarUrl || '/images/default-avatar.png');
+             setCurrentAvatarUrl(loggedInUser?.avatarUrl || '/default-avatar.png');
         } else {
             setSelectedDrawingId(drawingId);
             setCurrentAvatarUrl(imageUrl);
@@ -98,7 +98,7 @@ const ProfileSettings = () => {
              alert("Nenhum desenho selecionado para avatar.");
              return;
          }
-         if (currentAvatarUrl === (loggedInUser?.avatarUrl || '/images/default-avatar.png')) {
+         if (currentAvatarUrl === (loggedInUser?.avatarUrl || '/default-avatar.png')) {
              alert("Este já é o seu avatar atual.");
              return;
          }
@@ -287,7 +287,7 @@ const ProfileSettings = () => {
                 <motion.button
                      className={styles.saveAvatarButton}
                      onClick={handleSaveAvatar}
-                     disabled={isSavingAvatar || !selectedDrawingId || currentAvatarUrl === (loggedInUser?.avatarUrl || '/images/default-avatar.png')}
+                     disabled={isSavingAvatar || !selectedDrawingId || currentAvatarUrl === (loggedInUser?.avatarUrl || '/default-avatar.png')}
                      whileHover={{ scale: 1.05 }}
                      whileTap={{ scale: 0.95 }}
                 >

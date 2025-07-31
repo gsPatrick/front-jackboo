@@ -156,7 +156,7 @@ const Header = () => {
                   <div className={styles.userIconToggle}>
                     <div className={styles.userAvatarWrapper}>
                       <Image 
-                        src={user.avatarUrl || '/images/default-avatar.png'} 
+                        src={user.avatarUrl || '/default-avatar.png'} 
                         alt={`Avatar de ${user.nickname}`} 
                         width={40} 
                         height={40} 
@@ -184,7 +184,7 @@ const Header = () => {
                   <div className={styles.userIconToggle}>
                     <div className={styles.userAvatarWrapper}>
                       <Image 
-                        src={user.avatarUrl || '/images/default-avatar.png'} 
+                        src={user.avatarUrl || '/default-avatar.png'} 
                         alt={`Avatar de ${user.nickname}`} 
                         width={40} 
                         height={40} 
@@ -238,7 +238,7 @@ const Header = () => {
                 <Link href={`/profile/${user.slug || '#'}`} passHref>
                     <div className={styles.mobileUserAvatar}>
                         <Image 
-                            src={user.avatarUrl || '/images/default-avatar.png'} 
+                            src={user.avatarUrl || '/default-avatar.png'} 
                             alt={`Avatar de ${user.nickname}`} 
                             width={32} 
                             height={32} 

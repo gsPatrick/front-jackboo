@@ -139,7 +139,7 @@ const FriendsShop = () => {
                     >
                         <div className={styles.authorAvatarWrapper}>
                             <Image
-                                src={book.author.avatarUrl || '/images/default-avatar.png'} // ALTERADO: Usa dados da API
+                                src={book.author.avatarUrl || '/default-avatar.png'} // ALTERADO: Usa dados da API
                                 alt={`Avatar de ${book.author.nickname}`}
                                 width={35}
                                 height={35}

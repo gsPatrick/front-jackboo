@@ -159,7 +159,7 @@ export default function BookDetailsPage() {
             <div className={styles.characterAndCarouselWrapper}>
                 <CharacterMessage
                     protagonistName={book.mainCharacter?.name || 'Personagem'} // Usar mainCharacter
-                    protagonistImage={book.mainCharacter?.generatedCharacterUrl || '/images/default-avatar.png'} // Usar generatedCharacterUrl
+                    protagonistImage={book.mainCharacter?.generatedCharacterUrl || '/default-avatar.png'} // Usar generatedCharacterUrl
                     message={book.storyPrompt?.summary || 'Um livro incrível para a sua imaginação!'} // Usar storyPrompt.summary para a mensagem
                     authorName={book.author?.nickname || 'Autor Desconhecido'} // Usar author.nickname
                     authorSlug={book.author?.slug}

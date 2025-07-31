@@ -139,7 +139,7 @@ const FriendsProductGrid = ({ products, isLoading, error }) => { // Accept isLoa
                                  >
                                     <div className={styles.authorAvatarWrapper}>
                                         <Image
-                                            src={product.author.avatarUrl || '/images/default-avatar.png'} // Use author.avatarUrl
+                                            src={product.author.avatarUrl || '/default-avatar.png'} // Use author.avatarUrl
                                             alt={`Avatar de ${product.author.nickname}`} // Use author.nickname
                                             width={35}
                                             height={35}
