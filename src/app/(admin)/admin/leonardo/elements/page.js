@@ -3,14 +3,14 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { FaPlus, FaTrash, FaSync, FaEye } from 'react-icons/fa'; // Alterado FaEdit para FaEye
+import { FaPlus, FaTrash, FaSync, FaEye } from 'react-icons/fa';
 import { adminLeonardoService } from '@/services/api';
 import styles from './Elements.module.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import TrainElementModal from './_components/TrainElementModal';
-import ElementDetailsModal from './_components/ElementDetailsModal'; // Renomeado o modal de edição
+import ElementDetailsModal from './_components/ElementDetailsModal';
 
 const StatusBadge = ({ status }) => {
     const statusMap = {
@@ -33,7 +33,7 @@ const ElementsPage = () => {
     const [isPolling, setIsPolling] = useState(false);
     
     const [isTrainModalOpen, setIsTrainModalOpen] = useState(false);
-    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false); // Novo estado para o modal de detalhes
+    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [selectedElement, setSelectedElement] = useState(null);
 
     const fetchElements = useCallback(async (isSilent = false) => {
@@ -66,7 +66,7 @@ const ElementsPage = () => {
         }
     }, [elements, fetchElements]);
 
-    const handleOpenDetailsModal = (element) => { // Novo handler
+    const handleOpenDetailsModal = (element) => {
         setSelectedElement(element);
         setIsDetailsModalOpen(true);
     };
@@ -108,24 +108,22 @@ const ElementsPage = () => {
                         <tr>
                             <th>Nome do Modelo</th>
                             <th>Status</th>
-                            <th>Prompt de Base</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {isLoading ? ( <tr><td colSpan="4" style={{textAlign: 'center'}}>Carregando modelos...</td></tr> ) : 
-                        elements.length === 0 ? ( <tr><td colSpan="4" style={{textAlign: 'center'}}>Nenhum modelo treinado. Clique em "Treinar Novo Modelo".</td></tr> ) : 
+                        {isLoading ? ( <tr><td colSpan="3" style={{textAlign: 'center'}}>Carregando modelos...</td></tr> ) : 
+                        elements.length === 0 ? ( <tr><td colSpan="3" style={{textAlign: 'center'}}>Nenhum modelo treinado. Clique em "Treinar Novo Modelo".</td></tr> ) : 
                         (
                             elements.map(el => (
                                 <tr key={el.id}>
                                     <td className={styles.strong}>{el.name}</td>
                                     <td><StatusBadge status={el.status} /></td>
-                                    <td className={styles.promptCell}>{el.basePrompt || '-'}</td>
                                     <td className={styles.actionsCell}>
                                         <button className={`${styles.actionButton} ${styles.view}`} onClick={() => handleOpenDetailsModal(el)}>
-                                            <FaEye /> {/* Alterado para FaEye */}
+                                            <FaEye />
                                         </button>
-                                        <button className={`${styles.actionButton} ${styles.delete}`} onClick={() => handleDelete(el.id)} disabled={el.status === 'TRAINING' || el.status === 'PENDING'}> {/* Desabilitar delete durante treinamento/pendente */}
+                                        <button className={`${styles.actionButton} ${styles.delete}`} onClick={() => handleDelete(el.id)} disabled={el.status === 'TRAINING' || el.status === 'PENDING'}>
                                             <FaTrash />
                                         </button>
                                     </td>
@@ -143,7 +141,7 @@ const ElementsPage = () => {
             />
             
             {selectedElement && (
-                <ElementDetailsModal // Usando o novo nome do componente
+                <ElementDetailsModal
                     isOpen={isDetailsModalOpen}
                     onClose={() => {setIsDetailsModalOpen(false); setSelectedElement(null);}}
                     onSuccess={() => { fetchElements(); setIsDetailsModalOpen(false); setSelectedElement(null); }}

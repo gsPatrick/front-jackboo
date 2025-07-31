@@ -11,7 +11,7 @@
     border-radius: 15px;
     outline: none;
     width: 90%;
-    max-width: 600px;
+    max-width: 700px; /* Aumentado para comportar o guia */
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     font-family: var(--font-mali);
     max-height: 90vh;
@@ -36,10 +36,60 @@
     text-align: center;
 }
 
+/* --- ESTILOS PARA O GUIA VISUAL --- */
+.processFlow {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+}
+.flowStep {
+    flex: 1;
+    text-align: center;
+}
+.flowIcon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+.flowTitle {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem 0;
+}
+.flowDescription {
+    font-size: 0.85rem;
+    color: #6c757d;
+    line-height: 1.4;
+}
+.activeStep .flowIcon, .activeStep .flowTitle {
+    color: var(--color-jackboo-primary-orange);
+}
+.nextStep {
+    opacity: 0.7;
+}
+.flowConnector {
+    font-size: 1.5rem;
+    color: #ced4da;
+}
+/* --- FIM DO GUIA VISUAL --- */
+
+
 .form {
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
+}
+
+.formSectionTitle {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-text-dark-blue);
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #eef2f7;
+    margin-bottom: 0.5rem;
 }
 
 .formGroup label {
@@ -62,42 +112,16 @@
     background-color: #f8f9fa;
 }
 
+.formGroup textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
 .helperText {
     font-size: 0.85rem;
     color: #6c757d;
     margin-top: 0.3rem;
     display: block;
-}
-
-.labelWithHelper {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.aiHelperButton {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    background: none;
-    border: 1px solid var(--color-jackboo-blue);
-    color: var(--color-jackboo-blue);
-    font-family: var(--font-mali);
-    font-weight: 700;
-    padding: 0.3rem 0.6rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.aiHelperButton:hover:not(:disabled) {
-    background-color: var(--color-jackboo-blue-lightest);
-}
-
-.aiHelperButton:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
 }
 
 .modalActions {
