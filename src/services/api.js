@@ -63,9 +63,7 @@ const apiRequest = async (endpoint, options = {}) => {
 export const authService = {
   register: (userData) => apiRequest('/auth/register', { method: 'POST', body: userData }),
   login: (email, password) => apiRequest('/auth/login', { method: 'POST', body: { email, password } }),
-  // Atualizado: buscar perfil do usuário logado
   getUserProfile: () => apiRequest('/auth/profile', { method: 'GET' }),
-  // NOVO: Atualizar perfil do usuário logado
   updateUserProfile: (profileData) => apiRequest('/auth/profile', { method: 'PUT', body: profileData }),
   getSettings: () => apiRequest('/auth/settings', { method: 'GET' }),
   updateSetting: (key, value) => apiRequest(`/auth/settings/${key}`, { method: 'PUT', body: { value } }),
@@ -100,12 +98,11 @@ export const shopService = {
     },
 };
 
-// --- NOVO: SERVIÇO DE POPULARIDADE (Likes) ---
+// --- SERVIÇO DE POPULARIDADE (Likes) ---
 export const popularityService = {
   toggleLike: (likableType, likableId) => apiRequest(`/popularity/${likableType}/${likableId}/toggle-like`, { method: 'POST' }),
   getLikesCount: (likableType, likableId) => apiRequest(`/popularity/${likableType}/${likableId}/count`, { method: 'GET' }),
 };
-// --- FIM: SERVIÇO DE POPULARIDADE ---
 
 
 // --- SERVIÇOS DE ADMIN ---
@@ -115,6 +112,9 @@ export const adminLeonardoService = {
   getDatasetDetails: (localDatasetId) => apiRequest(`/admin/leonardo/datasets/${localDatasetId}`, { method: 'GET' }),
   uploadImageToDataset: (localDatasetId, formData) => apiRequest(`/admin/leonardo/datasets/${localDatasetId}/upload`, { method: 'POST', body: formData }),
   deleteDataset: (localDatasetId) => apiRequest(`/admin/leonardo/datasets/${localDatasetId}`, { method: 'DELETE' }),
+  // NOVA FUNÇÃO
+  deleteImageFromDataset: (localDatasetId, leonardoImageId) => apiRequest(`/admin/leonardo/datasets/${localDatasetId}/images/${leonardoImageId}`, { method: 'DELETE' }),
+  
   listElements: () => apiRequest('/admin/leonardo/elements', { method: 'GET' }),
   trainElement: (trainingData) => apiRequest('/admin/leonardo/elements/train', { method: 'POST', body: trainingData }),
   getElementDetails: (localElementId) => apiRequest(`/admin/leonardo/elements/${localElementId}`, { method: 'GET' }),
@@ -165,8 +165,7 @@ export const adminBooksService = {
     listAllBooks: () => apiRequest('/admin/books', { method: 'GET' }),
     getOfficialBookById: (id) => apiRequest(`/admin/books/${id}`, { method: 'GET' }),
     deleteOfficialBook: (id) => apiRequest(`/admin/books/${id}`, { method: 'DELETE' }),
-        updateOfficialBookStatus: (id, status) => apiRequest(`/admin/books/${id}/status`, { method: 'PUT', body: { status } }),
-
+    updateOfficialBookStatus: (id, status) => apiRequest(`/admin/books/${id}/status`, { method: 'PUT', body: { status } }),
 };
 export const adminAIHelperService = {
   generateText: (prompt) => apiRequest('/admin/ai-helper/generate-text', { method: 'POST', body: { prompt } }),

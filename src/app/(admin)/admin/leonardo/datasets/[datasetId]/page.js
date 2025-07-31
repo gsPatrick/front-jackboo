@@ -9,8 +9,7 @@ import { adminLeonardoService } from '@/services/api';
 import styles from './Gallery.module.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { FaArrowLeft, FaInfoCircle } from 'react-icons/fa';
-// Importa o componente da biblioteca que acabamos de instalar
+import { FaArrowLeft, FaInfoCircle, FaTrash } from 'react-icons/fa';
 import ImageViewer from 'react-simple-image-viewer';
 
 const DatasetGalleryPage = () => {
@@ -40,7 +39,23 @@ const DatasetGalleryPage = () => {
         fetchDatasetDetails();
     }, [fetchDatasetDetails]);
 
-    // Mapeia as imagens para o formato que a biblioteca espera (um array de strings de URL)
+    const handleDeleteImage = async (e, imageId) => {
+        e.stopPropagation(); // Impede que o viewer abra ao clicar no botão de deletar
+        if (window.confirm("Tem certeza que deseja apagar esta imagem do dataset? A ação é irreversível.")) {
+            try {
+                await adminLeonardoService.deleteImageFromDataset(datasetId, imageId);
+                toast.success("Imagem deletada com sucesso!");
+                // Atualiza o estado local para remover a imagem da UI instantaneamente
+                setDataset(prevDataset => ({
+                    ...prevDataset,
+                    dataset_images: prevDataset.dataset_images.filter(img => img.id !== imageId)
+                }));
+            } catch (error) {
+                toast.error(`Falha ao deletar imagem: ${error.message}`);
+            }
+        }
+    };
+
     const imagesForViewer = dataset?.dataset_images.map(image => image.url) || [];
 
     const openImageViewer = useCallback((index) => {
@@ -74,17 +89,20 @@ const DatasetGalleryPage = () => {
             <h1 className={styles.title}>{dataset.name}</h1>
             <p className={styles.subtitle}>{dataset.description || 'Sem descrição'}</p>
 
-            {imagesForViewer.length > 0 ? (
+            {dataset.dataset_images.length > 0 ? (
                 <div className={styles.galleryGrid}>
-                    {imagesForViewer.map((src, index) => (
-                        <div key={index} className={styles.imageWrapper} onClick={() => openImageViewer(index)}>
+                    {dataset.dataset_images.map((image, index) => (
+                        <div key={image.id} className={styles.imageWrapper} onClick={() => openImageViewer(index)}>
                             <Image
-                                src={src}
+                                src={image.url}
                                 alt={`Imagem ${index + 1} do dataset`}
                                 width={250}
                                 height={250}
                                 className={styles.galleryImage}
                             />
+                            <button className={styles.deleteButton} onClick={(e) => handleDeleteImage(e, image.id)}>
+                                <FaTrash />
+                            </button>
                         </div>
                     ))}
                 </div>
