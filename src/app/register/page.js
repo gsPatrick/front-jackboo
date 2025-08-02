@@ -66,7 +66,7 @@ export default function RegisterPage() {
             login(loginData.user, loginData.token);
 
             // 4. Redireciona para o dashboard do usuário
-            router.push('/dashboard'); 
+            router.push('/'); 
 
         } catch (err) {
             setError(err.message || 'Falha no cadastro. Verifique os dados ou tente novamente.');
