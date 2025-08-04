@@ -2,9 +2,9 @@
 
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react'; // Importei useCallback
 import Image from 'next/image';
-// ✅ REMOVIDO: import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import styles from './CharacterCreator.module.css';
 import { FaCamera, FaImages, FaCheck, FaBookOpen, FaBook, FaSpinner, FaHourglassHalf, FaTimesCircle, FaQuestionCircle } from 'react-icons/fa';
 import InfoModal from '../InfoModal/InfoModal';
@@ -18,11 +18,10 @@ const APP_URL = 'https://geral-jackboo.r954jc.easypanel.host';
 
 // Componente Spinner de Carregamento
 const LoadingSpinner = () => (
-    // ✅ REMOVIDO: motion.div, usando div com classes CSS
-    <div className={styles.spinnerWrapper}> 
+    <motion.div className={styles.spinnerWrapper} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
       <div className={styles.spinner}></div>
       <p>Criando a mágica...</p>
-    </div >
+    </motion.div>
 );
 
 // Componente Confetes
@@ -45,8 +44,12 @@ const Confetti = () => {
   );
 };
 
-// --- REMOVIDAS AS VARIAÇÕES DO FRAMER MOTION ---
-// const mainStep1Variants = { ... };
+// Variantes para transição suave entre os PRINCIPAIS sub-estados do Passo 1
+const mainStep1Variants = {
+    initial: { opacity: 0, y: 30 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -30, transition: { duration: 0.3 } },
+};
 
 const CharacterCreator = ({ onCreationComplete }) => {
   const { user, login, isLoading: isAuthLoading } = useAuth();
@@ -93,7 +96,7 @@ const CharacterCreator = ({ onCreationComplete }) => {
                     if (allPagesSuccessfullyCompleted) {
                         console.log(`[CharacterCreator] Livro ${generatedBookData.id} gerado com sucesso, todas as páginas prontas!`);
                         setIsBookGenerating(false); 
-                        onCreationComplete(bookData);
+                        onCreationComplete(bookData); // Procede para o preview SOMENTE se TODAS as páginas estiverem completas
                         clearInterval(intervalId);
                     } else if (anyPageFailed) {
                         console.error(`[CharacterCreator] Geração do livro ${generatedBookData.id} concluída com falhas em algumas páginas.`);
@@ -480,7 +483,7 @@ const CharacterCreator = ({ onCreationComplete }) => {
       <WarningModal
         show={isWarningModalOpen}
         onClose={() => setIsWarningModalOpen(false)}
-        onConfirm={handleWarningConfirm} // Este é o que chama a criação da história
+        onConfirm={handleWarningConfirm}
       />
       <StoryFormModal
         show={isStoryModalOpen}
