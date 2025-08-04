@@ -10,6 +10,7 @@ const CreateCharacterPage = () => {
   const [isPreviewing, setIsPreviewing] = useState(false);
   const [bookToPreview, setBookToPreview] = useState(null);
 
+  // ✅ ATUALIZADO: Esta função agora recebe os dados do livro gerado
   const handleGoToPreview = (bookData) => {
     setBookToPreview(bookData);
     setIsPreviewing(true);
@@ -21,7 +22,8 @@ const CreateCharacterPage = () => {
         {!isPreviewing ? (
           <>
             <h1 className={styles.pageTitle}>Crie seu personagem</h1>
-            <CharacterCreator onCreationComplete={handleGoToPreview} />
+            {/* ✅ ATUALIZADO: Passa onCreationComplete para o CharacterCreator */}
+            <CharacterCreator onCreationComplete={handleGoToPreview} /> 
           </>
         ) : (
           <BookPreview book={bookToPreview} />

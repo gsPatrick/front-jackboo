@@ -1,49 +1,17 @@
 // /app/(admin)/admin/leonardo/elements/_components/ElementDetailsModal.js
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react'; // ✅ REMOVIDO useState, useEffect
 import Modal from 'react-modal';
-import { adminLeonardoService } from '@/services/api';
-import { toast } from 'react-toastify';
+// ✅ REMOVIDO adminLeonardoService, toast
 import styles from './TrainElementModal.module.css'; // Reutilizando os estilos
 
 Modal.setAppElement('body');
 
-const ElementDetailsModal = ({ isOpen, onClose, onSuccess, element }) => {
-    const [formData, setFormData] = useState({
-        basePrompt: ''
-    });
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
-    useEffect(() => {
-        if (element) {
-            setFormData({
-                basePrompt: element.basePrompt?.replace(/,?\s*\{\{GPT_OUTPUT\}\}\s*$/g, '') || ''
-            });
-        }
-    }, [element, isOpen]);
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-    
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        
-        setIsSubmitting(true);
-        try {
-            await adminLeonardoService.updateElement(element.id, { 
-                basePrompt: formData.basePrompt,
-            });
-            toast.success('Elemento atualizado com sucesso!');
-            onSuccess();
-        } catch (error) {
-            toast.error(`Falha ao atualizar elemento: ${error.message}`);
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
+// ✅ ATUALIZADO: Componente agora é somente para visualização
+const ElementDetailsModal = ({ isOpen, onClose, element }) => { // ✅ REMOVIDO onSuccess
+    // ✅ REMOVIDO useState, useEffect, handleChange, handleSubmit
+    if (!element) return null; // Garante que o modal não renderize sem dados
 
     return (
         <Modal
@@ -54,13 +22,13 @@ const ElementDetailsModal = ({ isOpen, onClose, onSuccess, element }) => {
             contentLabel="Detalhes do Modelo (Element)"
         >
             <h2 className={styles.modalTitle}>Detalhes do Modelo: {element.name}</h2>
-            <form onSubmit={handleSubmit} className={styles.form}>
+            {/* ✅ REMOVIDO tag <form> e seus atributos onSubmit */}
+            <div className={styles.form}> {/* Usando div para manter o estilo do formulário */}
                 <div className={styles.formGroup}>
                     <label>Nome do Modelo</label>
                     <input type="text" value={element.name || ''} readOnly disabled />
                 </div>
 
-                {/* CAMPO RENDERIZADO CONDICIONALMENTE */}
                 {element.sourceDataset && (
                     <div className={styles.formGroup}>
                         <label>Dataset de Origem</label>
@@ -74,25 +42,31 @@ const ElementDetailsModal = ({ isOpen, onClose, onSuccess, element }) => {
                 </div>
 
                 <div className={styles.formGroup}>
-                    <label htmlFor="edit-basePrompt">Prompt Base (editável)</label>
+                    <label>Prompt Base</label>
                     <textarea 
-                        id="edit-basePrompt" 
-                        name="basePrompt" 
-                        value={formData.basePrompt} 
-                        onChange={handleChange}
+                        value={element.basePromptText || 'Nenhum prompt base definido'} // ✅ CORREÇÃO: Usar basePromptText
+                        readOnly 
+                        disabled 
                         rows="4"
-                        placeholder="Ex: estilo de desenho animado, cores vibrantes..."
                     />
                     <small className={styles.helperText}>Palavras-chave de estilo. A descrição da cena será adicionada automaticamente.</small>
+                </div>
+                
+                <div className={styles.formGroup}>
+                    <label>Descrição</label>
+                    <textarea 
+                        value={element.description || 'Nenhuma descrição'}
+                        readOnly
+                        disabled
+                        rows="3"
+                    />
                 </div>
 
                 <div className={styles.modalActions}>
                     <button type="button" className={styles.cancelButton} onClick={onClose}>Fechar</button>
-                    <button type="submit" className={styles.confirmButton} disabled={isSubmitting}>
-                        {isSubmitting ? 'Salvando...' : 'Salvar Prompt Base'}
-                    </button>
+                    {/* ✅ REMOVIDO botão de submit */}
                 </div>
-            </form>
+            </div>
         </Modal>
     );
 };

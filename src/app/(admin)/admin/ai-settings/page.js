@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { FaPlus, FaEdit, FaTrash, FaLink, FaUnlink, FaInfoCircle } from 'react-icons/fa';
-import { adminAISettingsService } from '@/services/api';
+import { adminAISettingsService, adminLeonardoService } from '@/services/api';
 import styles from './AiSettings.module.css';
 import TemplateFormModal from './_components/TemplateFormModal';
 import { ToastContainer, toast } from 'react-toastify';
@@ -12,6 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const AiSettingsPage = () => {
     const [settings, setSettings] = useState([]);
+    const [elements, setElements] = useState([]); // Estado para armazenar os LeonardoElements
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedTemplate, setSelectedTemplate] = useState(null);
@@ -19,8 +20,12 @@ const AiSettingsPage = () => {
     const fetchSettings = useCallback(async () => {
         try {
             setIsLoading(true);
-            const data = await adminAISettingsService.listSettings();
-            setSettings(data);
+            const [settingsData, elementsData] = await Promise.all([
+                adminAISettingsService.listSettings(),
+                adminLeonardoService.listElements()
+            ]);
+            setSettings(settingsData);
+            setElements(elementsData); // Armazena os elements
         } catch (error) {
             toast.error(`Erro ao buscar templates: ${error.message}`);
         } finally {
@@ -42,10 +47,10 @@ const AiSettingsPage = () => {
         setIsModalOpen(false);
     };
 
-    const handleDelete = async (type) => {
-        if (window.confirm(`Tem certeza que deseja deletar o template "${type}"? Esta ação não pode ser desfeita.`)) {
+    const handleDelete = async (purpose) => {
+        if (window.confirm(`Tem certeza que deseja deletar o template "${purpose}"? Esta ação não pode ser desfeita.`)) {
             try {
-                await adminAISettingsService.deleteSetting(type);
+                await adminAISettingsService.deleteSetting(purpose);
                 toast.success('Template deletado com sucesso!');
                 fetchSettings();
             } catch (error) {
@@ -54,10 +59,10 @@ const AiSettingsPage = () => {
         }
     };
     
-    // Agrupa os templates por prefixo (USER, ADMIN, etc.)
+    // Agrupa os templates por prefixo (USER, BOOK, etc.)
     const groupedSettings = useMemo(() => {
         return settings.reduce((acc, setting) => {
-            const prefix = setting.type.split('_')[0] || 'Outros';
+            const prefix = setting.purpose.startsWith('BOOK_') ? 'BOOK' : setting.purpose.split('_')[0];
             if (!acc[prefix]) {
                 acc[prefix] = [];
             }
@@ -65,6 +70,12 @@ const AiSettingsPage = () => {
             return acc;
         }, {});
     }, [settings]);
+
+    // Função auxiliar para encontrar o nome do Element pelo ID
+    const getElementName = useCallback((elementId) => {
+        const element = elements.find(el => el.leonardoElementId === elementId);
+        return element ? element.name : 'Elemento Desconhecido';
+    }, [elements]);
 
     return (
         <motion.div
@@ -81,7 +92,7 @@ const AiSettingsPage = () => {
                 </button>
             </div>
             <p className={styles.subtitle}>
-                Configure os prompts que a IA usará para gerar conteúdo. Os tipos (ex: `USER_character_description`) são usados pelo sistema para saber qual template aplicar em cada situação.
+                Configure os prompts que a IA usará para gerar conteúdo. Os tipos (ex: `USER_CHARACTER_DRAWING`) são usados pelo sistema para saber qual template aplicar em cada situação.
             </p>
 
             {isLoading ? (
@@ -102,7 +113,8 @@ const AiSettingsPage = () => {
                                     <tr>
                                         <th>Nome</th>
                                         <th>Tipo (Chave do Sistema)</th>
-                                        <th>Helper Prompt</th>
+                                        <th>Elemento Principal</th>
+                                        <th>Elemento Capa</th>
                                         <th>Ações</th>
                                     </tr>
                                 </thead>
@@ -110,10 +122,17 @@ const AiSettingsPage = () => {
                                     {groupSettings.map(setting => (
                                         <tr key={setting.id}>
                                             <td className={styles.strong}>{setting.name}</td>
-                                            <td className={styles.code}>{setting.type}</td>
+                                            <td className={styles.code}>{setting.purpose}</td>
                                             <td>
-                                                {setting.helperPrompt ? (
-                                                    <span className={styles.helperLink}><FaLink /> {setting.helperPrompt.name}</span>
+                                                {setting.defaultElementId ? (
+                                                    <span className={styles.helperLink}><FaLink /> {getElementName(setting.defaultElementId)}</span>
+                                                ) : (
+                                                    <span className={styles.noHelper}><FaUnlink /> Nenhum</span>
+                                                )}
+                                            </td>
+                                            <td>
+                                                {setting.coverElementId ? (
+                                                    <span className={styles.helperLink}><FaLink /> {getElementName(setting.coverElementId)}</span>
                                                 ) : (
                                                     <span className={styles.noHelper}><FaUnlink /> Nenhum</span>
                                                 )}
@@ -123,7 +142,7 @@ const AiSettingsPage = () => {
                                                     <button className={`${styles.actionButton} ${styles.edit}`} onClick={() => handleOpenModal(setting)}>
                                                         <FaEdit />
                                                     </button>
-                                                    <button className={`${styles.actionButton} ${styles.delete}`} onClick={() => handleDelete(setting.type)}>
+                                                    <button className={`${styles.actionButton} ${styles.delete}`} onClick={() => handleDelete(setting.purpose)}>
                                                         <FaTrash />
                                                     </button>
                                                 </div>
@@ -146,7 +165,6 @@ const AiSettingsPage = () => {
                         handleCloseModal();
                     }}
                     existingTemplate={selectedTemplate}
-                    allTemplates={settings}
                 />
             )}
         </motion.div>

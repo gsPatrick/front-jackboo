@@ -1,4 +1,3 @@
-// /app/(admin)/admin/leonardo/elements/_components/TrainElementModal.js
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -49,7 +48,22 @@ const TrainElementModal = ({ isOpen, onClose, onSuccess }) => {
         
         setIsSubmitting(true);
         try {
-            await adminLeonardoService.trainElement(formData);
+            // --- INÍCIO DA MODIFICAÇÃO PARA TRATAR O NULL ---
+            // Cria um novo objeto com os dados do formulário e adiciona campos padrão,
+            // garantindo que 'instance_prompt' seja sempre uma string, mesmo que vazia.
+            const dataToSend = {
+                ...formData,
+                instance_prompt: '', // Garante que instance_prompt seja sempre uma string vazia
+                // Se 'description' ou 'basePrompt' fossem campos que pudessem ser nulos no frontend
+                // mas são esperados como string pela API, você faria o mesmo:
+                // description: formData.description || '',
+                // basePromptText: formData.basePromptText || '', // Use 'basePromptText' se estiver no Código 1
+                // basePrompt: formData.basePrompt || '', // Use 'basePrompt' se estiver no Código 2
+            };
+
+            await adminLeonardoService.trainElement(dataToSend); // Envia o novo objeto 'dataToSend'
+            // --- FIM DA MODIFICAÇÃO ---
+
             toast.success('Treinamento do modelo iniciado com sucesso! O status será atualizado automaticamente.');
             onSuccess();
         } catch (error) {

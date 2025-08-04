@@ -12,7 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {
     adminBookGeneratorService,
     adminLeonardoService,
-    adminAISettingsService,
+    adminAISettingsService, // ✅ Mantido, pois ainda precisamos das configurações padrão
     adminCharactersService,
     adminTaxonomiesService
 } from '@/services/api';
@@ -29,14 +29,17 @@ export default function CreateOfficialBookPage() {
     const [theme, setTheme] = useState('');
     const [summary, setSummary] = useState('');
     const [printFormatId, setPrintFormatId] = useState('');
-    const [elementId, setElementId] = useState('');
-    const [coverElementId, setCoverElementId] = useState('');
+    
+    // ✅ ATUALIZADO: Element IDs agora são strings (leonardoElementId)
+    const [mioloElementId, setMioloElementId] = useState(''); 
+    const [capaElementId, setCapaElementId] = useState(''); 
+    
     const [pageCount, setPageCount] = useState(10);
 
     const [allCharacters, setAllCharacters] = useState([]);
-    const [allElements, setAllElements] = useState([]);
+    const [allElements, setAllElements] = useState([]); // LeonardoElements
     const [allPrintFormats, setAllPrintFormats] = useState([]);
-    const [defaultSettings, setDefaultSettings] = useState({});
+    const [defaultAISettings, setDefaultAISettings] = useState({}); // ✅ ATUALIZADO: Renomeado para clareza
 
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,18 +49,18 @@ export default function CreateOfficialBookPage() {
         try {
             const [charactersData, elementsData, printFormatsData, settingsData] = await Promise.all([
                 adminCharactersService.listCharacters(),
-                adminLeonardoService.listElements(),
+                adminLeonardoService.listElements(), // Busca todos os LeonardoElements
                 adminTaxonomiesService.listPrintFormats(),
-                adminAISettingsService.listSettings(),
+                adminAISettingsService.listSettings(), // Busca todas as configurações de IA
             ]);
 
             setAllCharacters(charactersData?.characters || []);
-            setAllElements(elementsData || []);
+            setAllElements(elementsData || []); // Armazena todos os LeonardoElements
             setAllPrintFormats(printFormatsData || []);
 
             const settingsMap = {};
             (settingsData || []).forEach(s => { settingsMap[s.purpose] = s; });
-            setDefaultSettings(settingsMap);
+            setDefaultAISettings(settingsMap); // Armazena as configurações de IA por purpose
 
         } catch (error) {
             toast.error(`Falha ao carregar dados iniciais: ${error.message}`);
@@ -70,19 +73,22 @@ export default function CreateOfficialBookPage() {
         loadInitialData();
     }, [loadInitialData]);
 
+    // ✅ ATUALIZADO: Lógica para preencher os IDs dos Elements padrão com base no tipo de livro e nas configurações de IA
     useEffect(() => {
-        if (Object.keys(defaultSettings).length > 0) {
-            const settingType = bookType === 'historia' ? 'USER_STORY_BOOK_GENERATION' : 'USER_COLORING_BOOK_GENERATION';
-            const defaults = defaultSettings[settingType];
+        if (Object.keys(defaultAISettings).length > 0) {
+            const settingPurpose = bookType === 'historia' ? 'USER_STORY_BOOK_STORYLINE' : 'USER_COLORING_BOOK_STORYLINE';
+            const defaults = defaultAISettings[settingPurpose];
             if (defaults) {
-                setElementId(defaults.defaultElementId || '');
-                setCoverElementId(defaults.coverElementId || '');
+                setMioloElementId(defaults.defaultElementId || '');
+                setCapaElementId(defaults.coverElementId || '');
             } else {
-                setElementId('');
-                setCoverElementId('');
+                // Se não houver configuração padrão, limpa os campos
+                setMioloElementId('');
+                setCapaElementId('');
+                toast.warn(`Nenhuma configuração padrão de IA encontrada para livros de ${bookType}. Por favor, configure em "Templates de IA".`);
             }
         }
-    }, [bookType, defaultSettings]);
+    }, [bookType, defaultAISettings]); // Depende do bookType e das defaultAISettings
 
     const handleCharacterToggle = (charId) => {
         setSelectedCharacters(prev =>
@@ -93,7 +99,7 @@ export default function CreateOfficialBookPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (selectedCharacters.length === 0 || !title || !theme || !printFormatId || !elementId || !coverElementId) {
+        if (selectedCharacters.length === 0 || !title || !theme || !printFormatId || !mioloElementId || !capaElementId) { // ✅ ATUALIZADO: Valida mioloElementId e capaElementId
             toast.warn('Por favor, preencha todos os campos, incluindo os estilos de IA.');
             return;
         }
@@ -110,8 +116,8 @@ export default function CreateOfficialBookPage() {
             theme,
             summary: bookType === 'historia' ? summary : undefined,
             printFormatId,
-            elementId,
-            coverElementId,
+            elementId: mioloElementId, // ✅ ATUALIZADO: Usa mioloElementId
+            coverElementId: capaElementId, // ✅ ATUALIZADO: Usa capaElementId
             pageCount: parseInt(pageCount, 10),
         };
 
@@ -210,20 +216,26 @@ export default function CreateOfficialBookPage() {
                     <h2 className={styles.sectionTitle}>4. Escolha os estilos de IA (Elements)</h2>
                     <div className={styles.formGrid}>
                         <div className={styles.formGroup}>
-                            <label htmlFor="elementId">Estilo do Miolo</label>
-                            {/* ✅ CORREÇÃO AQUI: o 'value' agora é o leonardoElementId */}
-                            <select id="elementId" value={elementId} onChange={e => setElementId(e.target.value)} required>
+                            <label htmlFor="mioloElementId">Estilo do Miolo</label>
+                            {/* ✅ CORREÇÃO AQUI: O 'value' agora é o leonardoElementId */}
+                            <select id="mioloElementId" value={mioloElementId} onChange={e => setMioloElementId(e.target.value)} required>
                                 <option value="" disabled>Selecione um estilo...</option>
-                                {allElements.filter(el => el.status === 'COMPLETE').map(el => <option key={el.id} value={el.leonardoElementId}>{el.name}</option>)}
+                                {allElements.filter(el => el.status === 'COMPLETE').map(el => <option key={el.leonardoElementId} value={el.leonardoElementId}>{el.name}</option>)}
                             </select>
+                            <small className={styles.helperText}>
+                                Este é o estilo padrão configurado para o tipo de livro. Você pode escolher outro se desejar.
+                            </small>
                         </div>
                         <div className={styles.formGroup}>
-                            <label htmlFor="coverElementId">Estilo da Capa e Contracapa</label>
-                             {/* ✅ CORREÇÃO AQUI: o 'value' agora é o leonardoElementId */}
-                            <select id="coverElementId" value={coverElementId} onChange={e => setCoverElementId(e.target.value)} required>
+                            <label htmlFor="capaElementId">Estilo da Capa e Contracapa</label>
+                             {/* ✅ CORREÇÃO AQUI: O 'value' agora é o leonardoElementId */}
+                            <select id="capaElementId" value={capaElementId} onChange={e => setCapaElementId(e.target.value)} required>
                                 <option value="" disabled>Selecione um estilo...</option>
-                                {allElements.filter(el => el.status === 'COMPLETE').map(el => <option key={el.id} value={el.leonardoElementId}>{el.name}</option>)}
+                                {allElements.filter(el => el.status === 'COMPLETE').map(el => <option key={el.leonardoElementId} value={el.leonardoElementId}>{el.name}</option>)}
                             </select>
+                            <small className={styles.helperText}>
+                                Este é o estilo padrão configurado para o tipo de livro. Você pode escolher outro se desejar.
+                            </small>
                         </div>
                     </div>
                 </div>

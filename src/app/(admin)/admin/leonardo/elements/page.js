@@ -3,14 +3,15 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { FaPlus, FaTrash, FaSync, FaEye } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaSync, FaEye, FaPencilAlt } from 'react-icons/fa';
 import { adminLeonardoService } from '@/services/api';
 import styles from './Elements.module.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import TrainElementModal from './_components/TrainElementModal';
-import ElementDetailsModal from './_components/ElementDetailsModal';
+import ElementDetailsModal from './_components/ElementDetailsModal'; // Modal para ver detalhes (agora somente leitura)
+import EditElementModal from './_components/EditElementModal'; // Modal para editar (nome, descrição, prompt base)
 
 const StatusBadge = ({ status }) => {
     const statusMap = {
@@ -33,7 +34,8 @@ const ElementsPage = () => {
     const [isPolling, setIsPolling] = useState(false);
     
     const [isTrainModalOpen, setIsTrainModalOpen] = useState(false);
-    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false); // Modal para ver detalhes (somente leitura)
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false); // Modal para editar (nome, descrição, prompt base)
     const [selectedElement, setSelectedElement] = useState(null);
 
     const fetchElements = useCallback(async (isSilent = false) => {
@@ -58,7 +60,7 @@ const ElementsPage = () => {
             setIsPolling(true);
             const intervalId = setInterval(() => {
                 fetchElements(true);
-            }, 15000);
+            }, 15000); // Polling a cada 15 segundos
 
             return () => clearInterval(intervalId);
         } else {
@@ -69,6 +71,11 @@ const ElementsPage = () => {
     const handleOpenDetailsModal = (element) => {
         setSelectedElement(element);
         setIsDetailsModalOpen(true);
+    };
+
+    const handleOpenEditModal = (element) => {
+        setSelectedElement(element);
+        setIsEditModalOpen(true);
     };
 
     const handleDelete = async (elementId) => {
@@ -108,22 +115,27 @@ const ElementsPage = () => {
                         <tr>
                             <th>Nome do Modelo</th>
                             <th>Status</th>
+                            <th>Prompt Base</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {isLoading ? ( <tr><td colSpan="3" style={{textAlign: 'center'}}>Carregando modelos...</td></tr> ) : 
-                        elements.length === 0 ? ( <tr><td colSpan="3" style={{textAlign: 'center'}}>Nenhum modelo treinado. Clique em "Treinar Novo Modelo".</td></tr> ) : 
+                        {isLoading ? ( <tr><td colSpan="4" style={{textAlign: 'center'}}>Carregando modelos...</td></tr> ) :
+                        elements.length === 0 ? ( <tr><td colSpan="4" style={{textAlign: 'center'}}>Nenhum modelo treinado. Clique em "Treinar Novo Modelo".</td></tr> ) :
                         (
                             elements.map(el => (
                                 <tr key={el.id}>
                                     <td className={styles.strong}>{el.name}</td>
                                     <td><StatusBadge status={el.status} /></td>
+                                    <td className={styles.promptCell}>{el.basePromptText || 'Nenhum prompt base definido'}</td>
                                     <td className={styles.actionsCell}>
-                                        <button className={`${styles.actionButton} ${styles.view}`} onClick={() => handleOpenDetailsModal(el)}>
+                                        <button className={`${styles.actionButton} ${styles.edit}`} onClick={() => handleOpenEditModal(el)} title="Editar Nome e Prompt Base">
+                                            <FaPencilAlt />
+                                        </button>
+                                        <button className={`${styles.actionButton} ${styles.view}`} onClick={() => handleOpenDetailsModal(el)} title="Ver Detalhes Completos">
                                             <FaEye />
                                         </button>
-                                        <button className={`${styles.actionButton} ${styles.delete}`} onClick={() => handleDelete(el.id)} disabled={el.status === 'TRAINING' || el.status === 'PENDING'}>
+                                        <button className={`${styles.actionButton} ${styles.delete}`} onClick={() => handleDelete(el.id)} disabled={el.status === 'TRAINING' || el.status === 'PENDING'} title="Deletar Modelo">
                                             <FaTrash />
                                         </button>
                                     </td>
@@ -144,7 +156,15 @@ const ElementsPage = () => {
                 <ElementDetailsModal
                     isOpen={isDetailsModalOpen}
                     onClose={() => {setIsDetailsModalOpen(false); setSelectedElement(null);}}
-                    onSuccess={() => { fetchElements(); setIsDetailsModalOpen(false); setSelectedElement(null); }}
+                    element={selectedElement}
+                />
+            )}
+
+            {selectedElement && (
+                <EditElementModal
+                    isOpen={isEditModalOpen}
+                    onClose={() => {setIsEditModalOpen(false); setSelectedElement(null);}}
+                    onSuccess={() => { fetchElements(); setIsEditModalOpen(false); setSelectedElement(null); }}
                     element={selectedElement}
                 />
             )}

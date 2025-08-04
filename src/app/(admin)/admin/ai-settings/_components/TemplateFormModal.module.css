@@ -103,6 +103,61 @@
     display: block;
 }
 
+/* --- NOVO: Estilos para o controle de passos --- */
+.stepIndicator {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-jackboo-blue);
+}
+
+.stepContent {
+    min-height: 300px; /* Garante que o modal não encolha muito */
+}
+
+/* --- NOVO: Estilos para a barra de placeholders --- */
+.placeholderBar {
+    background-color: #f0f4f7;
+    border: 1px solid #eef2f7;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+.placeholderBar h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #495057;
+    margin-top: 0;
+    margin-bottom: 0.8rem;
+}
+.placeholderButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.placeholderButton {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    border: 1px solid #bbdefb;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-family: var(--font-mali);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.placeholderButton:hover {
+    background-color: #bbdefb;
+    border-color: #90caf9;
+}
+.placeholderButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
 .modalActions {
     display: flex;
     justify-content: flex-end;
@@ -113,7 +168,8 @@
 }
 
 .confirmButton,
-.cancelButton {
+.cancelButton,
+.navButton { /* NOVO: Estilo para botões de navegação (Próximo, Voltar) */
     padding: 0.8rem 1.5rem;
     font-family: var(--font-mali);
     font-weight: 700;
@@ -141,6 +197,16 @@
     background-color: #f1f1f1;
     color: #333;
 }
+.navButton { /* Estilo para botões de navegação */
+    background-color: var(--color-jackboo-blue-lightest);
+    color: var(--color-jackboo-blue);
+    border: 1px solid var(--color-jackboo-blue-light);
+}
+.navButton:hover:not(:disabled) {
+    background-color: var(--color-jackboo-blue-light);
+    color: white;
+}
+
 
 @media (max-width: 768px) {
     .grid {

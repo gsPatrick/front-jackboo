@@ -13,7 +13,7 @@ const EditElementModal = ({ isOpen, onClose, onSuccess, element }) => {
     const [formData, setFormData] = useState({
         name: '',
         description: '',
-        basePrompt: ''
+        basePromptText: '' // ✅ CORREÇÃO: Nome do campo para basePromptText
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -22,7 +22,9 @@ const EditElementModal = ({ isOpen, onClose, onSuccess, element }) => {
             setFormData({
                 name: element.name || '',
                 description: element.description || '',
-                basePrompt: element.basePrompt?.replace('{{GPT_OUTPUT}}', '').replace(/,\s*$/, '') || ''
+                // ✅ CORREÇÃO: Carrega o valor de element.basePromptText
+                // Remove o {{GPT_OUTPUT}} e a vírgula do final para edição amigável
+                basePromptText: element.basePromptText?.replace(/,?\s*\{\{GPT_OUTPUT\}\}\s*$/g, '') || '' 
             });
         }
     }, [element, isOpen]);
@@ -41,7 +43,12 @@ const EditElementModal = ({ isOpen, onClose, onSuccess, element }) => {
         
         setIsSubmitting(true);
         try {
-            await adminLeonardoService.updateElement(element.id, formData);
+            // ✅ CORREÇÃO: Envia basePromptText para o serviço
+            await adminLeonardoService.updateElement(element.id, { 
+                name: formData.name,
+                description: formData.description,
+                basePromptText: formData.basePromptText, // Envia o campo correto
+            });
             toast.success('Elemento atualizado com sucesso!');
             onSuccess();
         } catch (error) {
@@ -67,9 +74,15 @@ const EditElementModal = ({ isOpen, onClose, onSuccess, element }) => {
                 </div>
 
                 <div className={styles.formGroup}>
-                    <label htmlFor="edit-basePrompt">Prompt Base</label>
-                    <input id="edit-basePrompt" name="basePrompt" type="text" value={formData.basePrompt} onChange={handleChange} />
-                    {/* CORREÇÃO AQUI: A placeholder agora é uma string literal */}
+                    <label htmlFor="edit-basePromptText">Prompt Base</label> {/* ✅ CORREÇÃO: Label ajustada */}
+                    <textarea 
+                        id="edit-basePromptText" // ✅ CORREÇÃO: ID ajustado
+                        name="basePromptText" // ✅ CORREÇÃO: Nome ajustado
+                        value={formData.basePromptText} 
+                        onChange={handleChange}
+                        rows="4"
+                        placeholder="Ex: estilo de desenho animado, cores vibrantes..."
+                    />
                     <small className={styles.helperText}>Palavras-chave de estilo. O sistema adicionará a descrição da cena (`{'{{GPT_OUTPUT}}'}`) automaticamente.</small>
                 </div>
 

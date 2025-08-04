@@ -2,25 +2,27 @@
 
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
+// ✅ REMOVIDO: import { motion, AnimatePresence } from 'framer-motion';
 import styles from './CharacterCreator.module.css';
-import { FaCamera, FaImages, FaCheck } from 'react-icons/fa';
+import { FaCamera, FaImages, FaCheck, FaBookOpen, FaBook, FaSpinner, FaHourglassHalf, FaTimesCircle, FaQuestionCircle } from 'react-icons/fa';
 import InfoModal from '../InfoModal/InfoModal';
 import WarningModal from '../WarningModal/WarningModal';
-import StoryFormModal from '../StoryFormModal/StoryFormModal'; // Importa o StoryFormModal
+import StoryFormModal from '../StoryFormModal/StoryFormModal';
 import { useAuth } from '@/contexts/AuthContext';
 import { authService, contentService } from '@/services/api'; 
 
-const API_BASE_URL = 'https://geral-jackboo.r954jc.easypanel.host'; // Ou a URL da sua API backend
-const APP_URL = 'https://geral-jackboo.r954jc.easypanel.host'; // Ou a URL onde seu frontend está rodando
+const API_BASE_URL = 'https://geral-jackboo.r954jc.easypanel.host';
+const APP_URL = 'https://geral-jackboo.r954jc.easypanel.host';
+
 // Componente Spinner de Carregamento
 const LoadingSpinner = () => (
-    <motion.div className={styles.spinnerWrapper} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+    // ✅ REMOVIDO: motion.div, usando div com classes CSS
+    <div className={styles.spinnerWrapper}> 
       <div className={styles.spinner}></div>
       <p>Criando a mágica...</p>
-    </motion.div>
+    </div >
 );
 
 // Componente Confetes
@@ -43,12 +45,8 @@ const Confetti = () => {
   );
 };
 
-// Variantes para transição suave entre os PRINCIPAIS sub-estados do Passo 1
-const mainStep1Variants = {
-    initial: { opacity: 0, y: 30 },
-    animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -30, transition: { duration: 0.3 } },
-};
+// --- REMOVIDAS AS VARIAÇÕES DO FRAMER MOTION ---
+// const mainStep1Variants = { ... };
 
 const CharacterCreator = ({ onCreationComplete }) => {
   const { user, login, isLoading: isAuthLoading } = useAuth();
@@ -68,8 +66,8 @@ const CharacterCreator = ({ onCreationComplete }) => {
   const [generationProgress, setGenerationProgress] = useState({ totalPages: 0, completedPages: 0 }); 
 
   const [isInitialInfoModalOpen, setIsInitialInfoModalOpen] = useState(false);
-  const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
   const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
+  const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
 
   // Efeito para monitorar o progresso da geração do livro
@@ -79,7 +77,6 @@ const CharacterCreator = ({ onCreationComplete }) => {
         console.log(`[CharacterCreator] Iniciando polling para o livro ID: ${generatedBookData.id}`);
         intervalId = setInterval(async () => {
             try {
-                // Usa contentService.getBookStatus que já está configurado para enviar o token
                 const bookData = await contentService.getBookStatus(generatedBookData.id); 
                 
                 setGeneratedBookData(bookData); 
@@ -89,7 +86,6 @@ const CharacterCreator = ({ onCreationComplete }) => {
                 const totalPages = bookData.variations?.[0]?.pageCount || 0;
                 setGenerationProgress({ totalPages, completedPages });
 
-                // --- LÓGICA CORRIGIDA PARA DETERMINAR O FIM DA GERAÇÃO ---
                 const allPagesSuccessfullyCompleted = pages.every(p => p.status === 'completed');
                 const anyPageFailed = pages.some(p => p.status === 'failed');
 
@@ -97,40 +93,31 @@ const CharacterCreator = ({ onCreationComplete }) => {
                     if (allPagesSuccessfullyCompleted) {
                         console.log(`[CharacterCreator] Livro ${generatedBookData.id} gerado com sucesso, todas as páginas prontas!`);
                         setIsBookGenerating(false); 
-                        onCreationComplete(bookData); // Procede para o preview SOMENTE se TODAS as páginas estiverem completas
+                        onCreationComplete(bookData);
                         clearInterval(intervalId);
                     } else if (anyPageFailed) {
-                        // Se o livro já está 'privado'/'publicado' mas alguma página falhou
                         console.error(`[CharacterCreator] Geração do livro ${generatedBookData.id} concluída com falhas em algumas páginas.`);
                         alert('Algumas páginas do seu livro não puderam ser geradas. Por favor, tente novamente ou entre em contato com o suporte.');
-                        setIsBookGenerating(false); // Para o polling, mas não vai para o preview
+                        setIsBookGenerating(false); 
                         clearInterval(intervalId);
                     }
-                    // Se o status é 'privado' mas allPagesSuccessfullyCompleted é falso e anyPageFailed é falso,
-                    // significa que ainda há páginas em 'generating'/'pending'. Continuar o polling.
                 } else if (bookData.status === 'falha_geracao') {
-                    // Se o status geral do livro indica falha, para tudo e notifica
                     console.error(`[CharacterCreator] Falha geral na geração do livro ${generatedBookData.id}.`);
                     alert('Ocorreu um erro crítico ao gerar seu livro. Por favor, tente novamente mais tarde.');
                     setIsBookGenerating(false); 
                     clearInterval(intervalId);
                 }
-                // --- FIM DA LÓGICA CORRIGIDA ---
 
             } catch (error) {
                 console.error(`[CharacterCreator] Erro no polling do livro ${generatedBookData.id}:`, error);
-                // Tratamento de erro robusto para o polling (ex: 401 Unauthorized)
                 if (error.message.includes('401')) { 
                     console.log("[CharacterCreator] Erro 401 no polling, a sessão pode ter expirado. Executando logout.");
-                    // O AuthContext já deve lidar com isso via setOnUnauthorizedCallback,
-                    // mas é bom ter o log no local para clareza.
                 }
-                // Se o polling falhar por algum outro motivo, para e notifica o usuário
                 alert(`Ocorreu um erro ao verificar o progresso do seu livro: ${error.message}.`);
                 setIsBookGenerating(false);
                 clearInterval(intervalId);
             }
-        }, 5000); // Polling a cada 5 segundos
+        }, 5000);
     }
     
     return () => {
@@ -180,7 +167,6 @@ const CharacterCreator = ({ onCreationComplete }) => {
       setCreatedCharacterId(newCharacter.id);
 
       if (newCharacter.generatedCharacterUrl && newCharacter.generatedCharacterUrl.startsWith('/uploads')) {
-        // Constrói a URL completa usando APP_URL definida diretamente
         setGeneratedImageUrl(`${APP_URL}${newCharacter.generatedCharacterUrl}`);
       } else {
         setGeneratedImageUrl('/images/character-placeholder.png'); 
@@ -261,7 +247,6 @@ const CharacterCreator = ({ onCreationComplete }) => {
     setSelectedFile(null);
     setCreatedCharacterId(null);
     setStep1Substate('upload');
-    // Reinicia o BookGenerating se estiver ativo
     setIsBookGenerating(false); 
     setGeneratedBookData(null);
     setGenerationProgress({ totalPages: 0, completedPages: 0 });
@@ -273,36 +258,33 @@ const CharacterCreator = ({ onCreationComplete }) => {
 
   const handleWarningConfirm = () => {
     setIsWarningModalOpen(false);
-    setIsStoryModalOpen(true);
+    setIsStoryModalOpen(true); // Abre o modal da história
   };
 
-  const handleStoryFormComplete = () => {
-    setIsStoryModalOpen(false);
-    onCreationComplete(null); // Chama a função do parent sem dados de livro para a história
-  };
-
-  // Inicia a geração do LIVRO DE COLORIR
-  const handleCreateColoringBook = async () => {
+  // ✅ ATUALIZADO: Função para lidar com a conclusão do formulário de história
+  const handleStoryFormComplete = async ({ theme, summary }) => {
+    setIsStoryModalOpen(false); // Fecha o modal da história
     if (!createdCharacterId) {
       alert("Erro: ID do personagem não encontrado.");
       return;
     }
     
-    setIsBookCreating(true); 
+    setIsBookCreating(true); // Indica que a criação do livro está em progresso
     try {
-      // ✅ CORREÇÃO: Passa os dados no formato esperado pelo backend: characterIds (array) e um theme.
-      const result = await contentService.createColoringBook({ 
-        characterIds: [createdCharacterId], 
-        theme: `As Aventuras de ${characterName || 'Meu Amigo'}` 
+      // Chama o serviço para criar o livro de história
+      const result = await contentService.createStoryBook({
+        characterIds: [createdCharacterId],
+        theme,
+        summary
       });
-      setGeneratedBookData(result.book); 
+      setGeneratedBookData(result.book); // Salva os dados do livro gerado para o polling
       setIsBookGenerating(true); // Ativa o estado de geração do livro, que agora terá uma tela dedicada
       
     } catch (error) {
-      console.error(`[ContentService] Erro ao iniciar a criação do livro de colorir: ${error.message}`);
-      alert(`Falha ao iniciar a criação do livro: ${error.message}`);
+      console.error(`[ContentService] Erro ao iniciar a criação do livro de história: ${error.message}`);
+      alert(`Falha ao iniciar a criação do livro de história: ${error.message}`);
     } finally {
-      setIsBookCreating(false); 
+      setIsBookCreating(false); // Finaliza o estado de criação do livro
     }
   };
 
@@ -318,10 +300,9 @@ const CharacterCreator = ({ onCreationComplete }) => {
 
       <AnimatePresence mode="wait">
         {isBookGenerating ? (
-            // --- NOVA TELA DE LOADING DEDICADA PARA GERAÇÃO DO LIVRO ---
             <motion.div
                 key="book-generating-full-screen"
-                className={styles.bookGeneratingContainer} // Adicione este estilo no seu CSS se ainda não tiver
+                className={styles.bookGeneratingContainer}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
@@ -339,7 +320,7 @@ const CharacterCreator = ({ onCreationComplete }) => {
                     {generationProgress.totalPages > 0 && `Página ${generationProgress.completedPages} de ${generationProgress.totalPages}...`}
                 </motion.p>
             </motion.div>
-        ) : ( // Renderiza o conteúdo normal se não estiver gerando o livro
+        ) : (
           <motion.div
               key="main-content-flow"
               initial={{ opacity: 0, y: 20 }}
@@ -499,13 +480,13 @@ const CharacterCreator = ({ onCreationComplete }) => {
       <WarningModal
         show={isWarningModalOpen}
         onClose={() => setIsWarningModalOpen(false)}
-        onConfirm={handleWarningConfirm}
+        onConfirm={handleWarningConfirm} // Este é o que chama a criação da história
       />
       <StoryFormModal
         show={isStoryModalOpen}
         onClose={() => setIsStoryModalOpen(false)}
-        onComplete={handleStoryFormComplete}
-        characterImage="/images/character-generated.png" 
+        onComplete={handleStoryFormComplete} // ✅ ATUALIZADO: Passa o handler para o StoryFormModal
+        characterImage={generatedImageUrl || '/images/character-placeholder.png'} 
       />
     </>
   );

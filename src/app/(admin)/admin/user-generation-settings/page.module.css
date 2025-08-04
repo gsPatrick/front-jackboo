@@ -31,7 +31,30 @@
     margin-top: 1rem;
     margin-bottom: 2.5rem;
     max-width: 700px;
+    display: flex; /* Para alinhar o botão de ajuda */
+    align-items: center;
+    gap: 0.5rem;
+    line-height: 1.5; /* Ajuste para melhor leitura com o botão */
 }
+
+/* ✅ NOVO: Estilo para o botão de ajuda */
+.helpButton {
+    background: none;
+    border: none;
+    color: var(--color-jackboo-blue);
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.helpButton:hover {
+    color: #4a90e2;
+}
+
 
 /* --- Grid Responsivo para os Cards --- */
 .settingsGrid {
@@ -71,6 +94,15 @@
     font-weight: 700;
     font-size: 1.4rem;
     margin: 0;
+}
+
+/* ✅ NOVO: Descrição do card */
+.cardDescription {
+    color: #6c757d;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    padding: 0 1.5rem; /* Alinha com o padding dos formGroup */
+    margin-bottom: 1rem;
 }
 
 /* --- Grupo de Formulário (Label + Input) --- */

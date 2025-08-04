@@ -9,9 +9,12 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { adminCharactersService } from '@/services/api';
+// ✅ CORREÇÃO: Importa CreateOfficialCharacterModal (que é o antigo UploadCharacterModal)
+import CreateOfficialCharacterModal from './_components/CreateOfficialCharacterModal'; 
+// ✅ CORREÇÃO: Importa GenerateOfficialCharacterModal (que é o antigo GenerateCharacterModal)
+import GenerateOfficialCharacterModal from './_components/GenerateOfficialCharacterModal'; 
+
 import styles from './page.module.css';
-import CreateOfficialCharacterModal from './_components/CreateOfficialCharacterModal';
-import GenerateOfficialCharacterModal from './_components/GenerateOfficialCharacterModal';
 
 // ✅ CORREÇÃO: Adicionando a URL base da API
 const API_BASE_URL = 'https://geral-jackboo.r954jc.easypanel.host';
@@ -22,8 +25,9 @@ const itemVariants = { hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 
 export default function OfficialCharactersPage() {
     const [characters, setCharacters] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
+    // ✅ ATUALIZADO: Nomes dos estados dos modais para refletir os componentes (já estava certo, só reforçando)
+    const [isUploadModalOpen, setIsUploadModalOpen] = useState(false); // Modal para upload direto
+    const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false); // Modal para gerar com IA
 
     const refreshCharacters = useCallback(async () => {
         try {
@@ -73,7 +77,7 @@ export default function OfficialCharactersPage() {
                      <button className={styles.addButton} onClick={() => setIsGenerateModalOpen(true)}>
                         <FaMagic /> Gerar com IA
                     </button>
-                    <button className={styles.secondaryButton} onClick={() => setIsCreateModalOpen(true)}>
+                    <button className={styles.secondaryButton} onClick={() => setIsUploadModalOpen(true)}> {/* ✅ ATUALIZADO: Chama setIsUploadModalOpen */}
                         <FaPlus /> Upload Direto
                     </button>
                 </div>
@@ -111,15 +115,17 @@ export default function OfficialCharactersPage() {
                 <div className={styles.emptyState}>Nenhum personagem encontrado. Crie o primeiro!</div>
             )}
 
+            {/* ✅ ATUALIZADO: Renderiza CreateOfficialCharacterModal (que é o upload direto) */}
             <CreateOfficialCharacterModal
-                isOpen={isCreateModalOpen}
-                onClose={() => setIsCreateModalOpen(false)}
+                isOpen={isUploadModalOpen}
+                onClose={() => setIsUploadModalOpen(false)}
                 onSuccess={() => {
-                    setIsCreateModalOpen(false);
+                    setIsUploadModalOpen(false);
                     refreshCharacters();
                 }}
             />
 
+            {/* ✅ ATUALIZADO: Renderiza GenerateOfficialCharacterModal (que é a geração por IA) */}
             <GenerateOfficialCharacterModal
                 isOpen={isGenerateModalOpen}
                 onClose={() => setIsGenerateModalOpen(false)}
