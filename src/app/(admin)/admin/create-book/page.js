@@ -12,7 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {
     adminBookGeneratorService,
     adminLeonardoService,
-    adminAISettingsService, // ✅ Mantido, pois ainda precisamos das configurações padrão
+    adminAISettingsService,
     adminCharactersService,
     adminTaxonomiesService
 } from '@/services/api';
@@ -30,16 +30,15 @@ export default function CreateOfficialBookPage() {
     const [summary, setSummary] = useState('');
     const [printFormatId, setPrintFormatId] = useState('');
     
-    // ✅ ATUALIZADO: Element IDs agora são strings (leonardoElementId)
     const [mioloElementId, setMioloElementId] = useState(''); 
     const [capaElementId, setCapaElementId] = useState(''); 
     
     const [pageCount, setPageCount] = useState(10);
 
     const [allCharacters, setAllCharacters] = useState([]);
-    const [allElements, setAllElements] = useState([]); // LeonardoElements
+    const [allElements, setAllElements] = useState([]);
     const [allPrintFormats, setAllPrintFormats] = useState([]);
-    const [defaultAISettings, setDefaultAISettings] = useState({}); // ✅ ATUALIZADO: Renomeado para clareza
+    const [defaultAISettings, setDefaultAISettings] = useState({});
 
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -49,18 +48,18 @@ export default function CreateOfficialBookPage() {
         try {
             const [charactersData, elementsData, printFormatsData, settingsData] = await Promise.all([
                 adminCharactersService.listCharacters(),
-                adminLeonardoService.listElements(), // Busca todos os LeonardoElements
+                adminLeonardoService.listElements(),
                 adminTaxonomiesService.listPrintFormats(),
-                adminAISettingsService.listSettings(), // Busca todas as configurações de IA
+                adminAISettingsService.listSettings(),
             ]);
 
             setAllCharacters(charactersData?.characters || []);
-            setAllElements(elementsData || []); // Armazena todos os LeonardoElements
+            setAllElements(elementsData || []);
             setAllPrintFormats(printFormatsData || []);
 
             const settingsMap = {};
             (settingsData || []).forEach(s => { settingsMap[s.purpose] = s; });
-            setDefaultAISettings(settingsMap); // Armazena as configurações de IA por purpose
+            setDefaultAISettings(settingsMap);
 
         } catch (error) {
             toast.error(`Falha ao carregar dados iniciais: ${error.message}`);
@@ -73,7 +72,6 @@ export default function CreateOfficialBookPage() {
         loadInitialData();
     }, [loadInitialData]);
 
-    // ✅ ATUALIZADO: Lógica para preencher os IDs dos Elements padrão com base no tipo de livro e nas configurações de IA
     useEffect(() => {
         if (Object.keys(defaultAISettings).length > 0) {
             const settingPurpose = bookType === 'historia' ? 'USER_STORY_BOOK_STORYLINE' : 'USER_COLORING_BOOK_STORYLINE';
@@ -82,13 +80,12 @@ export default function CreateOfficialBookPage() {
                 setMioloElementId(defaults.defaultElementId || '');
                 setCapaElementId(defaults.coverElementId || '');
             } else {
-                // Se não houver configuração padrão, limpa os campos
                 setMioloElementId('');
                 setCapaElementId('');
                 toast.warn(`Nenhuma configuração padrão de IA encontrada para livros de ${bookType}. Por favor, configure em "Templates de IA".`);
             }
         }
-    }, [bookType, defaultAISettings]); // Depende do bookType e das defaultAISettings
+    }, [bookType, defaultAISettings]);
 
     const handleCharacterToggle = (charId) => {
         setSelectedCharacters(prev =>
@@ -99,7 +96,7 @@ export default function CreateOfficialBookPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (selectedCharacters.length === 0 || !title || !theme || !printFormatId || !mioloElementId || !capaElementId) { // ✅ ATUALIZADO: Valida mioloElementId e capaElementId
+        if (selectedCharacters.length === 0 || !title || !theme || !printFormatId || !mioloElementId || !capaElementId) {
             toast.warn('Por favor, preencha todos os campos, incluindo os estilos de IA.');
             return;
         }
@@ -110,21 +107,23 @@ export default function CreateOfficialBookPage() {
 
         setIsSubmitting(true);
 
+        // Payload ajustado para corresponder ao que o controller agora espera
         const generationData = {
             characterIds: selectedCharacters,
             title,
             theme,
             summary: bookType === 'historia' ? summary : undefined,
             printFormatId,
-            elementId: mioloElementId, // ✅ ATUALIZADO: Usa mioloElementId
-            coverElementId: capaElementId, // ✅ ATUALIZADO: Usa capaElementId
+            elementId: mioloElementId,       // Corrigido
+            coverElementId: capaElementId,   // Corrigido
             pageCount: parseInt(pageCount, 10),
         };
 
         try {
             const response = await adminBookGeneratorService.generateBookPreview(bookType, generationData);
             toast.info('Iniciando o processo de criação...');
-            router.push(`/admin/create-book/generating?bookId=${response.id}`);
+            // Redireciona para a página de visualização/polling
+            router.push(`/admin/books/view/${response.id}`);
         } catch (error) {
             toast.error(`Erro ao iniciar geração: ${error.message}`);
             setIsSubmitting(false);
@@ -217,7 +216,6 @@ export default function CreateOfficialBookPage() {
                     <div className={styles.formGrid}>
                         <div className={styles.formGroup}>
                             <label htmlFor="mioloElementId">Estilo do Miolo</label>
-                            {/* ✅ CORREÇÃO AQUI: O 'value' agora é o leonardoElementId */}
                             <select id="mioloElementId" value={mioloElementId} onChange={e => setMioloElementId(e.target.value)} required>
                                 <option value="" disabled>Selecione um estilo...</option>
                                 {allElements.filter(el => el.status === 'COMPLETE').map(el => <option key={el.leonardoElementId} value={el.leonardoElementId}>{el.name}</option>)}
@@ -228,7 +226,6 @@ export default function CreateOfficialBookPage() {
                         </div>
                         <div className={styles.formGroup}>
                             <label htmlFor="capaElementId">Estilo da Capa e Contracapa</label>
-                             {/* ✅ CORREÇÃO AQUI: O 'value' agora é o leonardoElementId */}
                             <select id="capaElementId" value={capaElementId} onChange={e => setCapaElementId(e.target.value)} required>
                                 <option value="" disabled>Selecione um estilo...</option>
                                 {allElements.filter(el => el.status === 'COMPLETE').map(el => <option key={el.leonardoElementId} value={el.leonardoElementId}>{el.name}</option>)}

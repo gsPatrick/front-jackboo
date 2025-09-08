@@ -4,21 +4,22 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { FaUsers, FaBookOpen, FaPalette, FaFeatherAlt, FaUserAstronaut, FaChartPie, FaExclamationTriangle } from 'react-icons/fa';
+import { FaUsers, FaBookOpen, FaPalette, FaUserAstronaut, FaChartPie, FaExclamationTriangle } from 'react-icons/fa';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import styles from './page.module.css';
 
-// ✅ CORREÇÃO: Importando o novo serviço
+// Importando os serviços da API
 import { 
     adminUsersService, 
     adminBooksService, 
     adminCharactersService 
 } from '@/services/api'; 
 
+// Links de acesso rápido atualizados para focar na criação de conteúdo
 const quickAccessLinks = [
-    { href: '/admin/create-book', label: 'Criar Novo Livro Oficial', icon: <FaPalette /> },
+    { href: '/admin/create-book', label: 'Criar Livro Oficial', icon: <FaPalette /> },
     { href: '/admin/characters', label: 'Gerenciar Personagens', icon: <FaUserAstronaut /> },
-    { href: '/admin/user-generation-settings', label: 'Definir Padrões de Geração', icon: <FaFeatherAlt /> },
+    { href: '/admin/leonardo/elements', label: 'Gerenciar Models (Elements)', icon: <FaPalette /> },
 ];
 
 const PIE_CHART_COLORS = {
@@ -27,6 +28,7 @@ const PIE_CHART_COLORS = {
     indefinido: '#cccccc',
 };
 
+// Componente para exibir erros de carregamento de dados
 const DataError = ({ message }) => (
     <div className={styles.dataError}>
         <FaExclamationTriangle />
@@ -42,9 +44,10 @@ export default function AdminDashboardPage() {
         const fetchDashboardData = async () => {
             setIsLoading(true);
 
+            // Busca todos os dados em paralelo para otimizar o carregamento
             const results = await Promise.allSettled([
                 adminBooksService.listAllBooks(),
-                adminUsersService.listUsers(), // Usando o novo serviço
+                adminUsersService.listUsers(),
                 adminCharactersService.listCharacters()
             ]);
 
@@ -54,22 +57,21 @@ export default function AdminDashboardPage() {
 
             const finalStats = {};
 
-            // --- Processando Livros e Gráfico ---
+            // Processa o resultado da busca de livros
             if (booksResult.status === 'fulfilled') {
                 const booksData = booksResult.value?.books || [];
                 finalStats.totalBooks = booksData.length;
 
                 const bookTypesCount = booksData.reduce((acc, book) => {
-                    // ✅ CORREÇÃO: Acessando o tipo de livro corretamente
                     const type = book.variations?.[0]?.type || 'indefinido';
                     acc[type] = (acc[type] || 0) + 1;
                     return acc;
                 }, {});
 
                 finalStats.pieChartData = Object.keys(PIE_CHART_COLORS).map(key => ({
-                    name: key.charAt(0).toUpperCase() + key.slice(1), // Ex: 'historia' -> 'Historia'
+                    name: key.charAt(0).toUpperCase() + key.slice(1),
                     value: bookTypesCount[key] || 0
-                })).filter(item => item.value > 0); // Mostra apenas tipos que existem
+                })).filter(item => item.value > 0);
 
             } else {
                 console.error("Falha ao buscar LIVROS:", booksResult.reason);
@@ -77,7 +79,7 @@ export default function AdminDashboardPage() {
                 finalStats.pieChartData = [];
             }
 
-            // --- Processando Usuários ---
+            // Processa o resultado da busca de usuários
             if (usersResult.status === 'fulfilled') {
                 finalStats.totalUsers = usersResult.value?.users?.length || 0;
             } else {
@@ -85,7 +87,7 @@ export default function AdminDashboardPage() {
                 finalStats.totalUsers = <DataError />;
             }
 
-            // --- Processando Personagens ---
+            // Processa o resultado da busca de personagens
             if (charactersResult.status === 'fulfilled') {
                 finalStats.totalOfficialCharacters = charactersResult.value?.characters?.length || 0;
             } else {
@@ -136,7 +138,6 @@ export default function AdminDashboardPage() {
                 ))}
             </div>
             
-
             <div className={styles.quickAccessSection}>
                 <h2 className={styles.sectionTitle}>Acesso Rápido</h2>
                 <div className={styles.quickAccessGrid}>

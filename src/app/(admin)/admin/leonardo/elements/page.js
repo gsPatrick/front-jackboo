@@ -3,15 +3,15 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { FaPlus, FaTrash, FaSync, FaEye, FaPencilAlt } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaSync, FaEye, FaPencilAlt, FaCopy } from 'react-icons/fa';
 import { adminLeonardoService } from '@/services/api';
 import styles from './Elements.module.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import TrainElementModal from './_components/TrainElementModal';
-import ElementDetailsModal from './_components/ElementDetailsModal'; // Modal para ver detalhes (agora somente leitura)
-import EditElementModal from './_components/EditElementModal'; // Modal para editar (nome, descrição, prompt base)
+import ElementDetailsModal from './_components/ElementDetailsModal';
+import EditElementModal from './_components/EditElementModal';
 
 const StatusBadge = ({ status }) => {
     const statusMap = {
@@ -34,8 +34,8 @@ const ElementsPage = () => {
     const [isPolling, setIsPolling] = useState(false);
     
     const [isTrainModalOpen, setIsTrainModalOpen] = useState(false);
-    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false); // Modal para ver detalhes (somente leitura)
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false); // Modal para editar (nome, descrição, prompt base)
+    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedElement, setSelectedElement] = useState(null);
 
     const fetchElements = useCallback(async (isSilent = false) => {
@@ -90,6 +90,11 @@ const ElementsPage = () => {
         }
     };
 
+    const handleCopyId = (id) => {
+        navigator.clipboard.writeText(id);
+        toast.info("ID copiado para a área de transferência!");
+    };
+
     return (
         <motion.div className={styles.container} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <ToastContainer position="bottom-right" theme="colored" />
@@ -107,15 +112,15 @@ const ElementsPage = () => {
                 </div>
             </div>
             <p className={styles.subtitle}>
-                Elements são seus modelos de IA personalizados (LoRAs). Uma vez treinados, suas características principais são imutáveis. Você pode ajustar apenas o prompt base para refine os resultados.
+                Elements são seus modelos de IA personalizados (LoRAs). Copie o ID do modelo para usá-lo no código do backend.
             </p>
             <div className={styles.tableContainer}>
                 <table className={styles.table}>
                     <thead>
                         <tr>
                             <th>Nome do Modelo</th>
+                            <th>Element ID (Leonardo.AI)</th>
                             <th>Status</th>
-                            <th>Prompt Base</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -126,8 +131,13 @@ const ElementsPage = () => {
                             elements.map(el => (
                                 <tr key={el.id}>
                                     <td className={styles.strong}>{el.name}</td>
+                                    <td className={styles.idCell}>
+                                        <code>{el.leonardoElementId}</code>
+                                        <button onClick={() => handleCopyId(el.leonardoElementId)} className={styles.copyButton} title="Copiar ID">
+                                            <FaCopy />
+                                        </button>
+                                    </td>
                                     <td><StatusBadge status={el.status} /></td>
-                                    <td className={styles.promptCell}>{el.basePromptText || 'Nenhum prompt base definido'}</td>
                                     <td className={styles.actionsCell}>
                                         <button className={`${styles.actionButton} ${styles.edit}`} onClick={() => handleOpenEditModal(el)} title="Editar Nome e Prompt Base">
                                             <FaPencilAlt />

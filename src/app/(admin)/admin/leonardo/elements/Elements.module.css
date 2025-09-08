@@ -153,3 +153,56 @@
 .statusBadge.complete { background-color: #81c784; }
 .statusBadge.failed { background-color: #e57373; }
 .statusBadge.default { background-color: #90a4ae; }
+
+
+/* Adicione estas novas regras ao seu arquivo Elements.module.css */
+
+/* ... (todos os estilos existentes) ... */
+
+.table th, .table td {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    border-bottom: 1px solid #eef2f7;
+    vertical-align: middle;
+}
+
+/* ✅ NOVO: Estilo para a célula do ID */
+.idCell {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.idCell code {
+    background-color: #eef2f7;
+    padding: 0.3rem 0.6rem;
+    border-radius: 5px;
+}
+
+/* ✅ NOVO: Estilo para o botão de copiar */
+.copyButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #adb5bd;
+    font-size: 1rem;
+    padding: 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.copyButton:hover {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+/* REMOVIDO: Estilo antigo do promptCell que não é mais necessário na tabela principal */
+.promptCell {
+    display: none; /* Ou simplesmente remova a coluna do JSX */
+}
